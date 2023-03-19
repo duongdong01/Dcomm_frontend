@@ -2,11 +2,11 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   server: {
-    port: 8080
+    port: 3000
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'dscvr',
+    title: 'Dcomm',
     htmlAttrs: {
       lang: 'en'
     },
@@ -47,7 +47,9 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/antd-ui',
-    '@/plugins/api.js'
+    '@/plugins/api.js',
+    '@/plugins/toast.js',
+    '@/plugins/axios.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -63,7 +65,8 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    'vue-toastification/nuxt'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

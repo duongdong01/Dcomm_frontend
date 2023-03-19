@@ -1,8 +1,8 @@
 <template>
   <div class="grid grid-cols-8 w-full h-[200vh] gap-6">
     <div class="col-span-6">
-      <create-post />
-      <Sort class="mt-4" />
+      <create-post v-if="isLogin" class="mb-4" />
+      <Sort />
       <div>
         <Post />
       </div>
@@ -21,7 +21,12 @@ import Post from '~/components/post/Post.vue'
 import Sort from '~/components/sort-new/Sort.vue'
 export default {
   name: 'IndexPage',
-  components: { MainRight, CreatePost, Post, Sort }
+  components: { MainRight, CreatePost, Post, Sort },
+  computed: {
+    isLogin () {
+      return this.$store.getters.isLogin
+    }
+  }
 }
 </script>
 

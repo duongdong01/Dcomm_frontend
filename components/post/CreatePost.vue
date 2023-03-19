@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col rounded-xl bg-gray-800 text-base post">
+  <div class="flex flex-col rounded-xl bg-gray_850 text-base post">
     <div class="flex create_post  space-x-4 px-6 pt-5 ">
       <a href="#" class="avatar_user w-10 h-10 rounded-full cursor-pointer">
         <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
@@ -40,7 +40,7 @@
           <a-select
             label-in-value
             placeholder="Who can reply ?"
-            class="bg-gray-800 w-44 text-base text-white select-post"
+            class="bg-gray_850 w-44 text-base text-white select-post"
             @change="handleChange"
           >
             <a-select-option value="jack">
@@ -164,10 +164,10 @@ export default {
       @apply text-white
     }
     .ant-select-selection--single{
-      @apply bg-gray-800 border-none
+      @apply bg-gray_850 border-none
     }
     .ant-select-selection--single:focus{
-      @apply bg-gray-800 border-none
+      @apply bg-gray_850 border-none
     }
     .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
       @apply shadow-none

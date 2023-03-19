@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[60px] items-center px-6  w-full bg-gray-800 rounded-xl space-x-2">
+  <div class="flex h-[60px] items-center px-6  w-full bg-gray_850 rounded-xl space-x-2">
     <div class="flex hover:bg-gray-700 bg-gray-700 rounded-lg justify-between gap-2 py-2 px-2 text-white font-medium cursor-pointer text-base">
       <div>
         <svg

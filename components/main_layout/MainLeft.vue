@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-gray-800 rounded-xl text-white">
+  <div class="flex flex-col bg-gray_850 rounded-xl text-white">
     <div class="pl-3 mt-4 mb-4">
       <h1 class="text-lg font-semibold text-white">
         Feeds

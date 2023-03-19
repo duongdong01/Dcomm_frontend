@@ -19,7 +19,7 @@ export default {
 .search_header>{
 
     .input_search{
-     @apply  outline-none focus:border-[0.1px] border-blue-500
+     @apply  border-gray-600 border focus:border-[0.1px] focus:border-blue-500
     }
     .input_search::placeholder{
       @apply text-lg

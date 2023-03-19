@@ -1,49 +1,13 @@
 <template>
-  <div class="flex-col  fixed w-[260px]">
-    <div class="flex-col text-white  rounded-xl text-base  py-3 mb-5">
-      <div class="grid grid-cols-2 gap-1 rounded-xl px-4">
-        <div>
-          <p class="font-semibold">
-            🔥Hot Portals
-          </p>
-        </div>
-        <div class="flex justify-between ml-10">
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer ">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-chevron-left text-white font-semibold cursor-pointer"
-              viewBox="0 0 16 16"
-            >
-              <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
-          </div>
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-chevron-right text-white font-semibold "
-              viewBox="0 0 16 16"
-            >
-              <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <Ads />
-    </div>
-    <div class="flex flex-col px-4 py-3 bg-gray-800 rounded-xl text-white text-base ">
-      <div class="flex justify-between">
+  <div class="flex-col">
+    <div class="flex flex-col px-2 pb-6 text-white text-base border-b mb-4">
+      <div class="flex justify-between border-b pb-3">
         <p class="font-semibold">
-          Người liên hệ
+          Contact
         </p>
         <i class="fa-solid fa-ellipsis text-white cursor-pointer" />
       </div>
-      <div v-for="(item,index) in [0,1,2,3,4]" :key="index" class="flex flex-col mt-4">
+      <div v-for="(item,index) in [0,1,2,3,4,5]" :key="index" class="flex flex-col mt-4 cursor-pointer py-1 transition-all">
         <div class="flex  items-center mx-2">
           <div class="relative">
             <img class="rounded-full w-9 h-9" src="@/static/avatar/avatar1.jpg" alt="photo">
@@ -54,6 +18,42 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="flex-col text-white  rounded-xl text-base  pb-3 mb-5">
+      <div class="grid grid-cols-2 gap-1 rounded-xl pb-3">
+        <div>
+          <p class="font-semibold">
+            🔥Hot Products
+          </p>
+        </div>
+        <div class="flex justify-between ml-10">
+          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer ">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="currentColor"
+              class="bi bi-chevron-left text-white font-semibold cursor-pointer"
+              viewBox="0 0 16 16"
+            >
+              <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+            </svg>
+          </div>
+          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="currentColor"
+              class="bi bi-chevron-right text-white font-semibold "
+              viewBox="0 0 16 16"
+            >
+              <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <Ads />
     </div>
   </div>
 </template>

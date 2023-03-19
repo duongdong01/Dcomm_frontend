@@ -1,0 +1,9 @@
+<template>
+  <FormLogin />
+</template>
+<script>
+import FormLogin from '~/components/modal/FormLogin.vue'
+export default {
+  components: { FormLogin }
+}
+</script>
