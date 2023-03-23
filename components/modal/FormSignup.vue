@@ -11,9 +11,11 @@
         <a-input v-model="ruleForm.email" placeholder="@gmail.com" />
       </a-form-model-item>
       <a-form-model-item class="flex justify-center flex-col mx-0 text-center">
-        <button class="mt-4 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
-          Next
-        </button>
+        <a-spin :spinning="spinning" :delay="delayTime" size="default" class="h-full">
+          <button class="mt-4 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
+            Next
+          </button>
+        </a-spin>
       </a-form-model-item>
     </a-form-model>
 
@@ -55,7 +57,7 @@ export default {
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     const validatePass = (rule, value, callback) => {
       clearTimeout(checkPending4)
@@ -68,7 +70,7 @@ export default {
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     const checkFristname = (rule, value, callback) => {
       clearTimeout(checkPending2)
@@ -81,7 +83,7 @@ export default {
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     const checkLastname = (rule, value, callback) => {
       clearTimeout(checkPending3)
@@ -94,7 +96,7 @@ export default {
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     const checkOtp = (rule, value, callback) => {
       clearTimeout(checkPending5)
@@ -104,11 +106,13 @@ export default {
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     return {
       isShowLayoutOtp: false,
       isShowPassword: false,
+      spinning: false,
+      delayTime: 200,
       typeInput: 'password',
       ruleForm: {
         // pass: '',
@@ -134,14 +138,22 @@ export default {
   },
   methods: {
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$toast.success('otp has been sent to your email.')
-          this.isShowLayoutOtp = true
-          // this.$router.push('/auth/login')
-        } else {
-          this.$toast.error('Sign up error')
-          return false
+      this.$refs[formName].validate(async (valid) => {
+        try {
+          if (valid) {
+            this.spinning = true
+            await this.$api.auth.sentMailOtp({ email: this.ruleForm.email, type: 'signup' })
+            this.spinning = false
+            this.$toast.success('Otp has been sent to your email.')
+            this.isShowLayoutOtp = true
+          } else {
+            return false
+          }
+        } catch (err) {
+          if (err.data) {
+            this.spinning = false
+            this.$toast.error(err.data.message, { timeout: 1500 })
+          }
         }
       })
     },
@@ -189,6 +201,15 @@ export default {
   }
     .login-pass{
       @apply mb-5
+    }
+    .ant-spin-container::after{
+      @apply bg-transparent ;
+    }
+    .ant-spin-nested-loading > div > .ant-spin .ant-spin-dot{
+        @apply mt-[0.5px]
+    }
+    .ant-spin-dot-item{
+      @apply bg-white
     }
   }
   </style>

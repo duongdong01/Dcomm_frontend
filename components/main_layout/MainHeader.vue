@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-[#121212] h-[74px] grid grid-cols-10 gap-4  w-full z-50 max-w-[1440px]" style="box-shadow:rgb(0 0 0 / 8%) 0px 4px 20px 0px">
-    <div class="col-span-8 flex space-x-7">
-      <div class="flex justify-center">
+  <div class="bg-[#121212] h-[74px] grid grid-cols-10 gap-4  w-full z-50" style="box-shadow:rgb(0 0 0 / 8%) 0px 4px 20px 0px">
+    <div class="col-span-8 grid grid-cols-4">
+      <div class="flex justify-start col-span-1">
         <nuxt-link tag="h1" to="/" class="dscvr_logo items-center flex space-x-2 cursor-pointer">
-          <img src="@/static/logo/dscvr-logo.png" class="max-w-[33px] rounded-full" alt="logo">
+          <img src="@/static/logo/dscvr-logo.png" class="max-w-[38px] rounded-full" alt="logo">
           <span class="text-white font-semibold text-lg">DCOMM</span>
         </nuxt-link>
       </div>
-      <div class="search_header flex items-center w-full leading-[70px]">
+      <div class="search_header flex justify-start items-center w-full leading-[70px] col-span-3 px-2">
         <input type="search" placeholder="Search" class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg">
         <i class="fa-solid fa-magnifying-glass absolute ml-4 text-base text-white" />
       </div>
@@ -51,7 +51,7 @@
       </div>
       <button class="relative pr-2" @focusout="hideDropDown">
         <div class="flex justify-center items-center gap-[6px] btn-avatar h-12 px-1" @click="showDropDown()">
-          <img src="@/static/avatar/avatar-dscvr.png" alt="avatar" class="w-9 h-9 rounded-full">
+          <img src="@/static/avatar/avatar-dscvr.png" alt="avatar" class="w-[38px] h-[38px] rounded-full">
           <!-- <div class="flex flex-col text-sm font-medium text-white">
             <h1 class="text-white font-bold truncate max-w-[96px]">
               Duong1102a
