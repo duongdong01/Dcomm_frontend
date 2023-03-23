@@ -67,30 +67,23 @@ export default {
   },
   methods: {
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         try {
           if (valid) {
-            // const data = await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
-            //   .catch(({ response: err }) => {
-            //     this.$toast.error(err.data.message)
-            //     console.log(err)
-            //   })
-            // console.log('tesst', data)
+            await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
             this.$toast.success('Login successfully', {
               timeout: 1500
             })
             setTimeout(() => {
-              this.$router.push('/')
-            }, 1000)
+              this.$router.push({ path: '/' })
+            }, 1200)
           } else {
-            this.$toast.error('Login erorr', {
-              timeout: 2000
-            })
             return false
           }
         } catch (err) {
-          this.$toast.error(err.data.message)
-          console.log(err)
+          if (err.data && Object.keys(err.data).length) {
+            this.$toast.error(err.data.message, { timeout: 1500 })
+          }
         }
       })
     },

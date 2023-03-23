@@ -29,7 +29,8 @@ module.exports = {
       pink: colors.pink,
       slate: colors.slate,
       primary: '#4f46e5',
-      green: colors.green
+      green: colors.green,
+      drak_chat: '#3a3b3c'
     }
   },
   plugins: []

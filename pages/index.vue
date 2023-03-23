@@ -1,10 +1,11 @@
 <template>
-  <div class="grid grid-cols-8 w-full h-[200vh] gap-6">
+  <div class="grid grid-cols-8 w-full gap-6">
     <div class="col-span-6">
       <create-post v-if="isLogin" class="mb-4" />
       <Sort />
       <div>
         <Post />
+        <nuxt-child />
       </div>
     </div>
     <div class="col-span-2 flex">
