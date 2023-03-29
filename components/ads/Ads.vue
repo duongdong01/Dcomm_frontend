@@ -1,7 +1,8 @@
 <template>
   <div class="flex-col space-y-6">
-    <div v-for="(item,index) in [0,1,2]" :key="index" class="flex relative w-full h-40 filter rounded-xl overflow-hidden hover:brightness-110">
+    <div v-for="(item,index) in arr" :key="index" class="flex relative w-full h-40 filter rounded-xl overflow-hidden hover:brightness-110">
       <div class="w-full h-40">
+        {{ item }}
         <img src="@/static/ads.jpeg" alt="ads" class="object-cover w-full h-full rounded-xl">
       </div>
       <div class="grid grid-cols-5 bg-[#5f6077]/90 absolute h-20 bottom-0 w-full items-center cursor-pointer">
@@ -27,3 +28,19 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  props: {
+    arr: {
+      type: Array,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default: [1, 2, 3]
+    }
+  }
+}
+
+</script>
+
+<style scoped>
+
+</style>
