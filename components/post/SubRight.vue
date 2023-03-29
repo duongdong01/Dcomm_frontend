@@ -115,30 +115,18 @@ export default {
 }
 @keyframes ani {
   0%{
-    opacity: 0.8;
-    transform: translateX(0);
-  }
-  50%{
-    opacity: 1;
-    transform: translateX(0);
+    transform: translateX(15px);
   }
   100%{
-    opacity: 0.8;
-    transform: translateX(15px);
+    transform: translateX(0);
   }
 }
 @keyframes ani2 {
   0%{
-    opacity: 0.8;
-    transform: translateX(0);
-  }
-  50%{
-    opacity: 1;
-    transform: translateX(0);
+    transform: translateX(-15px);
   }
   100%{
-    opacity: 0.8;
-    transform: translateX(-15px);
+    transform: translateX(0px);
   }
 }
 </style>
