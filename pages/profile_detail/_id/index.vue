@@ -183,7 +183,7 @@
         </div>
       </div>
     </div>
-    <div class="h-20 flex bg-[#171819] text-white font-medium text-[18px] px-4">
+    <div class="h-20 flex bg-[#131720] text-white font-medium text-[18px] px-4">
       <div class="flex gap-8 items-center">
         <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310" :class="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 ? 'border-b-[3px] border-white' :''">
           <svg
@@ -231,6 +231,20 @@
 
           Tokens
         </nuxt-link>
+        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310/friends" :class="$route.path.split('/')[3] === 'friends' ? 'border-b-[3px] border-white' :''">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="bi bi-person-check-fill w-6 h-6"
+            viewBox="0 0 16 16"
+          >
+            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+          </svg>
+          Friends
+        </nuxt-link>
       </div>
     </div>
     <div class="w-full grid grid-cols-8 gap-2">
@@ -240,7 +254,7 @@
         </div>
         <NuxtChild class="px-4" />
       </div>
-      <div class="col-span-2 w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
+      <div to="/profile_detail/duong1310/friends" :class="$route.path.split('/')[3] === 'friends' ? 'hidden' :''" class="col-span-2 w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
         <p class="text-[18px] font-semibold">
           About
         </p>

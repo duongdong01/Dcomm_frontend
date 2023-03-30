@@ -108,10 +108,10 @@ export default {
 </script>
 <style lang="scss">
 .slide{
-  animation: ani 0.5s 1;
+  animation: ani 0.5s 1 ease-in-out;
 }
 .slide2{
-  animation: ani2 0.5s 1;
+  animation: ani2 0.5s 1 ease-in-out;
 }
 @keyframes ani {
   0%{
