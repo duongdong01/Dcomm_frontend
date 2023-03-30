@@ -1,8 +1,8 @@
 <template>
   <div class="grid grid-cols-10 text-white">
     <div class="col-span-2  border-r-[1.5px] border-[#303030] rounded-lg overflow-y-scroll conversation_left">
-      <div class="flex flex-col">
-        <div class="flex h-16 leading-[64px] justify-between items-center pr-8">
+      <div class="flex flex-col pr-8">
+        <div class="flex h-16 leading-[64px] justify-between items-center">
           <div>
             <p class="text-[22px] font-semibold text-white">
               Chat
@@ -21,7 +21,7 @@
             </svg>
           </div>
         </div>
-        <DiscusstionItem />
+        <ListDiscusstion />
       </div>
     </div>
     <div class="col-span-6  flex flex-col border-[1.5px] border-[#303030] ">
@@ -93,12 +93,12 @@
 </template>
 
 <script>
-import DiscusstionItem from '~/components/conversations/DiscusstionItem.vue'
+import ListDiscusstion from '~/components/conversations/ListDiscusstion.vue'
 import RightConversation from '~/components/conversations/RightConversation.vue'
 
 export default {
   name: 'Conversation',
-  components: { DiscusstionItem, RightConversation },
+  components: { ListDiscusstion, RightConversation },
   layout: 'conversation'
 }
 </script>
