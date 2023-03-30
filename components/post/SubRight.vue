@@ -27,7 +27,7 @@
           </p>
         </div>
         <div class="flex justify-between ml-10">
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer ">
+          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer " @click="backArr">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -39,7 +39,7 @@
               <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
             </svg>
           </div>
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer">
+          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer" @click="nextArr">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -53,7 +53,8 @@
           </div>
         </div>
       </div>
-      <Ads />
+      <Ads :arr="current" :class="startAni" />
+      {{ startAni }}
     </div>
   </div>
 </template>
@@ -61,9 +62,71 @@
 <script>
 import Ads from '../ads/Ads.vue'
 export default {
-  comments: {
-    Ads
+  components: { Ads },
+  data: function () {
+    return {
+      array: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      current: [1, 2, 3],
+      currentIndex: 0,
+      startAni: ''
+    }
   },
-  components: { Ads }
+  created () {
+    const tmp = [...this.array]
+    this.current = tmp.splice(this.currentIndex, 3)
+    this.currentIndex = 3
+  },
+  methods: {
+    nextArr () {
+      if (this.currentIndex >= this.array.length) {
+        this.currentIndex = 0
+      }
+      const tmp = [...this.array]
+      this.current = tmp.splice(this.currentIndex, 3)
+      this.currentIndex = this.currentIndex + 3
+      this.startAni = 'slide'
+      setTimeout(() => {
+        this.startAni = ''
+      }, 500)
+    },
+    backArr () {
+      this.currentIndex = this.currentIndex - 6
+      if (this.currentIndex < 0) {
+        this.currentIndex = 3
+        return
+      }
+      const tmp = [...this.array]
+      this.current = tmp.splice(this.currentIndex, 3)
+      this.currentIndex = this.currentIndex + 3
+      this.startAni = 'slide2'
+      setTimeout(() => {
+        this.startAni = ''
+      }, 500)
+    }
+  }
 }
 </script>
+<style lang="scss">
+.slide{
+  animation: ani 0.5s 1;
+}
+.slide2{
+  animation: ani2 0.5s 1;
+}
+@keyframes ani {
+  0%{
+    transform: translateX(15px);
+  }
+  100%{
+    transform: translateX(0);
+  }
+}
+@keyframes ani2 {
+  0%{
+    transform: translateX(-15px);
+  }
+  100%{
+    transform: translateX(0px);
+  }
+}
+</style>
