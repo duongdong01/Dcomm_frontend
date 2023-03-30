@@ -76,6 +76,16 @@ export default {
     this.current = tmp.splice(this.currentIndex, 3)
     this.currentIndex = 3
   },
+  mounted () {
+    setInterval(() => {
+      if (this.currentIndex >= this.array.length) {
+        this.currentIndex = 0
+      }
+      const tmp = [...this.array]
+      this.current = tmp.splice(this.currentIndex, 3)
+      this.currentIndex = this.currentIndex + 3
+    }, 30000)
+  },
   methods: {
     nextArr () {
       if (this.currentIndex >= this.array.length) {
