@@ -248,7 +248,7 @@
       </div>
     </div>
     <div class="w-full grid grid-cols-8 gap-2">
-      <div class=" w-full"  :class="$route.path.split('/')[3] === 'friends' ? 'col-span-8' :'col-span-6'">
+      <div class=" w-full" :class="$route.path.split('/')[3] === 'friends' ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
           <Post />
         </div>
