@@ -248,13 +248,13 @@
       </div>
     </div>
     <div class="w-full grid grid-cols-8 gap-2">
-      <div class="col-span-6 w-full">
+      <div class=" w-full"  :class="$route.path.split('/')[3] === 'friends' ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
           <Post />
         </div>
         <NuxtChild class="px-4" />
       </div>
-      <div to="/profile_detail/duong1310/friends" :class="$route.path.split('/')[3] === 'friends' ? 'hidden' :''" class="col-span-2 w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
+      <div :class="$route.path.split('/')[3] === 'friends' ? 'hidden' :''" class="col-span-2 w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
         <p class="text-[18px] font-semibold">
           About
         </p>
