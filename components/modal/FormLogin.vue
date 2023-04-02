@@ -93,10 +93,6 @@ export default {
     emitForgotPassword (e) {
       this.$emit('forgot-password', e)
     },
-    // async getRole () {
-    //   const abc = await this.$api.auth.role()
-    //   console.log(abc, 'abc')
-    // }
     showPassword () {
       this.isShowPassword = true
       this.typeInput = 'text'

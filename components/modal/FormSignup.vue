@@ -10,6 +10,19 @@
       <a-form-model-item has-feedback label="Email" prop="email">
         <a-input v-model="ruleForm.email" placeholder="@gmail.com" />
       </a-form-model-item>
+      <a-form-model-item label="Gender" prop="gender">
+        <a-select v-model="ruleForm.gender" default-value="Male" placeholder="Please select your gender">
+          <a-select-option value="Male">
+            Male
+          </a-select-option>
+          <a-select-option value="FeMale">
+            FeMale
+          </a-select-option>
+          <a-select-option value="Other">
+            Other
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
       <a-form-model-item class="flex justify-center flex-col mx-0 text-center">
         <a-spin :spinning="spinning" :delay="delayTime" size="default" class="h-full">
           <button class="mt-4 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
@@ -118,13 +131,15 @@ export default {
         // pass: '',
         email: '',
         firstName: '',
-        lastName: ''
+        lastName: '',
+        gender: undefined
       },
       rules: {
         firstName: [{ validator: checkFristname, trigger: 'change' }],
         lastName: [{ validator: checkLastname, trigger: 'change' }],
         email: [{ validator: checkEmail, trigger: 'change' }],
-        pass: [{ validator: validatePass, trigger: 'change' }]
+        pass: [{ validator: validatePass, trigger: 'change' }],
+        gender: [{ required: true, message: 'Please select activity gender', trigger: 'change' }]
       },
       ruleForm2: {
         pass: '',
@@ -142,7 +157,7 @@ export default {
         try {
           if (valid) {
             this.spinning = true
-            await this.$api.auth.sentMailOtp({ email: this.ruleForm.email, type: 'signup' })
+            await this.$api.auth.sentMailOtp({ email: this.ruleForm.email, type: 'SIGNUP' })
             this.spinning = false
             this.$toast.success('Otp has been sent to your email.')
             this.isShowLayoutOtp = true
@@ -158,14 +173,39 @@ export default {
       })
     },
     submitForm2 (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          console.log(this.ruleForm, this.ruleForm2)
-          this.$toast.success('Sign up successfully.')
-          this.$router.push('/auth/login')
-        } else {
-          this.$toast.error('Sign up error')
-          return false
+      this.$refs[formName].validate(async (valid) => {
+        try {
+          if (valid) {
+            const verifyOtp = {
+              otp: this.ruleForm2.otp,
+              email: this.ruleForm.email,
+              type: 'SIGNUP'
+            }
+            await this.$api.auth.verifyOtp(verifyOtp)
+            let genderUser = 'GENDER'
+            if (this.ruleForm.gender === 'FEMALE') {
+              genderUser = 'FEMALE'
+            } else {
+              genderUser = 'OTHER'
+            }
+            const signupParam = {
+              firstName: this.ruleForm.firstName,
+              lastName: this.ruleForm.lastName,
+              email: this.ruleForm.email,
+              password: this.ruleForm2.pass,
+              gender: genderUser
+            }
+            await this.$api.auth.signup(signupParam)
+            this.$toast.success('Sign up successfully.')
+            this.$router.push('/auth/login')
+          } else {
+            this.$toast.error('Sign up error')
+            return false
+          }
+        } catch (err) {
+          if (err.data && err.data.message) {
+            this.$toast.error(err.data.message, { timeout: 1500 })
+          }
         }
       })
     },
@@ -210,6 +250,19 @@ export default {
     }
     .ant-spin-dot-item{
       @apply bg-white
+    }
+
+    .ant-select-selection--single{
+      @apply bg-[#1b1a38] border-none text-white h-12 pt-2
+    }
+    .ant-form-item-required::before{
+      content: '';
+    }
+    .ant-select-arrow{
+      @apply text-white
+    }
+    .ant-form-item{
+      @apply mb-5
     }
   }
   </style>
