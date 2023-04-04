@@ -1,15 +1,30 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="header-profile bg-gray_850 h-[520px] w-full rounded-2xl  relative">
-      <div class="w-full cover-img h-full rounded-2xl" />
+      <div v-if="isLoaded" class="w-full cover-img h-full rounded-2xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
       <div class="w-full bg-gray_850 grid grid-cols-5 h-36 z-[2] absolute bottom-0 text-white rounded-b-2xl">
-        <div class="grid grid-cols-3 col-span-3 ">
+        <div v-if="!isLoaded" class=" shadow rounded-md p-4 w-full mx-auto grid grid-cols-3 col-span-3">
+          <div class="animate-pulse flex space-x-4">
+            <div class="rounded-full bg-slate-200 h-10 w-10" />
+            <div class="flex-1 space-y-6 py-1">
+              <div class="h-2 bg-slate-200 rounded" />
+              <div class="space-y-3">
+                <div class="grid grid-cols-3 gap-4">
+                  <div class="h-2 bg-slate-200 rounded col-span-2" />
+                  <div class="h-2 bg-slate-200 rounded col-span-1" />
+                </div>
+                <div class="h-2 bg-slate-200 rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="isLoaded" class="grid grid-cols-3 col-span-3 ">
           <div class="relative w-full h-full flex ml-10 col-span-1">
-            <img src="@/static/avatar/avatar1.jpg" alt="" class="w-36 h-36 rounded-full -top-10 absolute">
+            <img :src="user.avatar || defaultAvatar" alt="" class="w-36 h-36 rounded-full -top-10 absolute object-cover">
           </div>
           <div class="flex flex-col text-white  justify-start col-span-2 py-4  space-y-2">
             <p class="font-semibold text-xl mt-[1px]">
-              Duong1310
+              {{ user.fullname }}
             </p>
             <div class="flex text-lg font-medium gap-3">
               <p>19 <span class="text-blue-500">Followers</span></p>
@@ -185,7 +200,7 @@
     </div>
     <div class="h-20 flex bg-[#131720] text-white font-medium text-[18px] px-4">
       <div class="flex gap-8 items-center">
-        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310" :class="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 ? 'border-b-[3px] border-white' :''">
+        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}`" :class="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 ? 'border-b-[3px] border-white' :''">
           <svg
             width="24"
             height="24"
@@ -198,7 +213,7 @@
 
           Posts
         </nuxt-link>
-        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310/portals" :class="$route.path.split('/')[3] === 'portals' ? 'border-b-[3px] border-white' :''">
+        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}/portals`" :class="$route.path.split('/')[3] === 'portals' ? 'border-b-[3px] border-white' :''">
           <svg
             width="20"
             height="20"
@@ -211,7 +226,7 @@
 
           Portals
         </nuxt-link>
-        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310/tokens" :class="$route.path.split('/')[3] === 'tokens' ? 'border-b-[3px] border-white' :''">
+        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}/tokens`" :class="$route.path.split('/')[3] === 'tokens' ? 'border-b-[3px] border-white' :''">
           <svg
             width="20"
             height="20"
@@ -231,7 +246,7 @@
 
           Tokens
         </nuxt-link>
-        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " to="/profile_detail/duong1310/friends" :class="$route.path.split('/')[3] === 'friends' ? 'border-b-[3px] border-white' :''">
+        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}/friends`" :class="$route.path.split('/')[3] === 'friends' ? 'border-b-[3px] border-white' :''">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -258,7 +273,7 @@
         <p class="text-[18px] font-semibold">
           About
         </p>
-        <p>Hello wordl</p>
+        <p>Hello world</p>
         <p>
           Music magazine in web3.
         </p>
@@ -277,8 +292,27 @@ export default {
   },
   data: () => {
     return {
-      isSettingShow: false
+      isSettingShow: false,
+      user: {
+        fullname: null,
+        createdAt: null,
+        avatar: '',
+        coverImage: ''
+      },
+      cssProps: {
+        backgroundImage: `url(${require('@/static/avatar/cover.jpg')})`
+      },
+      isLoaded: false
     }
+  },
+  computed: {
+    defaultAvatar () {
+      return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZjxtpW8HD6X1SbNWDdsLRnv_gISY1LVJ8L4si0KBw&s'
+    }
+  },
+  async created () {
+    await this.getUserProfile()
+    this.isLoaded = true
   },
   methods: {
     showSetting (e) {
@@ -286,6 +320,18 @@ export default {
     },
     tongleShowSetting () {
       this.isSettingShow = !this.isSettingShow
+    },
+    async getUserProfile () {
+      try {
+        if (this.$route.params.id) {
+          const dataUserProfile = await this.$api.user.getUserProfile(this.$route.params.id)
+          this.user = dataUserProfile.data.user
+        } else {
+          return false
+        }
+      } catch (err) {
+        this.$router.push('/')
+      }
     }
   }
 }
@@ -293,7 +339,7 @@ export default {
 
 <style lang="scss">
 .cover-img{
-  background-image: url('@/static/avatar/cover.jpg');
+  // background-image: url('@/static/avatar/cover.jpg');
   background-position:  50% 65%;
   background-repeat: no-repeat;
   background-size: auto;

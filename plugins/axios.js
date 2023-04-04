@@ -1,19 +1,21 @@
-export default ({ $axios }) => {
-  $axios.onRequest((config) => {
-    if (localStorage.getItem('jwt')) {
-      const jwt = localStorage.getItem('jwt')
-      config.headers.common.Authorization = `Bearer ${jwt}`
+import axios from 'axios'
+export default function (context, inject) {
+  context.$axios.onRequest((config) => {
+    if (localStorage.getItem('access_token')) {
+      // eslint-disable-next-line camelcase
+      const access_token = localStorage.getItem('access_token')
+      // eslint-disable-next-line camelcase
+      config.headers.common.Authorization = `Bearer ${access_token}`
     }
   })
-  $axios.interceptors.response.use((response) => {
-    return response
-  }, function (error) {
-    // Do something with response error
+  context.$axios.onError(async (error) => {
     if (error.response.status === 401) {
-      console.log('unauthorized, logging out ...')
-      // auth.logout()
-      // router.replace('/auth/login')
+      const dataToken = await context.$axios.post('/auth/refresh-token', { refreshToken: localStorage.getItem('refresh_token') })
+      localStorage.setItem('refresh_token', dataToken.data.data.refresh_token)
+      localStorage.setItem('access_token', dataToken.data.data.access_token)
+    } else {
+      context.redirect('/auth/login')
     }
-    return Promise.reject(error.response)
   })
+  inject('axios', axios)
 }
