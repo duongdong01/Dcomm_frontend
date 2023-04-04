@@ -1,13 +1,13 @@
 import Auth from '@/api/auth'
-import PostUser from '~/api/post-user'
-// import Blog from '@/api/blog'
-// import Settings from '@/api/settings'
+import User from '@/api/user'
+import Friend from '@/api/friend'
 
 export default (context, inject) => {
   // Initialize API factories
   const factories = {
     auth: Auth(context.$axios),
-    post_user: PostUser(context.$axios)
+    user: User(context.$axios),
+    Friend: Friend(context.$axios)
   }
 
   // Inject $api

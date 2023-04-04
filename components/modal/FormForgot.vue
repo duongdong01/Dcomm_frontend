@@ -14,10 +14,12 @@
         <a-input v-model.trim="ruleForm.repass" type="password" placeholder="Write here..." />
       </a-form-model-item>
       <a-form-model-item class="flex justify-center flex-col mx-0 text-center">
-        <button v-if="!isSendCode" class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="openLayoutChangePass">
-          Send code
-        </button>
-        <button v-else class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
+        <a-spin :spinning="spinning" :delay="delayTime" size="default" class="h-full">
+          <button v-if="!isSendCode" class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="openLayoutChangePass">
+            Send code
+          </button>
+        </a-spin>
+        <button v-if="isSendCode" class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
           Save
         </button>
         <div class="flex justify-center flex-col text-white text-base font-semibold mt-3 text-center">
@@ -105,6 +107,8 @@ export default {
       callback()
     }
     return {
+      spinning: false,
+      delayTime: 200,
       ruleForm: {
         email: '',
         pass: '',
@@ -122,26 +126,44 @@ export default {
   },
   methods: {
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.isSendCode = true
-          console.log(this.ruleForm)
-          this.$toast.success('Password recovery successful.', { timeout: 1000 })
-          setTimeout(() => {
-            this.$router.push('/auth/login')
-          }, 1000)
-        } else {
-          console.log('error submit!!')
-          return false
+      this.$refs[formName].validate(async (valid) => {
+        try {
+          if (valid) {
+            this.isSendCode = true
+            await this.$api.auth.forgotPassword({ email: this.ruleForm.email, newPassword: this.ruleForm.pass, otp: this.ruleForm.otp })
+            this.$toast.success('Password recovery successful.', { timeout: 1000 })
+            setTimeout(() => {
+              this.$router.push('/auth/login')
+            }, 1000)
+          } else {
+            // console.log('error submit!!')
+            return false
+          }
+        } catch (err) {
+          if (err.data && err.message) {
+            this.$toast.error(err.data.message, { setTimeout: 1500 })
+          }
         }
       })
     },
-    openLayoutChangePass () {
-      this.$refs.ruleForm.validateField('email')
-      if (isValidEmail(this.ruleForm.email)) {
-        this.isSendCode = true
-      } else {
-        console.log('cccc')
+    async openLayoutChangePass () {
+      try {
+        this.$refs.ruleForm.validateField('email')
+        if (isValidEmail(this.ruleForm.email)) {
+          this.spinning = true
+          await this.$api.auth.sentMailOtp({ email: this.ruleForm.email, type: 'FORGOT' })
+          this.spinning = false
+          this.$toast.success('Check otp forgot password in your email.')
+          this.isSendCode = true
+        } else {
+          this.spinning = false
+          return false
+        }
+      } catch (err) {
+        if (err.data && err.data.message) {
+          this.$toast.error(err.data.message, { setTimeout: 1500 })
+        }
+        this.spinning = false
       }
     },
     backToForgot () {
@@ -172,6 +194,15 @@ export default {
   }
     .login-pass{
       @apply mb-5
+    }
+    .ant-spin-container::after{
+      @apply bg-transparent ;
+    }
+    .ant-spin-nested-loading > div > .ant-spin .ant-spin-dot{
+        @apply mt-[0.5px]
+    }
+    .ant-spin-dot-item{
+      @apply bg-white
     }
   }
   </style>

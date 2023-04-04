@@ -75,7 +75,14 @@
         <!-- dropdown -->
 
         <div v-if="isShowDropDown" class="absolute bg-gray-700 w-64 min-h-56 rounded-xl top-[68px] right-0 flex flex-col py-[10px]  text-white font-normal text-base space-y-2 px-1">
-          <nuxt-link tag="div" to="/profile_detail/duong1310" class="flex gap-2 rounded-md hover:bg-gray-500 w-full px-5 py-2 -top-[2px] text-start  items-center" @click.native="hideDropDown">
+          <nuxt-link
+            tag="div"
+            :to="{
+              name: 'profile_detail-id',params :{id:user._id}
+            }"
+            class="flex gap-2 rounded-md hover:bg-gray-500 w-full px-5 py-2 -top-[2px] text-start  items-center"
+            @click.native="hideDropDown"
+          >
             <svg
               viewBox="0 0 20 20"
               fill="none"
@@ -93,7 +100,7 @@
               class="stroke-current "
             /></svg>
             <p class="text-start">
-              Đồng Văn Dương
+              {{ user.fullname }}
             </p>
           </nuxt-link>
           <hr class="mx-4 text-gray-400">
@@ -119,17 +126,8 @@
             ><path d="M6.07672 2.47485C7.0593 1.72622 8.3464 1.25 10 1.25C11.6536 1.25 12.9407 1.72622 13.9233 2.47485C14.896 3.21598 15.527 4.19046 15.9371 5.12796C16.3471 6.06508 16.5484 6.99198 16.6484 7.67748C16.6987 8.02216 16.724 8.31076 16.7368 8.51572C16.7439 8.62884 16.7497 8.74377 16.75 8.85714V18.75H3.25L3.25001 8.85331C3.25086 8.76364 3.25326 8.67439 3.26318 8.51572C3.27599 8.31076 3.30134 8.02216 3.3516 7.67748C3.45157 6.99198 3.65289 6.06508 4.06288 5.12796C4.47304 4.19046 5.104 3.21598 6.07672 2.47485Z" fill="#D1D5DB" class="fill-current" /></svg>
             My portals
           </div>
-          <!-- <div class="flex gap-2 hover:bg-gray-500 w-full px-5 py-2">
-            <svg
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="mr-1 text-white w-6 h-6"
-              data-v-58a38da4=""
-            ><path fill-rule="evenodd" clip-rule="evenodd" d="M6 3H14V6H17V10H19V16H17V18H12V15H15V12.375H5V15H8V18H3V16H1V10H3V6H6V3ZM3 6H0V3H3V6ZM17 6V3H20V6H17ZM12 10V8H14V10H12ZM6 8V10H8V8H6Z" fill="white" /></svg>
-            Airdrops
-          </div> -->
-          <div class="flex gap-2 hover:bg-gray-500 w-full px-5 py-2 rounded-md">
+
+          <div class="flex gap-2 hover:bg-gray-500 w-full px-5 py-2 rounded-md" @click="logout">
             <svg
               viewBox="0 0 20 20"
               fill="none"
@@ -158,32 +156,48 @@
 export default {
   data: () => {
     return {
-      isShowDropDown: false
+      isShowDropDown: false,
+      user: {
+        fullmame: '',
+        _id: ''
+      },
+      accessToken: window.localStorage.getItem('access_token')
+
     }
   },
+
   computed: {
     isLogin () {
       return this.$store.getters.isLogin
     }
   },
+  async mounted () {
+    await this.getMe()
+  },
   methods: {
     showDropDown () {
       this.isShowDropDown = !this.isShowDropDown
-      console.log(this.isShowDropDown)
     },
     hideDropDown () {
-      console.log(this.isShowDropDown)
       this.isShowDropDown = false
     },
     onSearch (value) {
       console.log(value)
     },
 
-    ShowLoginModal () {
-      this.$store.commit('showModalLogin', true)
+    logout () {
+      window.localStorage.removeItem('access_token')
+      window.localStorage.removeItem('refresh_token')
+      this.$router.push('/auth/login')
     },
-    ShowSignupModal () {
-      this.$store.commit('showModalSignup', true)
+    async getMe () {
+      try {
+        if (window.localStorage.getItem('access_token')) {
+          const dataUser = await this.$api.user.getMe()
+          this.user = dataUser.data.user
+        }
+      } catch (err) {
+      }
     }
   }
 }
