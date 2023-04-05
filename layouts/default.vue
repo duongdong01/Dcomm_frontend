@@ -18,8 +18,8 @@
 import MainLeft from '@/components/main_layout/MainLeft.vue'
 import MainHeader from '@/components/main_layout/MainHeader.vue'
 export default {
-  components: { MainLeft, MainHeader }
-
+  components: { MainLeft, MainHeader },
+  middleware: ['auth']
 }
 </script>
 

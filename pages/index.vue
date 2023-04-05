@@ -13,7 +13,6 @@
     </div>
   </div>
 </template>
-
 <script>
 
 import MainRight from '@/components/main_layout/MainRight.vue'

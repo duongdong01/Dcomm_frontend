@@ -1,7 +1,10 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="header-profile bg-gray_850 h-[520px] w-full rounded-2xl  relative">
-      <div v-if="isLoaded" class="w-full cover-img h-full rounded-2xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
+      <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
+        <div class="animate-pulse flex space-x-4" />
+      </div>
+      <div v-if="isLoaded" class="w-full object-cover cover-img h-full rounded-2xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
       <div class="w-full bg-gray_850 grid grid-cols-5 h-36 z-[2] absolute bottom-0 text-white rounded-b-2xl">
         <div v-if="!isLoaded" class=" shadow rounded-md p-4 w-full mx-auto grid grid-cols-3 col-span-3">
           <div class="animate-pulse flex space-x-4">
@@ -27,8 +30,10 @@
               {{ user.fullname }}
             </p>
             <div class="flex text-lg font-medium gap-3">
-              <p>19 <span class="text-blue-500">Followers</span></p>
-              <p>2 <span class="text-blue-500">Following</span></p>
+              <nuxt-link :to="`/profile_detail/${$route.params.id}/friends`" tag="button">
+                19 <span class="text-blue-500">Friends</span>
+              </nuxt-link>
+              <p>2 <span class="text-blue-500">Follower</span></p>
             </div>
             <div class="flex space-x-3">
               <div class="flex gap-2  items-center justify-center">
@@ -97,40 +102,36 @@
           </div>
         </div>
         <div class="flex justify-end col-span-2 py-4 px-8">
-          <div class="flex space-x-4">
-            <button class="flex items-center rounded-lg px-3 py-2 h-12  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
+          <div v-if="isLoaded" class="flex space-x-4">
+            <button v-if="!isFriend && !isYourProfile" class="flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
               <svg
-                width="21"
-                height="20"
-                viewBox="0 0 21 20"
-                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                data-v-1ebbdd90=""
-              ><path
-                d="M11.55 3.00002L4.70835 10.2417C4.45002 10.5167 4.20002 11.0584 4.15002 11.4334L3.84169 14.1334C3.73335 15.1084 4.43335 15.775 5.40002 15.6084L8.08335 15.15C8.45835 15.0834 8.98335 14.8084 9.24168 14.525L16.0834 7.28335C17.2667 6.03335 17.8 4.60835 15.9583 2.86668C14.125 1.14168 12.7334 1.75002 11.55 3.00002Z"
-                stroke="white"
-                stroke-width="1.5"
-                stroke-miterlimit="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              /><path
-                d="M10.4083 4.20825C10.7667 6.50825 12.6333 8.26659 14.95 8.49992"
-                stroke="white"
-                stroke-width="1.5"
-                stroke-miterlimit="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              /><path
-                d="M3 18.3333H18"
-                stroke="white"
-                stroke-width="1.5"
-                stroke-miterlimit="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              /></svg>
-              Edit
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-person-plus w-5 h-5"
+                viewBox="0 0 16 16"
+              >
+                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+                <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+              </svg>
+              Add friend
             </button>
-            <button class="bg-gray-700 hover:bg-gray-600 border-gray-700 transition-all ease-in-out duration-300 h-12 flex items-center p-[16px] rounded-lg relative" @click="tongleShowSetting" @focusout="showSetting(false)">
+            <button v-if="isPending &&!isYourProfile " class="flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-person-dash w-5 h-5"
+                viewBox="0 0 16 16"
+              >
+                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+              </svg>
+              Cancel request
+            </button>
+            <button class="bg-gray-700 hover:bg-gray-600 border-gray-700 transition-all ease-in-out duration-300 h-11 flex items-center p-[16px] rounded-lg relative" @click="tongleShowSetting" @focusout="showSetting(false)">
               <svg
                 width="16"
                 height="16"
@@ -141,7 +142,7 @@
                 data-v-1ebbdd90=""
               ><path d="M8.0001 4.80001C7.57575 4.80001 7.16878 4.63144 6.86873 4.33138C6.56867 4.03132 6.4001 3.62435 6.4001 3.20001C6.4001 2.77566 6.56867 2.36869 6.86873 2.06864C7.16879 1.76858 7.57575 1.60001 8.0001 1.60001C8.42444 1.60001 8.83141 1.76858 9.13147 2.06864C9.43153 2.36869 9.6001 2.77566 9.6001 3.20001C9.6001 3.62435 9.43153 4.03132 9.13147 4.33138C8.83141 4.63144 8.42444 4.80001 8.0001 4.80001ZM8.0001 9.60001C7.57575 9.60001 7.16878 9.43143 6.86873 9.13138C6.56867 8.83132 6.4001 8.42435 6.4001 8.00001C6.4001 7.57566 6.56867 7.16869 6.86873 6.86864C7.16878 6.56858 7.57575 6.40001 8.0001 6.40001C8.42444 6.40001 8.83141 6.56858 9.13147 6.86864C9.43153 7.16869 9.6001 7.57566 9.6001 8.00001C9.6001 8.42435 9.43153 8.83132 9.13147 9.13138C8.83141 9.43143 8.42444 9.60001 8.0001 9.60001ZM6.4001 12.8C6.4001 13.2244 6.56867 13.6313 6.86873 13.9314C7.16878 14.2314 7.57575 14.4 8.0001 14.4C8.42444 14.4 8.83141 14.2314 9.13147 13.9314C9.43153 13.6313 9.6001 13.2244 9.6001 12.8C9.6001 12.3757 9.43153 11.9687 9.13147 11.6686C8.83141 11.3686 8.42444 11.2 8.0001 11.2C7.57575 11.2 7.16878 11.3686 6.86873 11.6686C6.56867 11.9687 6.4001 12.3757 6.4001 12.8Z" fill="white" class="fill-current" /></svg>
               <div v-if="isSettingShow" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-10">
-                <div class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+                <div v-if="isYourProfile" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
                   <svg
                     width="22"
                     height="22"
@@ -299,6 +300,9 @@ export default {
         avatar: '',
         coverImage: ''
       },
+      isFriend: false,
+      isPending: false,
+      isYourProfile: false,
       cssProps: {
         backgroundImage: `url(${require('@/static/avatar/cover.jpg')})`
       },
@@ -326,6 +330,10 @@ export default {
         if (this.$route.params.id) {
           const dataUserProfile = await this.$api.user.getUserProfile(this.$route.params.id)
           this.user = dataUserProfile.data.user
+          this.isFriend = dataUserProfile.data.isFriend
+          this.isPending = dataUserProfile.data.isPending
+          this.isYourProfile = dataUserProfile.data.isYourProfile
+          console.log(dataUserProfile.data)
         } else {
           return false
         }
@@ -339,9 +347,8 @@ export default {
 
 <style lang="scss">
 .cover-img{
-  // background-image: url('@/static/avatar/cover.jpg');
   background-position:  50% 65%;
   background-repeat: no-repeat;
-  background-size: auto;
+  background-size: cover;
 }
 </style>
