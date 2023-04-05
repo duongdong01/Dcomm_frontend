@@ -15,7 +15,8 @@ export default {
   components: {
     MainHeader
   },
-  layout: 'conversation'
+  layout: 'conversation',
+  middleware: ['auth']
 }
 </script>
 <style>

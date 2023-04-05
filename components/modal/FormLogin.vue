@@ -76,8 +76,8 @@ export default {
           if (valid) {
             this.spinning = true
             const dataLogin = await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
+            console.log(dataLogin, '1111')
             window.localStorage.setItem('access_token', dataLogin.data.access_token)
-            console.log(dataLogin)
             this.$toast.success('Login successfully', {
               timeout: 1500
             })
@@ -91,6 +91,7 @@ export default {
           }
         } catch (err) {
           this.spinning = false
+          console.log('error11: ', err)
           if (err.data && Object.keys(err.data).length) {
             this.$toast.error(err.data.message, { timeout: 1500 })
           }

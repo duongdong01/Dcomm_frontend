@@ -10,12 +10,15 @@ export default function (context, inject) {
   })
   context.$axios.onError(async (error) => {
     if (error.response.status === 401) {
-      const dataToken = await context.$axios.post('/auth/refresh-token', { refreshToken: localStorage.getItem('refresh_token') })
-      localStorage.setItem('refresh_token', dataToken.data.data.refresh_token)
-      localStorage.setItem('access_token', dataToken.data.data.access_token)
-    } else {
-      context.redirect('/auth/login')
+      if (localStorage.getItem('refresh_token')) {
+        const dataToken = await context.$axios.post('/auth/refresh-token', { refreshToken: localStorage.getItem('refresh_token') })
+        localStorage.setItem('refresh_token', dataToken.data.data.refresh_token)
+        localStorage.setItem('access_token', dataToken.data.data.access_token)
+      } else {
+        context.redirect('/auth/login')
+      }
     }
+    return Promise.reject(error.response)
   })
   inject('axios', axios)
 }
