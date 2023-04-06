@@ -7,7 +7,7 @@ export default (context, inject) => {
   const factories = {
     auth: Auth(context.$axios),
     user: User(context.$axios),
-    Friend: Friend(context.$axios)
+    friend: Friend(context.$axios)
   }
 
   // Inject $api

@@ -73,6 +73,7 @@ export default {
             this.spinning = true
             const dataLogin = await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
             window.localStorage.setItem('access_token', dataLogin.data.access_token)
+            window.localStorage.setItem('refresh_token', dataLogin.data.refresh_token)
             this.$toast.success('Login successfully', {
               timeout: 1500
             })

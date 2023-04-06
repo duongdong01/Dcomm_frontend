@@ -5,8 +5,8 @@
         <div class="absolute left-[4px] text-white">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
+            width="18"
+            height="18"
             fill="currentColor"
             class="bi bi-search"
             viewBox="0 0 16 16"
@@ -14,14 +14,60 @@
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
           </svg>
         </div>
-        <input class="min-w-[500px] h-[30px] pl-7 rounded-lg input_search text-sm bg-gray-700 text-white" type="input" placeholder="Search by name...">
+        <input v-model="search" class="min-w-[500px] h-[30px] pl-7 rounded-lg input_search text-sm bg-gray-700 text-white" type="input" placeholder="Search by name..." @keyup="searchFriend">
       </div>
       <div class="text-white mr-6 text-base">
-        Bạn bè: {{ countFriends }} người
+        Connected: {{ friends.length }} friend
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
-      <friend-item v-for="(item, index) in array" :key="index" :current="item" />
+    <div v-if="isLoaded" class="grid grid-cols-2 gap-4">
+      <friend-item v-for="(item, index) in friends" :key="index" :friend="item" />
+    </div>
+    <div v-if="!isLoaded" class="grid grid-cols-2 gap-4">
+      >
+      <svg
+        id="L5"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px"
+        y="0px"
+        viewBox="0 0 100 100"
+        enable-background="new 0 0 0 0"
+        xml:space="preserve"
+        class="w-20 h-20"
+      >
+        <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+          <animateTransform
+            attributeName="transform"
+            dur="1s"
+            type="translate"
+            values="0 15 ; 0 -15; 0 15"
+            repeatCount="indefinite"
+            begin="0.1"
+          />
+        </circle>
+        <circle fill="#fff" stroke="none" cx="30" cy="50" r="6">
+          <animateTransform
+            attributeName="transform"
+            dur="1s"
+            type="translate"
+            values="0 10 ; 0 -10; 0 10"
+            repeatCount="indefinite"
+            begin="0.2"
+          />
+        </circle>
+        <circle fill="#fff" stroke="none" cx="54" cy="50" r="6">
+          <animateTransform
+            attributeName="transform"
+            dur="1s"
+            type="translate"
+            values="0 5 ; 0 -5; 0 5"
+            repeatCount="indefinite"
+            begin="0.3"
+          />
+        </circle>
+      </svg>
     </div>
   </div>
 </template>
@@ -33,6 +79,7 @@ export default {
   data () {
     return {
       countFriends: 123,
+      isLoaded: false,
       array: [{
         userName: 'DuongDong',
         userTitle: 'Bắc Giang',
@@ -51,7 +98,33 @@ export default {
         userName: 'Vợ 3 của idol Dương',
         userTitle: 'Nam Ninh',
         avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5r_Kri1nA7eoXgD6zdhqMneLSRYT5ZL1JNw&usqp=CAU'
-      }]
+      }],
+      friends: [],
+      search: ''
+    }
+  },
+  async mounted () {
+    await this.getListFriend(10, 1, '')
+  },
+  methods: {
+    async getListFriend (limit, page, keyword) {
+      try {
+        const friendData = await this.$api.friend.getListFriend({ userParam: '642d8ba569ad9f52970f0053', limit, page, keyword })
+        this.friends = friendData.data.friends
+        this.isLoaded = true
+      } catch (err) {
+        this.isLoaded = false
+        console.log(err)
+      }
+    },
+    async searchFriend () {
+      try {
+        this.isLoaded = false
+        await this.getListFriend(10, 1, this.search)
+        this.isLoaded = true
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
