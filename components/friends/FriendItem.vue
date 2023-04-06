@@ -1,6 +1,6 @@
 <template>
-  <div class="flex text-white items-center p-3 rounded-lg bg-edit">
-    <div class="w-20 min-h-[80px] overflow-hidden rounded-md">
+  <div class="flex text-white items-center p-3 rounded-lg bg-edit relative">
+    <div class="w-20 min-h-[80px] overflow-hidden rounded-md" @mouseover="upHere = true" @mouseleave="upHere = false">
       <img class="w-20 min-h-[80px]" :src="current.avatar" alt="">
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
@@ -28,10 +28,13 @@
         </div>
       </div>
     </button>
+    <friend-view v-if="upHere || upHere2" :current="current" class="z-50 absolute top-25 transition-all" @mouseover.stop="upHere2 = true" @mouseleave.stop="upHere2 = false" />
   </div>
 </template>
 <script>
+import FriendView from './FriendView.vue'
 export default {
+  components: { FriendView },
   props: {
     current: {
       type: Object,
@@ -45,7 +48,9 @@ export default {
   },
   data: () => {
     return {
-      isClick: false
+      isClick: false,
+      upHere: false,
+      upHere2: false
     }
   },
   methods: {
