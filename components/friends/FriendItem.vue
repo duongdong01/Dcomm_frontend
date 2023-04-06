@@ -1,14 +1,14 @@
 <template>
-  <div class="flex text-white items-center p-3 rounded-lg bg-edit relative">
-    <div class="w-20 min-h-[80px] overflow-hidden rounded-md" @mouseover="upHere = true" @mouseleave="upHere = false">
-      <img class="w-20 min-h-[80px]" :src="current.avatar" alt="">
+  <div class="flex text-white items-center p-3 rounded-lg bg-edit">
+    <div class="w-20 min-h-[80px] overflow-hidden rounded-md">
+      <img class="w-20 min-h-[80px]" :src="friend.userDetail.avatar" alt="">
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
       <span class="font-medium text-base">
-        {{ current.userName }}
+        {{ friend.userDetail.fullname }}
       </span>
       <div class="font-light text-sm">
-        {{ current.userTitle }}
+        {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }}
       </div>
     </div>
     <button class="rounded-full p-1 bg-edit3 relative" @click="togleClick" @focusout="change">
@@ -36,13 +36,18 @@ import FriendView from './FriendView.vue'
 export default {
   components: { FriendView },
   props: {
-    current: {
+    friend: {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
       default: {
-        userName: 'DuongDong',
-        userTitle: 'Bắc Giang',
-        avatar: 'https://ianrmedia.unl.edu/images/resources/nilo-ren.jpg'
+        mutualCount: 0,
+        userDetail: {
+          _id: '',
+          fullname: '',
+          avatar: '',
+          coverImage: '',
+          createdAt: '2023-04-05T14:54:35.935Z'
+        }
       }
     }
   },
