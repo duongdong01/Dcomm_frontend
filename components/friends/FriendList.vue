@@ -17,7 +17,7 @@
         <input class="min-w-[500px] h-[30px] pl-7 rounded-lg input_search text-sm bg-gray-700 text-white" type="input" placeholder="Search by name...">
       </div>
       <div class="text-white mr-6 text-base">
-        Bạn bè: {{ countFriends}} người
+        Bạn bè: {{ countFriends }} người
       </div>
     </div>
     <div class="grid grid-cols-2 gap-4">

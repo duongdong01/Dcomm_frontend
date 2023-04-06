@@ -16,11 +16,9 @@
             Forgot password?
           </nuxt-link>
         </div>
-        <a-spin :spinning="spinning" :delay="delayTime" size="default" class="h-full">
-          <button class="mt-3 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
-            Log in
-          </button>
-        </a-spin>
+        <button class="mt-3 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
+          Log in
+        </button>
       </a-form-model-item>
     </a-form-model>
   </div>
@@ -55,8 +53,6 @@ export default {
       }
     }
     return {
-      spinning: false,
-      delayTime: 200,
       isShowPassword: false,
       typeInput: 'password',
       ruleForm: {
@@ -76,22 +72,18 @@ export default {
           if (valid) {
             this.spinning = true
             const dataLogin = await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
-            console.log(dataLogin, '1111')
             window.localStorage.setItem('access_token', dataLogin.data.access_token)
             this.$toast.success('Login successfully', {
               timeout: 1500
             })
-            this.spinning = false
             setTimeout(() => {
               this.$router.push({ path: '/' })
             }, 1200)
           } else {
-            this.spinning = false
             return false
           }
         } catch (err) {
           this.spinning = false
-          console.log('error11: ', err)
           if (err.data && Object.keys(err.data).length) {
             this.$toast.error(err.data.message, { timeout: 1500 })
           }
@@ -135,14 +127,5 @@ export default {
   .login-pass{
     @apply mb-0
   }
-  .ant-spin-container::after{
-      @apply bg-transparent ;
-    }
-    .ant-spin-nested-loading > div > .ant-spin .ant-spin-dot{
-        @apply mt-[0.5px]
-    }
-    .ant-spin-dot-item{
-      @apply bg-white
-    }
 }
 </style>
