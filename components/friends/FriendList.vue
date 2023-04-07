@@ -80,40 +80,24 @@ export default {
     return {
       countFriends: 123,
       isLoaded: false,
-      array: [{
-        userName: 'DuongDong',
-        userTitle: 'Bắc Giang',
-        avatar: 'https://ianrmedia.unl.edu/images/resources/nilo-ren.jpg'
-      },
-      {
-        userName: 'Vợ 1 của idol Dương',
-        userTitle: 'Hà Nam',
-        avatar: 'https://luv.vn/wp-content/uploads/2021/08/gai-xinh-mac-vay-xep-ly-ngan-17.jpg'
-      },
-      {
-        userName: 'Vợ 2 của idol Dương',
-        userTitle: 'Hà Nội',
-        avatar: 'https://pbs.twimg.com/profile_images/1438035897430130688/f4vDy5Bd_400x400.jpg'
-      }, {
-        userName: 'Vợ 3 của idol Dương',
-        userTitle: 'Nam Ninh',
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5r_Kri1nA7eoXgD6zdhqMneLSRYT5ZL1JNw&usqp=CAU'
-      }],
       friends: [],
       search: ''
     }
   },
   async mounted () {
     await this.getListFriend(10, 1, '')
+    console.log('hahaha', this.$route.params)
   },
   methods: {
     async getListFriend (limit, page, keyword) {
       try {
-        const friendData = await this.$api.friend.getListFriend({ userParam: '642d8ba569ad9f52970f0053', limit, page, keyword })
+        const userId = this.$route.params.id
+        const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
         this.friends = friendData.data.friends
         this.isLoaded = true
       } catch (err) {
         this.isLoaded = false
+        this.$router.push('/')
         console.log(err)
       }
     },
