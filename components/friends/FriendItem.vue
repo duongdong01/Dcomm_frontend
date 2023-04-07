@@ -1,17 +1,27 @@
 <template>
-  <div class="flex text-white items-center p-3 rounded-lg bg-edit">
-    <div class="w-20 min-h-[80px] overflow-hidden rounded-md" @mouseover="upHere = true">
-      <img class="w-20 min-h-[80px] object-cover" :src="friend.userDetail.avatar" alt="photo">
+  <div class="flex text-white items-center p-3 rounded-lg bg-edit ">
+    <div class="w-20 min-h-[80px]  rounded-md relative" @mouseover="upHere = true" @mouseleave="upHere=false">
+      <nuxt-link tag="div" :to="`/profile_detail/${friend.userDetail._id}`">
+        <img class="w-20 min-h-[80px] object-cover rounded-md cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
+      </nuxt-link>
+      <div v-if="upHere" class="z-50 absolute top-[98%] transition-all">
+        <friend-view :friend="friend" />
+      </div>
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
-      <span class="font-medium text-base">
-        {{ friend.userDetail.fullname }}
-      </span>
+      <div class="relative flex-inline w-fit" @mouseover="upHere2 = true" @mouseleave="upHere2=false">
+        <nuxt-link tag="span" :to="`/profile_detail/${friend.userDetail._id}`" class="font-medium text-base hover:decoration-solid cursor-pointer hover:underline " >
+          {{ friend.userDetail.fullname }}
+        </nuxt-link>
+        <div v-if="upHere2" class="z-50 absolute top-[98%] transition-all">
+          <friend-view :friend="friend" />
+        </div>
+      </div>
       <div class="font-light text-sm">
         {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }}
       </div>
     </div>
-    <button class="rounded-full p-1 bg-edit3 relative" @click="togleClick" @focusout="change">
+    <button class="rounded-full p-1 bg-edit3 relative" @click="toggleClick" @focusout="change">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="22"
@@ -24,13 +34,10 @@
       </svg>
       <div v-if="isClick" class="p-[8px] bg-gray-600 bg-edit4 absolute z-10 top-[36px] min-w-[120px] rounded-md">
         <div>
-          Hủy kết bạn
+          Unfriend
         </div>
       </div>
     </button>
-    <div class="z-50 absolute top-25 transition-all" @mouseleave="upHere=false">
-      <friend-view v-if="upHere" :friend="friend" />
-    </div>
   </div>
 </template>
 <script>
@@ -65,14 +72,14 @@ export default {
     change () {
       this.isClick = false
     },
-    togleClick () {
+    toggleClick () {
       this.isClick = !this.isClick
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .bg-edit{
    background-color: rgb(28, 33, 46);
 }
