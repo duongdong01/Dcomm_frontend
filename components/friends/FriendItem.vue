@@ -1,7 +1,7 @@
 <template>
   <div class="flex text-white items-center p-3 rounded-lg bg-edit">
-    <div class="w-20 min-h-[80px] overflow-hidden rounded-md">
-      <img class="w-20 min-h-[80px]" :src="friend.userDetail.avatar" alt="">
+    <div class="w-20 min-h-[80px] overflow-hidden rounded-md" @mouseover="upHere = true">
+      <img class="w-20 min-h-[80px] object-cover" :src="friend.userDetail.avatar" alt="photo">
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
       <span class="font-medium text-base">
@@ -28,7 +28,9 @@
         </div>
       </div>
     </button>
-    <friend-view v-if="upHere || upHere2" :current="current" class="z-50 absolute top-25 transition-all" @mouseover.stop="upHere2 = true" @mouseleave.stop="upHere2 = false" />
+    <div class="z-50 absolute top-25 transition-all" @mouseleave="upHere=false">
+      <friend-view v-if="upHere" :friend="friend" />
+    </div>
   </div>
 </template>
 <script>
@@ -39,15 +41,15 @@ export default {
     friend: {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
-      default: {
-        mutualCount: 0,
-        userDetail: {
-          _id: '',
-          fullname: '',
-          avatar: '',
-          coverImage: '',
-          createdAt: '2023-04-05T14:54:35.935Z'
-        }
+      default: () => {
+        // mutualCount: 0,
+        // userDetail: {
+        //   _id: '',
+        //   fullname: '',
+        //   avatar: '',
+        //   coverImage: '',
+        //   createdAt: '2023-04-05T14:54:35.935Z'
+        // }
       }
     }
   },
@@ -59,6 +61,7 @@ export default {
     }
   },
   methods: {
+
     change () {
       this.isClick = false
     },
