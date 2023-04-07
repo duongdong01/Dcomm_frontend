@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-edit w-[350px] rounded-lg box shadow-gray-800">
+  <div class="bg-edit w-[350px] rounded-lg box shadow-gray-800 py-1">
     <div class="flex flex-row">
       <div class="m-[10px] relative">
         <div class="overflow-hidden rounded-full">
-          <img class="w-[100px] h-[100px]" :src="current.avatar" alt="">
+          <img class="w-[100px] h-[100px] object-cover cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
         </div>
         <div class="absolute bottom-2.5 right-1.5">
           <svg
@@ -18,11 +18,11 @@
           </svg>
         </div>
       </div>
-      <div class="mt-[20px]">
-        <div class="text-base">
-          {{ current.userName }}
+      <div class="mt-[20px] space-y-3">
+        <div class="text-base font-bold">
+          {{ friend.userDetail.fullname }}
         </div>
-        <div class="flex flex-row pt-[10px] pb-[10px]">
+        <div v-if="friend.mutualCount > 0" class="flex flex-row ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -34,27 +34,28 @@
             <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
           </svg>
           <div class="ml-[10px] text-sm">
-            có n bạn chung
+            {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }}
           </div>
         </div>
-        <div class="flex flex-row pt-[10px] pb-[10px]">
+        <div class="flex flex-row ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
             height="20"
             fill="currentColor"
-            class="bi bi-house-door"
+            class="bi bi-person-up w-5 h-5"
             viewBox="0 0 16 16"
           >
-            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146ZM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5Z" />
+            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+            <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
           </svg>
           <div class="ml-[10px] text-sm">
-            {{ current.userTitle }}
+            {{ friend.userDetail.createdAt }}
           </div>
         </div>
       </div>
     </div>
-    <div class="flex flex-row items-center gap-x-1.5 m-2 mb-4 mr-6">
+    <div class="flex flex-row items-center gap-x-1.5 mb-4 mr-6">
       <div class="basis-5/12 p-2 text-center ml-3 bg-gray-500 hover:bg-gray-600 rounded-lg cursor-pointer">
         Bạn Bè
       </div>
@@ -79,13 +80,18 @@
 <script>
 export default {
   props: {
-    current: {
+    friend: {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
-      default: {
-        userName: 'DuongDong',
-        userTitle: 'Bắc Giang',
-        avatar: 'https://ianrmedia.unl.edu/images/resources/nilo-ren.jpg'
+      default: () => {
+        // mutualCount: 0,
+        // userDetail: {
+        //   _id: '',
+        //   fullname: '',
+        //   avatar: '',
+        //   coverImage: '',
+        //   createdAt: '2023-04-05T14:54:35.935Z'
+        // }
       }
     }
   }

@@ -42,6 +42,7 @@
 <script>
 export default {
   layout: 'empty',
+  middleware: ['existToken'],
   data: () => {
     return {
       forgotPass: false

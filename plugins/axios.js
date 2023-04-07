@@ -15,6 +15,8 @@ export default function (context, inject) {
         localStorage.setItem('refresh_token', dataToken.data.data.refresh_token)
         localStorage.setItem('access_token', dataToken.data.data.access_token)
       } else {
+        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('access_token')
         context.redirect('/auth/login')
       }
     }
