@@ -24,7 +24,7 @@
       <friend-item v-for="(item, index) in friends" :key="index" :friend="item" />
     </div>
     <div v-if="!isLoaded" class="grid grid-cols-2 gap-4">
-      >
+      <div />
       <svg
         id="L5"
         version="1.1"

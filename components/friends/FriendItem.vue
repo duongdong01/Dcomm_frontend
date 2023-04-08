@@ -49,14 +49,6 @@ export default {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
       default: () => {
-        // mutualCount: 0,
-        // userDetail: {
-        //   _id: '',
-        //   fullname: '',
-        //   avatar: '',
-        //   coverImage: '',
-        //   createdAt: '2023-04-05T14:54:35.935Z'
-        // }
       }
     }
   },
