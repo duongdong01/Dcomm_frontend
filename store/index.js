@@ -4,7 +4,8 @@ export const state = () => ({
   },
   systemInfo: {
     openLoginModal: false,
-    openSignupModal: false
+    openSignupModal: false,
+    openFollower: false
   }
 
 })
@@ -18,7 +19,8 @@ export const getters = {
   },
   isSignupModalOpen: (state) => {
     return state.systemInfo.openSignupModal
-  }
+  },
+  isOpenFollower: state => state.systemInfo.openFollower
 }
 
 export const mutations = {
@@ -27,5 +29,8 @@ export const mutations = {
   },
   showModalSignup: (state, show) => {
     state.systemInfo.openSignupModal = show
+  },
+  showFollower: (state, show) => {
+    state.systemInfo.openFollower = show
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full ">
     <div class="header-profile bg-gray_850 h-[520px] w-full rounded-2xl  relative">
       <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
         <div class="animate-pulse flex space-x-4" />
@@ -33,7 +33,9 @@
               <nuxt-link :to="`/profile_detail/${$route.params.id}/friends`" tag="button">
                 19 <span class="text-blue-500">Friends</span>
               </nuxt-link>
-              <p>2 <span class="text-blue-500">Follower</span></p>
+              <p class="cursor-pointer" @click="showFollower(true)">
+                2 <span class="text-blue-500">Follower</span>
+              </p>
             </div>
             <div class="flex space-x-3">
               <div class="flex gap-2  items-center justify-center">
@@ -299,6 +301,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import Post from '~/components/post/Post.vue'
 export default {
   name: 'ProfileDetailId',
@@ -333,6 +336,7 @@ export default {
     this.isLoaded = true
   },
   methods: {
+    ...mapMutations(['showFollower']),
     showSetting (e) {
       this.isSettingShow = e
     },

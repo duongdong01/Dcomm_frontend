@@ -10,7 +10,7 @@
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
       <div class="relative flex-inline w-fit" @mouseover="upHere2 = true" @mouseleave="upHere2=false">
-        <nuxt-link tag="span" :to="`/profile_detail/${friend.userDetail._id}`" class="font-medium text-base hover:decoration-solid cursor-pointer hover:underline " >
+        <nuxt-link tag="span" :to="`/profile_detail/${friend.userDetail._id}`" class="font-medium text-base hover:decoration-solid cursor-pointer hover:underline ">
           {{ friend.userDetail.fullname }}
         </nuxt-link>
         <div v-if="upHere2" class="z-50 absolute top-[98%] transition-all">

@@ -95,7 +95,6 @@
 <script>
 import ListDiscusstion from '~/components/conversations/ListDiscusstion.vue'
 import RightConversation from '~/components/conversations/RightConversation.vue'
-
 export default {
   name: 'Conversation',
   components: { ListDiscusstion, RightConversation },
