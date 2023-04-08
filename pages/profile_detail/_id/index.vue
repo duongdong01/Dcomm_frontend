@@ -4,7 +4,7 @@
       <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
         <div class="animate-pulse flex space-x-4" />
       </div>
-      <div v-if="isLoaded" class="w-full object-cover cover-img h-full rounded-2xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
+      <div v-if="isLoaded" class="w-full object-cover cover-img h-full rounded-2xl rounded-b-3xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
       <div class="w-full bg-gray_850 grid grid-cols-5 h-36 z-[2] absolute bottom-0 text-white rounded-b-2xl">
         <div v-if="!isLoaded" class=" shadow rounded-md p-4 w-full mx-auto grid grid-cols-3 col-span-3">
           <div class="animate-pulse flex space-x-4">
@@ -105,7 +105,7 @@
         </div>
         <div class="flex justify-end col-span-2 py-4 px-8">
           <div v-if="isLoaded" class="flex space-x-4">
-            <button v-if="!isFriend && !isYourProfile" class="flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
+            <button v-if="!isFriend && !isYourProfile && !isPending && !isReceiver" :disabled="isDisable" class="relative overflow-hidden flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]" @click="createFriendRequest">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -118,8 +118,45 @@
                 <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
               </svg>
               Add Friend
+              <div v-if="isLoadedAddFriend" class="absolute  left-0 w-full h-full flex justify-center bg-gray-200 opacity-40" />
+              <Loading v-if="isLoadedAddFriend" />
             </button>
-            <button v-if="isFriend && !isYourProfile" class="flex items-center rounded-lg px-3 py-2 h-11  duration-300 border-[1px] bg-gray_850  transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
+
+            <button v-if="!isFriend && !isYourProfile && !isPending && isReceiver" :disabled="isDisable" class="relative overflow-hidden flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]" @click="acceptFriendRequestByUserId">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-person-check-fill"
+                viewBox="0 0 16 16"
+              >
+                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+              </svg>
+              Accept
+              <div v-if="isLoadedAcceptFriend" class="absolute  left-0 w-full h-full flex justify-center bg-gray-200 opacity-40" />
+              <Loading v-if="isLoadedAcceptFriend" />
+            </button>
+
+            <button v-if="!isFriend && !isYourProfile && !isPending && isReceiver" :disabled="isDisable" class="relative overflow-hidden flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-gray-700 hover:bg-gray-600 border-gray-700 transition-all ease-in-out  gap-x-3 text-white text-[16px]" @click="refuseFriendRequestByUserId">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-person-dash h-5 w-5"
+                viewBox="0 0 16 16"
+              >
+                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+              </svg>
+              Refuse
+              <div v-if="isLoadedRefuseFriend" class="absolute  left-0 w-full h-full flex justify-center bg-gray-200 opacity-40" />
+              <Loading v-if="isLoadedRefuseFriend" />
+            </button>
+
+            <button v-if="isFriend && !isYourProfile" :disabled="isDisable" class="overflow-hidden relative flex items-center rounded-lg px-3 py-2 h-11  duration-300 border-[1px] bg-gray_850  transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]" @click="removeFriendByUserId">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -132,8 +169,10 @@
                 <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
               </svg>
               Unfriend
+              <div v-if="isLoadedUnFriend" class="absolute  left-0 w-full h-full flex justify-center bg-gray-200 opacity-40" />
+              <Loading v-if="isLoadedUnFriend" />
             </button>
-            <button v-if="isPending &&!isYourProfile " class="flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]">
+            <button v-if="isPending &&!isYourProfile " :disabled="isDisable" class="overflow-hidden relative flex items-center rounded-lg px-3 py-2 h-11  duration-300 bg-indigo-600 hover:bg-indigo-500 transition-all ease-in-out border-indigo-600 gap-x-3 text-white text-[16px]" @click="cancelFriendRequestByUserId">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -146,6 +185,8 @@
                 <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
               </svg>
               Cancel request
+              <div v-if="isLoadedCancelRequest" class="absolute  left-0 w-full h-full flex justify-center bg-gray-200 opacity-40" />
+              <Loading v-if="isLoadedCancelRequest" />
             </button>
             <button class="bg-gray-700 hover:bg-gray-600 border-gray-700 transition-all ease-in-out duration-300 h-11 flex items-center p-[16px] rounded-lg relative" @click="tongleShowSetting" @focusout="showSetting(false)">
               <svg
@@ -299,14 +340,14 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapMutations } from 'vuex'
 import Post from '~/components/post/Post.vue'
+import Loading from '@/components/loading/Loading.vue'
 export default {
   name: 'ProfileDetailId',
   components: {
-    Post
+    Post, Loading
   },
   data: () => {
     return {
@@ -320,10 +361,17 @@ export default {
       isFriend: false,
       isPending: false,
       isYourProfile: false,
+      isReceiver: false,
       cssProps: {
         backgroundImage: `url(${require('@/static/avatar/cover.jpg')})`
       },
-      isLoaded: false
+      isLoaded: false,
+      isLoadedUnFriend: false,
+      isLoadedAddFriend: false,
+      isLoadedCancelRequest: false,
+      isLoadedAcceptFriend: false,
+      isLoadedRefuseFriend: false,
+      isDisable: false
     }
   },
   computed: {
@@ -350,13 +398,82 @@ export default {
           this.user = dataUserProfile.data.user
           this.isFriend = dataUserProfile.data.isFriend
           this.isPending = dataUserProfile.data.isPending
+          this.isReceiver = dataUserProfile.data.isReceiver
           this.isYourProfile = dataUserProfile.data.isYourProfile
-          console.log(dataUserProfile.data)
         } else {
           return false
         }
       } catch (err) {
         this.$router.push('/')
+      }
+    },
+    async removeFriendByUserId () {
+      try {
+        this.isLoadedUnFriend = true
+        this.isDisable = true
+        await this.$api.friend.removeFriendByUserId(this.$route.params.id)
+        await this.getUserProfile()
+        this.isLoadedUnFriend = false
+        this.isDisable = false
+      } catch (err) {
+        this.$toast.error(err.data.message)
+        this.isLoadedUnFriend = false
+        this.isDisable = false
+      }
+    },
+    async refuseFriendRequestByUserId () {
+      try {
+        this.isLoadedRefuseFriend = true
+        this.isDisable = true
+        await this.$api.friend.refuseFriendRequestByUserId(this.$route.params.id)
+        await this.getUserProfile()
+        this.isDisable = false
+        this.isLoadedRefuseFriend = false
+      } catch (err) {
+        this.isLoadedRefuseFriend = false
+        this.isDisable = false
+        console.log(err)
+      }
+    },
+    async createFriendRequest () {
+      try {
+        this.isLoadedAddFriend = true
+        this.isDisable = true
+        await this.$api.friend.createFriendRequest(this.$route.params.id)
+        await this.getUserProfile()
+        this.isLoadedAddFriend = false
+        this.isDisable = false
+      } catch (err) {
+        this.isDisable = false
+        this.isLoadedAddFriend = false
+      }
+    },
+    async cancelFriendRequestByUserId () {
+      try {
+        this.isLoadedCancelRequest = true
+        this.isDisable = true
+        await this.$api.friend.cancelFriendRequestByUserId(this.$route.params.id)
+        await this.getUserProfile()
+        this.isLoadedCancelRequest = false
+        this.isDisable = false
+      } catch (err) {
+        this.isLoadedCancelRequest = false
+        this.isDisable = false
+        console.log(err)
+      }
+    },
+    async acceptFriendRequestByUserId () {
+      try {
+        this.isLoadedAcceptFriend = true
+        this.isDisable = true
+        await this.$api.friend.acceptFriendRequestByUserId(this.$route.params.id)
+        await this.getUserProfile()
+        this.isLoadedAcceptFriend = false
+        this.isDisable = false
+      } catch (err) {
+        this.isLoadedAcceptFriend = false
+        this.isDisable = false
+        console.log(err)
       }
     }
   }
