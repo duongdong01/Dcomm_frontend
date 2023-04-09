@@ -49,7 +49,9 @@ export default {
     '@/plugins/antd-ui',
     '@/plugins/api.js',
     '@/plugins/toast.js',
-    '@/plugins/axios.js'],
+    '@/plugins/axios.js',
+    '@/plugins/emoji.js'
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="friends flex flex-col">
     <div class="w-[100%] h-[60px] mb-[24px] bg-edit flex justify-between items-center rounded-lg">
       <div class="flex relative items-center ml-6">
         <div class="absolute left-[4px] text-white">
@@ -17,84 +17,81 @@
         <input v-model="search" class="min-w-[500px] h-[30px] pl-7 rounded-lg input_search text-sm bg-gray-700 text-white" type="input" placeholder="Search by name..." @input="searchFriend">
       </div>
       <div class="text-white mr-6 text-base">
-        Connected: {{ friends.length }} friend
+        {{ search.length > 0 ? 'Total result' : 'Connected' }} : {{ pageDetail.totalDocs || 0 }} friend
       </div>
     </div>
     <div v-if="isLoaded" class="grid grid-cols-2 gap-4">
       <friend-item v-for="(item, index) in friends" :key="index" :friend="item" />
     </div>
-    <div v-if="!isLoaded" class="grid grid-cols-2 gap-4">
-      <div />
-      <svg
-        id="L5"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        x="0px"
-        y="0px"
-        viewBox="0 0 100 100"
-        enable-background="new 0 0 0 0"
-        xml:space="preserve"
-        class="w-20 h-20"
-      >
-        <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
-          <animateTransform
-            attributeName="transform"
-            dur="1s"
-            type="translate"
-            values="0 15 ; 0 -15; 0 15"
-            repeatCount="indefinite"
-            begin="0.1"
-          />
-        </circle>
-        <circle fill="#fff" stroke="none" cx="30" cy="50" r="6">
-          <animateTransform
-            attributeName="transform"
-            dur="1s"
-            type="translate"
-            values="0 10 ; 0 -10; 0 10"
-            repeatCount="indefinite"
-            begin="0.2"
-          />
-        </circle>
-        <circle fill="#fff" stroke="none" cx="54" cy="50" r="6">
-          <animateTransform
-            attributeName="transform"
-            dur="1s"
-            type="translate"
-            values="0 5 ; 0 -5; 0 5"
-            repeatCount="indefinite"
-            begin="0.3"
-          />
-        </circle>
-      </svg>
-    </div>
+    <LoadingDot v-if="!isLoaded ||isLoadMore " />
   </div>
 </template>
 
 <script>
+import LoadingDot from '../loading/LoadingDot.vue'
 import FriendItem from './FriendItem.vue'
 export default {
-  components: { FriendItem },
+  components: { FriendItem, LoadingDot },
   data () {
     return {
       countFriends: 123,
       isLoaded: false,
       friends: [],
-      search: ''
+      pageDetail: {},
+      pageFriend: 1,
+      search: '',
+      isLoadMore: false
     }
   },
   async mounted () {
-    await this.getListFriend(10, 1, '')
-    console.log('hahaha', this.$route.params)
+    window.addEventListener('scroll', this.debounce(this.loadMore, 300))
+    await this.getListFriend(10, 1, this.search)
   },
   methods: {
+    debounce (func, timeout = 300) {
+      this.isLoadMore = true
+      let timer
+      return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => { func.apply(this, args) }, timeout)
+      }
+    },
+    async loadMore () {
+      try {
+        if (document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 10) {
+          if (this.pageDetail.nextPage) {
+            this.isLoadMore = true
+            await this.getListFriend(10, this.pageDetail.nextPage, this.search)
+            this.isLoadMore = false
+          }
+        } else {
+          //
+        }
+      } catch (err) {
+        this.isLoadMore = false
+      }
+    },
     async getListFriend (limit, page, keyword) {
       try {
-        const userId = this.$route.params.id
-        const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
-        this.friends = friendData.data.friends
-        this.isLoaded = true
+        if (keyword || !keyword.trim().length) {
+          const userId = this.$route.params.id
+          const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
+          this.friends.push(...friendData.data.friends)
+          if (this.pageDetail.prevPage !== friendData.data.detailPage.prevPage) {
+            this.pageDetail = friendData.data.detailPage
+          }
+          this.isLoaded = true
+        } else {
+          const userId = this.$route.params.id
+          this.friends = []
+          this.pageDetail = {}
+          const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
+          this.friends = friendData.data.friends
+          if (this.pageDetail.prevPage !== friendData.data.detailPage.prevPage) {
+            this.pageDetail = friendData.data.detailPage
+          }
+          this.isLoaded = true
+        }
       } catch (err) {
         this.isLoaded = false
         this.$router.push('/')
@@ -104,9 +101,9 @@ export default {
     async searchFriend (e) {
       try {
         this.isLoaded = false
+        this.friends = []
         await this.getListFriend(10, 1, this.search)
         this.isLoaded = true
-        console.log(this.search, e)
       } catch (err) {
         console.log(err)
       }
