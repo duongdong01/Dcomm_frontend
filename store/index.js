@@ -7,7 +7,6 @@ export const state = () => ({
     openSignupModal: false,
     openFollower: false
   }
-
 })
 
 export const getters = {

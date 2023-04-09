@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full ">
+  <div class="flex flex-col w-full min-h-screen ">
     <div class="header-profile bg-gray_850 h-[520px] w-full rounded-2xl  relative">
       <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
         <div class="animate-pulse flex space-x-4" />
@@ -30,11 +30,11 @@
               {{ user.fullname }}
             </p>
             <div class="flex text-lg font-medium gap-3">
-              <nuxt-link :to="`/profile_detail/${$route.params.id}/friends`" tag="button">
-                19 <span class="text-blue-500">Friends</span>
+              <nuxt-link v-if="user.countFriend>0" :to="`/profile_detail/${$route.params.id}/friends`" tag="button">
+                {{ user.countFriend }} <span class="text-blue-500">Friends</span>
               </nuxt-link>
-              <p class="cursor-pointer" @click="showFollower(true)">
-                2 <span class="text-blue-500">Follower</span>
+              <p v-if="user.countFollower>0 && isYourProfile" class="cursor-pointer" @click="showFollower(true)">
+                {{ user.countFollower }} <span class="text-blue-500">Follower</span>
               </p>
             </div>
             <div class="flex space-x-3">
@@ -356,7 +356,9 @@ export default {
         fullname: null,
         createdAt: null,
         avatar: '',
-        coverImage: ''
+        coverImage: '',
+        countFriend: 0,
+        countFollower: 0
       },
       isFriend: false,
       isPending: false,
@@ -432,7 +434,6 @@ export default {
       } catch (err) {
         this.isLoadedRefuseFriend = false
         this.isDisable = false
-        console.log(err)
       }
     },
     async createFriendRequest () {
@@ -459,7 +460,6 @@ export default {
       } catch (err) {
         this.isLoadedCancelRequest = false
         this.isDisable = false
-        console.log(err)
       }
     },
     async acceptFriendRequestByUserId () {
