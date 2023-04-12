@@ -4,7 +4,7 @@
       <nuxt-link tag="div" :to="`/profile_detail/${friend.userDetail._id}`">
         <img class="w-20 min-h-[80px] object-cover rounded-md cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
       </nuxt-link>
-      <div v-if="upHere" class="z-50 absolute top-[98%] transition-all">
+      <div v-if="upHere" class="z-50 absolute bottom-[90%] transition-all">
         <friend-view :friend="friend" />
       </div>
     </div>
@@ -13,7 +13,7 @@
         <nuxt-link tag="span" :to="`/profile_detail/${friend.userDetail._id}`" class="font-medium text-base hover:decoration-solid cursor-pointer hover:underline ">
           {{ friend.userDetail.fullname }}
         </nuxt-link>
-        <div v-if="upHere2" class="z-50 absolute top-[98%] transition-all">
+        <div v-if="upHere2" class="z-50 absolute bottom-4 transition-all">
           <friend-view :friend="friend" />
         </div>
       </div>
@@ -32,7 +32,7 @@
       >
         <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
       </svg>
-      <div v-if="isClick" class="p-[8px] bg-gray-600 bg-edit4 absolute z-10 top-[36px] min-w-[120px] rounded-md">
+      <div v-if="isClick" class="p-2 bg-gray-600 bg-edit4 absolute z-10 top-[36px] min-w-[120px] rounded-md">
         <div>
           Unfriend
         </div>

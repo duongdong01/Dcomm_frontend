@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-8 w-full gap-6">
     <div class="col-span-6">
-      <create-post v-if="isLogin" class="mb-4" />
+      <create-post class="mb-4" :on="on" />
       <Sort />
       <div>
         <Post />
@@ -19,17 +19,14 @@ import MainRight from '@/components/main_layout/MainRight.vue'
 import CreatePost from '~/components/post/CreatePost.vue'
 import Post from '~/components/post/Post.vue'
 import Sort from '~/components/sort-new/Sort.vue'
+import { PostActionOn } from '@/constants/post'
 export default {
   name: 'IndexPage',
   components: { MainRight, CreatePost, Post, Sort },
-  computed: {
-    isLogin () {
-      return this.$store.getters.isLogin
+  data () {
+    return {
+      on: PostActionOn.PERSONAL
     }
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>
