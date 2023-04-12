@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col rounded-xl bg-gray_850 text-base post relative">
     <div v-if="false" class="absolute z-[2] left-0 w-full h-full flex justify-center bg-[#000] opacity-50 rounded-xl" />
-    <Loading v-if="false" class="absolute z-[2]" />
-    <div class="flex create_post  space-x-4 px-6 pt-5 ">
-      <a href="#" class="avatar_user w-10 h-10 rounded-full cursor-pointer">
+    <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
+    <div class="grid grid-cols-11 create_post gap-1 px-6 pt-5 ">
+      <a href="#" class="avatar_user w-11 h-11 rounded-full cursor-pointer col-span-1">
         <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
       </a>
-      <div class="w-full relative">
+      <div class="w-full relative col-span-10">
         <Mentionable
           placement="bottom"
           :keys="['@']"
@@ -15,11 +15,11 @@
           @open="onOpen"
           @apply="onApply"
         >
-          <textarea
+          <div
             ref="textarea"
-            v-model="postUser.content"
+            contenteditable="true"
             placeholder="What's happening?"
-            class="post-textarea rounded-xl px-3 pt-2  bg-main_color transition-all ease-out duration-150 h-14 min-h-[56px]"
+            class="post-textarea rounded-xl pl-3 pr-9 pt-2 pb-2  bg-main_color transition-all ease-out duration-150 h-14 min-h-[56px]"
             @input="resize()"
           />
 
@@ -30,10 +30,10 @@
           </template>
           <template #item="{ item }">
             <div class="user">
-              {{ item._id }}
-              <span class="dim">
-                ({{ item.firstName }})
-              </span>
+              {{ item.fullname }}
+              <!-- <span class="dim">
+                ({{ item.fullname }})
+              </span> -->
             </div>
           </template>
         </Mentionable>
@@ -116,20 +116,29 @@
         <div class="border-r-[1px] flex justify-center items-center">
           <a-select
             class="bg-gray_850 w-36 text-base text-white select-post"
-            default-value="public"
+            default-value="PUBLIC"
             @change="handleChange"
           >
-            <a-select-option value="public">
+            <a-select-option value="PUBLIC">
               Everyone
             </a-select-option>
-            <a-select-option value="friend">
+            <a-select-option value="FRIENDS">
               Your friends
+            </a-select-option>
+            <a-select-option value="ONLY_ME">
+              Only me
             </a-select-option>
           </a-select>
         </div>
         <div class="flex justify-center -mt-1">
-          <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px]" @click="onSubmit">
-            Create Post
+          <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px]" :disabled="isCreatePost" :class=" isCreatePost ? 'opacity-80':''" @click="onSubmit">
+            {{ !isLoadCreatePost ? 'Create Post' :'' }}
+            <div>
+              <svg v-if="isLoadCreatePost" class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+                <!-- ... -->
+              </svg>
+            </div>
+            Processing...
           </button>
         </div>
       </div>
@@ -140,13 +149,13 @@
 <script>
 import { Mentionable } from 'vue-mention'
 import Loading from '../loading/Loading.vue'
+import { PostType, PostPrivacy } from '@/constants/post'
 const users = [
-  { _id: '642d8ba569ad9f52970f0053', email: 'user1@gmail.com', firstName: 'duong', lastName: 'dong', value: 'akryum 2' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user2@gmail.com', firstName: 'duong', lastName: 'dong', value: 'akryum 1' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user3@gmail.com', firstName: 'duong', lastName: 'dong', value: 'akryum 3' }
+  { _id: '642d8ba569ad9f52970f0053', email: 'user1@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr7' },
+  { _id: '642d8ba569ad9f52970f0054', email: 'user2@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr8' },
+  { _id: '642d8ba569ad9f52970f0054', email: 'user3@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr9' }
 ]
 export default {
-
   directives: {
     focus: {
       inserted (el) {
@@ -155,6 +164,7 @@ export default {
     }
   },
   components: { Loading, Mentionable },
+  props: ['on'],
   data () {
     return {
       text: '',
@@ -162,37 +172,63 @@ export default {
       typeImage: ['mp4', 'png', 'jpg', 'webp', 'jpeg'],
       previewImage: [],
       imageUpload: [],
-      // input: '',
+      isCreatePost: true,
       search: '',
       count: 0,
-      postUser: {
-        content: '',
-        user: '63a8595b70f313083970865f',
-        image: [
-          'image'
-        ]
-      }
+      privacy: PostPrivacy.PUBLIC,
+      isLoadCreatePost: false
     }
   },
   mounted () {
     // this.getPostById()
+    this.$refs.textarea.addEventListener('click', this.cursor_position)
+    this.$refs.textarea.addEventListener('keydown', this.cursor_position)
   },
   methods: {
     onOpen (key) {
       this.items = users
     },
+    placeCaretAtEnd (el) {
+      el.focus()
+      if (typeof window.getSelection !== 'undefined' &&
+            typeof document.createRange !== 'undefined') {
+        const range = document.createRange()
+        range.selectNodeContents(el)
+        range.collapse(false)
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+      } else if (typeof document.body.createTextRange !== 'undefined') {
+        const textRange = document.body.createTextRange()
+        textRange.moveToElementText(el)
+        textRange.collapse(false)
+        textRange.select()
+      }
+    },
     onApply (item, key, replacedWith) {
-      const lastMentionIndex = this.postUser.content.lastIndexOf('@')
-      const newText = this.postUser.content.substring(0, lastMentionIndex) + item._id + ' '
-      this.postUser.content = newText
+      const lastMentionIndex = this.$refs.textarea.innerHTML.lastIndexOf('@')
+      const newText = this.$refs.textarea.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item._id}" class="mention-user">` + item.fullname + '</a>' + ' ' + this.$refs.textarea.innerHTML.substring(lastMentionIndex + 10, this.$refs.textarea.innerHTML.length
+      )
+      this.$refs.textarea.innerHTML = newText
+      // set focus
+      const selection = window.getSelection()
+      const range = document.createRange()
+      selection.removeAllRanges()
+      range.selectNodeContents(this.$refs.textarea)
+      range.collapse(false)
+      selection.addRange(range)
+      this.$refs.textarea.focus()
     },
     append (emoji) {
-      this.postUser.content += emoji
+      this.isCreatePost = false
+      this.$refs.textarea.innerHTML += emoji
     },
     handleChange (value) {
       console.log(value) // { key: "lucy", label: "Lucy (101)" }
+      this.privacy = value.key
     },
     resize () {
+      this.isCreatePost = false
       const element = this.$refs.textarea
       if (element.scrollHeight > 90) {
         element.style.height = 'auto'
@@ -201,7 +237,9 @@ export default {
       }
       element.style.height = element.scrollHeight + 'px'
     },
+
     uploadImage (e) {
+      this.isCreatePost = false
       const image = e.target.files
       const listImgName = this.imageUpload.map(el => el.name)
       if (this.previewImage.length + image.length > 8) {
@@ -239,16 +277,58 @@ export default {
       this.previewImage = newPreviewImg
       this.imageUpload = newImageUpload
     },
-    onSubmit () {
+    async onSubmit () {
       try {
-        let contents = []
-        if (this.postUser.content.length > 0) {
-          contents = this.postUser.content.split(/\n/)
-          this.postUser.content = contents.join('\n')
+        this.isLoadCreatePost = true
+        const listTagA = this.$refs.textarea.getElementsByTagName('a')
+        const userMentions = []
+        if (listTagA.length) {
+          const listHref = []
+          for (let i = 0; i < listTagA.length; i++) {
+            listHref.push(listTagA[i].href)
+          }
+          listHref.forEach((el) => {
+            userMentions.push(el.split('/')[el.split('/').length - 1])
+          })
         }
-      } catch (error) {
-        console.log(error)
+        const postBody = {
+          on: this.on,
+          type: PostType.NORMAL,
+          privacy: this.privacy
+        }
+        if (userMentions.length) {
+          postBody.userMentions = userMentions
+        }
+        const payloadPost = {
+        }
+        if (this.$refs.textarea.innerHTML.length) {
+          payloadPost.content = this.$refs.textarea.innerHTML
+        }
+        if (this.imageUpload.length) {
+          const formData = new FormData()
+          const album = {
+            files: []
+          }
+          this.imageUpload.forEach((el) => {
+            formData.append('files', el)
+          })
+          const filesData = await this.$api.upload.uploadFilesToAws(formData)
+          album.files = filesData.data
+          payloadPost.album = album
+        }
+        if (payloadPost.content || Object.keys(payloadPost.album).length) {
+          postBody.payloadPost = payloadPost
+          const dataCreatePost = await this.$api.post.createPost(postBody)
+          console.log(dataCreatePost)
+        }
+        this.isLoadCreatePost = false
+      } catch (err) {
+        this.$toast.error('System error.')
+        this.isLoadCreatePost = false
       }
+    },
+    async uploadImgToAws (dataImage) {
+
     }
   }
 }
@@ -372,7 +452,7 @@ export default {
 .mention-selected {
   @apply bg-gray-600;
 }
-.user{
-  @apply bg-red-500
+.mention-user{
+  @apply bg-[#1f4a82]
 }
 </style>
