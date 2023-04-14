@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute  left-0 w-full h-full flex justify-center">
+  <div class="absolute left-0 w-full h-full flex justify-center">
     <svg
       id="L9"
       version="1.1"

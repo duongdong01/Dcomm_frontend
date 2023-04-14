@@ -18,5 +18,14 @@ export default axios => ({
   },
   acceptFriendRequestByUserId (senderId) {
     return axios.post('/user-relationship/accept-friend-request-by-user-id', { senderId })
+  },
+  getListFriendRequests ({ page, limit, keyword }) {
+    return axios.get(`user-relationship/get-list-friend-requests?page=${page}&limit=${limit}&keyword=${keyword}`).then(_ => _.data)
+  },
+  acceptFriendRequestById (friendRequestId) {
+    return axios.post('user-relationship/accept-friend-request', { friendRequestId })
+  },
+  refuseFriendRequestById (friendRequestId) {
+    return axios.put('user-relationship/refuse-friend-request', { friendRequestId })
   }
 })

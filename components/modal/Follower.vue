@@ -14,6 +14,6 @@ export default {
 <style lang="scss">
 .blur-edit{
   backdrop-filter: blur(4px);
-    filter: blur(0);
+  filter: blur(0);
 }
 </style>
