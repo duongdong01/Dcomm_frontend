@@ -78,10 +78,10 @@ export default {
         if (document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 30) {
           if (this.pageDetail.nextPage && this.isLoadMore === false) {
             this.isLoadMore = true
-            if (!this.search || !this.search.trim().length) {
+            if (this.pageDetail.nextPage && (!this.search || !this.search.trim().length)) {
               await this.getListFriend(10, this.pageDetail.nextPage, this.search)
             }
-            if (this.search && this.search.trim().length && !this.await) {
+            if (this.pageDetail.nextPage && this.search && this.search.trim().length) {
               await this.getListFriend(10, this.pageDetail.nextPage, this.search)
             }
           }
@@ -97,29 +97,30 @@ export default {
         if (!keyword || !keyword.trim().length) {
           const userId = this.$route.params.id
           const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
+          this.pageDetail = friendData.data.detailPage
           if (this.isLoadMore) {
             this.friends.push(...friendData.data.friends)
           } else {
             this.friends = friendData.data.friends
           }
-          this.pageDetail = friendData.data.detailPage
           this.isLoaded = true
           this.isLoadMore = false
         }
         if (keyword && keyword.trim().length) {
           const userId = this.$route.params.id
           const friendData = await this.$api.friend.getListFriend({ userParam: userId, limit, page, keyword })
+          this.pageDetail = friendData.data.detailPage
           if (this.isLoadMore) {
             this.friends.push(...friendData.data.friends)
           } else {
             this.friends = friendData.data.friends
           }
-          this.pageDetail = friendData.data.detailPage
           this.isLoaded = true
           this.isLoadMore = false
         }
       } catch (err) {
         this.isLoaded = false
+        this.$toast.error(err.toString())
         this.$router.push('/')
       }
     },

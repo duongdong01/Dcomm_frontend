@@ -50,10 +50,7 @@
         In Einstein's relativity and the Standard Model, we only have three spatial dimensions. But there could be more, and many think there are.
       </p>
       <div class="mt-2 flex justify-center items-center overflow-hidden w-full max-h-[600px] rounded-md">
-        <img src="@/static/img-post-demo.jpg" alt="" class="w-full">
-        <!-- <div v-for="(item,index) in lengthImg" :key="index">
-          <img src="@/static/img-post-demo.jpg" alt="" class="w-full">
-        </div> -->
+        <lightbox :items="images" class="w-full ABC z-10" />
       </div>
       <div class="flex mt-8 gap-2">
         <div class="flex gap-[6px] bg-indigo-600 px-4 py-2 rounded-lg justify-center items-center hover:bg-indigo-500 cursor-pointer transition-all" title="Upvote">
@@ -113,10 +110,30 @@
 </template>
 
 <script>
+import Lightbox from '../lightbox/Lightbox.vue'
 export default {
+  components: { Lightbox },
+  props: {
+    post: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data: () => {
     return {
-      lengthImg: [1]
+      lengthImg: [1],
+      images: [
+        'https://duong1310.s3.ap-southeast-2.amazonaws.com/1681394528876%20-5cbca2e7-c73f-4d22-8cc0-d3f424e8d080-934563089.mp4',
+        'https://i.wifegeek.com/200426/5ce1e1c7.jpg',
+        'https://i.wifegeek.com/200426/5fa51df3.jpg',
+        'https://i.wifegeek.com/200426/663181fe.jpg',
+        'https://i.wifegeek.com/200426/2d110780.jpg',
+        'https://i.wifegeek.com/200426/e73cd3fa.jpg',
+        'https://i.wifegeek.com/200426/15160d6e.jpg',
+        'https://i.wifegeek.com/200426/d0c881ae.jpg',
+        'https://i.wifegeek.com/200426/a154fc3d.jpg',
+        'https://i.wifegeek.com/200426/71d3aa61.jpg'
+      ]
     }
   }
 }
