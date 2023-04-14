@@ -51,6 +51,7 @@ export default {
     '@/plugins/toast.js',
     '@/plugins/axios.js',
     '@/plugins/emoji.js'
+    // '@/plugins/lightbox.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

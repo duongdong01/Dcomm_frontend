@@ -131,14 +131,9 @@
           </a-select>
         </div>
         <div class="flex justify-center -mt-1">
-          <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px]" :disabled="isCreatePost" :class=" isCreatePost ? 'opacity-80':''" @click="onSubmit">
-            {{ !isLoadCreatePost ? 'Create Post' :'' }}
-            <div>
-              <svg v-if="isLoadCreatePost" class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
-                <!-- ... -->
-              </svg>
-            </div>
-            Processing...
+          <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px] flex justify-center items-center relative" :disabled="isCreatePost" :class=" isCreatePost ? 'opacity-80':''" @click="onSubmit">
+            <Loading v-if="isLoadCreatePost" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
+            {{ !isLoadCreatePost ? 'Create post' :'Processing...' }}
           </button>
         </div>
       </div>
@@ -224,8 +219,7 @@ export default {
       this.$refs.textarea.innerHTML += emoji
     },
     handleChange (value) {
-      console.log(value) // { key: "lucy", label: "Lucy (101)" }
-      this.privacy = value.key
+      this.privacy = value
     },
     resize () {
       this.isCreatePost = false
@@ -279,6 +273,23 @@ export default {
     },
     async onSubmit () {
       try {
+        this.isCreatePost = true
+        if (this.$refs.textarea.innerHTML.length && !this.imageUpload.length) {
+          const checkContentNull = this.$refs.textarea.innerHTML.split(';')
+          const listNbsp = checkContentNull.map(el => el.trim())
+          let count = 0
+          if (listNbsp[listNbsp.length - 1].toString() !== '') {
+            count++
+          }
+          for (let i = 0; i < listNbsp.length - 1; i++) {
+            if (listNbsp[i].toString() !== '&nbsp') {
+              count++
+            }
+          }
+          if (count === 0) {
+            return
+          }
+        }
         this.isLoadCreatePost = true
         const listTagA = this.$refs.textarea.getElementsByTagName('a')
         const userMentions = []
@@ -322,13 +333,11 @@ export default {
           console.log(dataCreatePost)
         }
         this.isLoadCreatePost = false
+        this.isCreatePost = false
       } catch (err) {
         this.$toast.error('System error.')
         this.isLoadCreatePost = false
       }
-    },
-    async uploadImgToAws (dataImage) {
-
     }
   }
 }
