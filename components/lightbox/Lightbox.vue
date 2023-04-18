@@ -1,18 +1,19 @@
 <template>
   <div v-if="items.length>0" class="lb">
-    <div class="lb-grid" :class="[css,items.length>cells?'lb-grid-' + cells: 'lb-grid-' + items.length]">
+    <div class="lb-grid " :class="[css,items.length>cells?'lb-grid-' + cells: 'lb-grid-' + items.length]">
       <a
-        v-for="(src, i) in items"
+        v-for="(file, i) in items"
         v-if="i<cells"
         :key="i"
-        class="lb-item"
-        :href="items[i]"
+        class="lb-item bg-white/80"
+        :class="items.length > 2 ? 'border-t-[#fff] border-t-[2px]  bg-cover':'bg-contain'"
+        :href="items[i].url"
         role="link"
-        :style="!['mp4'].includes(src.split('.')[src.split('.').length-1]) ? bg(src) :''"
+        :style="!['mp4'].includes(file.url.split('.')[file.url.split('.').length-1]) ? bg(file.url) :''"
         @click.prevent="show(i)"
       >
-        <video v-if="['mp4'].includes(src.split('.')[src.split('.').length-1])" controls class="h-full  w-[100%] object-cover">
-          <source :src="src" type="video/mp4">
+        <video v-if="['mp4'].includes(file.url.split('.')[file.url.split('.').length-1])" controls class="h-full  w-[100%] object-cover">
+          <source :src="file.url" type="video/mp4">
         </video>
         <span v-if="i==cells-1 && items.length - cells>0" class="lb-more">{{ items.length - cells }}+</span>
       </a>
@@ -31,7 +32,7 @@
         </button>
 
         <div class="lb-modal-img" @click="close">
-          <video v-if="['mp4'].includes(src.split('.')[src.split('.').length-1])" controls class="xl:scale-75">
+          <video v-if="['mp4'].includes(src.split('.')[src.split('.').length-1])" controls>
             <source :src="src" type="video/mp4">
           </video>
           <img v-else :src="src">
@@ -116,7 +117,7 @@ export default {
       this.loading = true
       this.bind()
       this.index = i
-      const src = this.items[i]
+      const src = this.items[i].url
       const img = new Image()
       img.src = src
       this.src = src
@@ -146,12 +147,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .lb-grid{
   @apply md:h-[400px] lg:h-[600px] h-[300px]
 }
 .lb-modal-img{
-  @apply flex justify-center
+  @apply flex justify-center items-center h-full  py-6;
+  // img{
+  //   @apply w-auto;
+  // }
 }
 .lb-grid {
     position: relative;
@@ -162,8 +166,6 @@ export default {
     position: absolute;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: cover;
-    border-top: solid 2px #fff;
     border-right: solid 2px #fff;
 }
 
@@ -237,7 +239,7 @@ export default {
     width: 100%;
     min-height: 100%;
     height: 100vh;
-    background-color: rgba(0, 0, 0, .8);
+    background-color: rgba(0, 0, 0, .9);
     display: block;
     -webkit-user-select: none;
     -moz-user-select: -moz-none;
@@ -273,11 +275,11 @@ export default {
 }
 
 .lb-modal-img {
-    position: absolute;
-    top: 10px;
-    left: 70px;
-    right: 70px;
-    bottom: 10px;
+    // position: absolute;
+    // top: 10px;
+    // left: 70px;
+    // right: 70px;
+    // bottom: 10px;
     text-align: center;
 }
 
