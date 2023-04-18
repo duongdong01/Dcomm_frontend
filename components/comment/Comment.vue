@@ -1,12 +1,15 @@
 <template>
-  <div class="flex flex-col rounded-xl bg-gray_850 text-base post relative">
+  <div class="flex flex-col  bg-gray_850 text-base comment relative border-t-[1px] border-gray-700 pt-1">
     <div v-if="false" class="absolute z-[2] left-0 w-full h-full flex justify-center bg-[#000] opacity-50 rounded-xl" />
     <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
-    <div class="grid grid-cols-12 create_post gap-1 px-6 pt-5 ">
-      <a href="#" class="avatar_user w-11 h-11 rounded-full cursor-pointer col-span-1">
-        <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
-      </a>
-      <div class="w-full relative col-span-11">
+    <div class="grid grid-cols-12 create_comment pt-2 ">
+      <div class="w-10 h-10 overflow-hidden col-span-1">
+        <a href="#" class="avatar_user  rounded-full cursor-pointer ">
+          <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
+        </a>
+      </div>
+      <!-- mention -->
+      <div class="w-full relative col-span-11 xl:-ml-3">
         <Mentionable
           placement="bottom"
           :keys="['@']"
@@ -16,11 +19,13 @@
           @apply="onApply"
         >
           <div
-            ref="textarea"
+            ref="textareaComment"
             contenteditable="true"
-            placeholder="What's happening?"
-            class="post-textarea rounded-xl pl-3 pr-9 pt-2 pb-2  bg-main_color transition-all ease-out duration-150 h-14 min-h-[56px]"
+            placeholder="Write a public comment..."
+            class="comment-textarea rounded-3xl pl-4 pr-[74px] pt-2 pb-2  bg-main_color transition-all ease-out duration-150 h-12 min-h-[48px] cursor-text"
             @input="resize()"
+            @keyup.ctrl.enter="breakLine"
+            @keydown.enter.exact="submitTest"
           />
 
           <template #no-result>
@@ -32,13 +37,28 @@
             <div class="user">
               {{ item.fullname }}
               <!-- <span class="dim">
-                ({{ item.fullname }})
-              </span> -->
+                  ({{ item.fullname }})
+                </span> -->
             </div>
           </template>
         </Mentionable>
 
-        <div class="absolute z-[2] top-0 right-0">
+        <div v-if="previewImage.length===0" class="flex justify-center text-center absolute top-[9px] right-12">
+          <label :for="`file-comment${postId}`" class="flex"><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill="currentColor"
+            class="bi bi-camera text-white cursor-pointer"
+            viewBox="0 0 16 16"
+          >
+            <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z" />
+            <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
+          </svg> </label>
+          <!--fid k dc trung  -->
+          <input :id="`file-comment${postId}`" class="file-comment" type="file" accept="image/jpeg,video/mp4" @change="uploadImage">
+        </div>
+        <div class="absolute z-[2] top-[1px] right-0">
           <emoji-picker :search="search" class="absolute top-0 right-1 w-full" @emoji="append">
             <button
               slot="emoji-invoker"
@@ -75,11 +95,12 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col space-y-4 mb-4">
-      <div class="pr-10 pl-11 ml-11 grid gap-6 mt-1 grid-cols-2 max-h-[56vh]  grid-img" :class="previewImage.length>4 ? 'overflow-y-scroll':''">
+    <div class="flex flex-col space-y-4">
+      <div class="px-10 ml-10 grid gap-6 mt-1 grid-cols-2 max-h-[56vh]  grid-img" :class="previewImage.length>4 ? 'overflow-y-scroll':''">
         <div v-for="(item,index) in previewImage" :key="index" class="py-2 h-[25vh] rounded-xl flex justify-center flex-col relative ">
           <video v-if="['mp4'].includes(item.name.split('.')[item.name.split('.').length-1])" controls class="h-full rounded-xl w-[100%] object-cover">
             <source :src="item.dataImg" type="video/mp4">
+            Your browser does not support the video tag.
           </video>
           <img v-else :src="item.dataImg" class="h-full rounded-xl w-[100%] object-cover">
           <div class="flex justify-center items-center w-6 h-6 absolute top-3 right-2 rounded-full bg-gray-800 cursor-pointer hover:bg-btn_hover">
@@ -95,45 +116,6 @@
               <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
             </svg>
           </div>
-        </div>
-      </div>
-      <div class="px-10 grid grid-cols-3 gap-4">
-        <div class="border-r-[1px] flex justify-center text-center">
-          <label for="file-input" class="flex"><svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            fill="currentColor"
-            class="bi bi-camera text-white cursor-pointer"
-            viewBox="0 0 16 16"
-          >
-            <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z" />
-            <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
-          </svg> <p class="text-white ml-2 mt-[6px]">Image/Video</p></label>
-          <input id="file-input" type="file" accept="image/jpeg,video/mp4" multiple="multiple" @change="uploadImage">
-        </div>
-        <div class="border-r-[1px] flex justify-center items-center">
-          <a-select
-            class="bg-gray_850 w-36 text-base text-white select-post"
-            default-value="PUBLIC"
-            @change="handleChange"
-          >
-            <a-select-option value="PUBLIC">
-              Everyone
-            </a-select-option>
-            <a-select-option value="FRIENDS">
-              Your friends
-            </a-select-option>
-            <a-select-option value="ONLY_ME">
-              Only me
-            </a-select-option>
-          </a-select>
-        </div>
-        <div class="flex justify-center -mt-1">
-          <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px] flex justify-center items-center relative" :disabled="isCreatePost" :class=" isCreatePost ? 'opacity-80':''" @click="onSubmit">
-            <Loading v-if="isLoadCreatePost" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
-            {{ !isLoadCreatePost ? 'Create post' :'Processing...' }}
-          </button>
         </div>
       </div>
     </div>
@@ -158,7 +140,7 @@ export default {
     }
   },
   components: { Loading, Mentionable },
-  props: ['on'],
+  props: ['on', 'postId'],
   data () {
     return {
       text: '',
@@ -174,59 +156,59 @@ export default {
     }
   },
   mounted () {
-    // this.getPostById()
-    this.$refs.textarea.addEventListener('click', this.cursor_position)
-    this.$refs.textarea.addEventListener('keydown', this.cursor_position)
   },
   methods: {
-    onOpen (key) {
-      this.items = users
+    submitTest (e) {
+      e.preventDefault()
+      this.$refs.textareaComment.innerHTML = ''
+      this.resize()
     },
-    placeCaretAtEnd (el) {
-      el.focus()
-      if (typeof window.getSelection !== 'undefined' &&
-            typeof document.createRange !== 'undefined') {
-        const range = document.createRange()
-        range.selectNodeContents(el)
-        range.collapse(false)
-        const sel = window.getSelection()
-        sel.removeAllRanges()
-        sel.addRange(range)
-      } else if (typeof document.body.createTextRange !== 'undefined') {
-        const textRange = document.body.createTextRange()
-        textRange.moveToElementText(el)
-        textRange.collapse(false)
-        textRange.select()
-      }
-    },
-    onApply (item, key, replacedWith) {
-      const lastMentionIndex = this.$refs.textarea.innerHTML.lastIndexOf('@')
-      const newText = this.$refs.textarea.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item._id}" class="mention-user">` + item.fullname + '</a>' + ' ' + this.$refs.textarea.innerHTML.substring(lastMentionIndex + 10, this.$refs.textarea.innerHTML.length
-      )
-      this.$refs.textarea.innerHTML = newText
+    breakLine () {
+      this.$refs.textareaComment.innerHTML += '<div><br></div>'
+      this.resize()
       // set focus
       const selection = window.getSelection()
       const range = document.createRange()
       selection.removeAllRanges()
-      range.selectNodeContents(this.$refs.textarea)
+      range.selectNodeContents(this.$refs.textareaComment)
       range.collapse(false)
       selection.addRange(range)
-      this.$refs.textarea.focus()
+      this.$refs.textareaComment.focus()
+    },
+    onOpen (key) {
+      this.items = users
+    },
+    onApply (item, key, replacedWith) {
+      const lastMentionIndex = this.$refs.textareaComment.innerHTML.lastIndexOf('@')
+      const newText = this.$refs.textareaComment.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item._id}" class="mention-user">` + item.fullname + '</a>' + ' ' + this.$refs.textareaComment.innerHTML.substring(lastMentionIndex + 10, this.$refs.textareaComment.innerHTML.length
+      )
+      this.$refs.textareaComment.innerHTML = newText
+      // set focus
+      const selection = window.getSelection()
+      const range = document.createRange()
+      selection.removeAllRanges()
+      range.selectNodeContents(this.$refs.textareaComment)
+      range.collapse(false)
+      selection.addRange(range)
+      this.$refs.textareaComment.focus()
     },
     append (emoji) {
       this.isCreatePost = false
-      this.$refs.textarea.innerHTML += emoji
+      this.$refs.textareaComment.innerHTML += emoji
     },
     handleChange (value) {
       this.privacy = value
     },
     resize () {
       this.isCreatePost = false
-      const element = this.$refs.textarea
-      if (element.scrollHeight > 90) {
+      const element = this.$refs.textareaComment
+      if (this.$refs.textareaComment.length === 0) {
+        element.style.height = 48 + 'px'
+      }
+      if (element.scrollHeight > 30) {
         element.style.height = 'auto'
       } else {
-        //
+      //
       }
       element.style.height = element.scrollHeight + 'px'
     },
@@ -273,8 +255,8 @@ export default {
     async onSubmit () {
       try {
         this.isCreatePost = true
-        if (this.$refs.textarea.innerHTML.length && !this.imageUpload.length) {
-          const checkContentNull = this.$refs.textarea.innerHTML.split(';')
+        if (this.$refs.textareaComment.innerHTML.length && !this.imageUpload.length) {
+          const checkContentNull = this.$refs.textareaComment.innerHTML.split(';')
           const listNbsp = checkContentNull.map(el => el.trim())
           let count = 0
           if (listNbsp[listNbsp.length - 1].toString() !== '') {
@@ -290,7 +272,7 @@ export default {
           }
         }
         this.isLoadCreatePost = true
-        const listTagA = this.$refs.textarea.getElementsByTagName('a')
+        const listTagA = this.$refs.textareaComment.getElementsByTagName('a')
         const userMentions = []
         if (listTagA.length) {
           const listHref = []
@@ -311,8 +293,8 @@ export default {
         }
         const payloadPost = {
         }
-        if (this.$refs.textarea.innerHTML.length) {
-          payloadPost.content = this.$refs.textarea.innerHTML
+        if (this.$refs.textareaComment.innerHTML.length) {
+          payloadPost.content = this.$refs.textareaComment.innerHTML
         }
         if (this.imageUpload.length) {
           const formData = new FormData()
@@ -344,124 +326,128 @@ export default {
 </script>
 
 <style lang="scss">
-.post{
+  [contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  position: absolute;
+  top:10px;
+  color: gray;
+  background-color: transparent;
+}
+  .comment{
 
-  .create_post{
-      .post-textarea{
-          @apply outline-0 border-0 resize-none w-full font-normal text-base text-white overflow-hidden;
-      }
-      .post-textarea::placeholder{
-          @apply font-normal   text-[16px] pt-1
-      }
-      .post-textarea:focus{
-        @apply h-20 transition-all duration-150 ease-in
-      }
+    .create_comment{
+        .comment-textarea{
+            @apply outline-0 border-0 w-full font-normal text-base text-white overflow-hidden;
+        }
+        .comment-textarea::placeholder{
+            @apply font-normal   text-[16px] ;
+        }
 
+    }
+    .file-comment{
+            @apply hidden
+      }
+      .ant-select-selection__placeholder{
+        @apply text-white
+      }
+      .ant-select-selection--single{
+        @apply bg-gray_850 border-none
+      }
+      .ant-select-selection--single:focus{
+        @apply bg-gray_850 border-none
+      }
+      .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
+        @apply shadow-none
+      }
+      .ant-select-arrow-icon{
+        @apply text-white
+      }
   }
-  #file-input{
-          @apply hidden
-    }
-    .ant-select-selection__placeholder{
-      @apply text-white
-    }
-    .ant-select-selection--single{
-      @apply bg-gray_850 border-none
-    }
-    .ant-select-selection--single:focus{
-      @apply bg-gray_850 border-none
-    }
-    .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
-      @apply shadow-none
-    }
-    .ant-select-arrow-icon{
-      @apply text-white
-    }
-}
-.ant-select-dropdown-content{
-  @apply rounded-md
-}
-.ant-select-dropdown{
-  @apply rounded-lg
-}
-    .ant-select-dropdown-menu ,.ant-select-dropdown-menu-vertical ,.ant-select-dropdown-menu-root{
-      @apply bg-gray-700 text-white
-    }
-  .ant-select-dropdown-menu-item{
-      @apply bg-gray-700 text-white text-base
-    }
-    .ant-select-dropdown-menu-item:hover{
-      @apply bg-gray-600 text-white
-    }
-    .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled),.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled){
-      @apply bg-gray-600 text-white
-    }
-
-.emoji-invoker {
-  @apply absolute top-2 right-2 w-6 h-6 rounded-[50%] cursor-pointer transition-all duration-200 p-0 bg-transparent border-0 hover:scale-110 ;
-  svg {
-    @apply fill-[#b1c6d0] ;
+  .ant-select-dropdown-content{
+    @apply rounded-md
   }
-}
-.emoji-picker {
-  @apply w-60 h-80 overflow-y-scroll overflow-hidden p-4 box-border rounded-xl bg-gray-800 text-white drop-shadow-lg;
-}
-.emoji-picker__search {
-  display: flex;
-}
-.emoji-picker__search > input {
-  @apply w-[96%] flex-[1] rounded-[10rem]  py-2 px-4  outline-none bg-[#131720] mb-[2px] ;
-}
-.emoji-picker h5 {
-  @apply mb-0 text-[#b1b1b1] uppercase text-[0.8rem] cursor-default ;
-}
-.emoji-picker .emojis {
-  @apply flex flex-wrap justify-between ;
-}
-.emoji-picker .emojis:after {
-  content: "";
-  flex: auto;
-}
-.emoji-picker .emojis span {
-  @apply p-[0.2rem] cursor-pointer rounded-md ;
-}
-.emoji-picker .emojis span:hover {
-  @apply bg-[#ececec] cursor-pointer ;
-}
+  .ant-select-dropdown{
+    @apply rounded-lg
+  }
+      .ant-select-dropdown-menu ,.ant-select-dropdown-menu-vertical ,.ant-select-dropdown-menu-root{
+        @apply bg-gray-700 text-white
+      }
+    .ant-select-dropdown-menu-item{
+        @apply bg-gray-700 text-white text-base
+      }
+      .ant-select-dropdown-menu-item:hover{
+        @apply bg-gray-600 text-white
+      }
+      .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled),.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled){
+        @apply bg-gray-600 text-white
+      }
 
-.emoji-picker::-webkit-scrollbar-track
-{
--webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-}
+  .emoji-invoker {
+    @apply absolute top-2 right-2 w-6 h-6 rounded-[50%] cursor-pointer transition-all duration-200 p-0 bg-transparent border-0 hover:scale-110 ;
+    svg {
+      @apply fill-[#b1c6d0] ;
+    }
+  }
+  .emoji-picker {
+    @apply w-60 h-80 overflow-y-scroll overflow-hidden p-4 box-border rounded-xl bg-gray-800 text-white drop-shadow-lg;
+  }
+  .emoji-picker__search {
+    display: flex;
+  }
+  .emoji-picker__search > input {
+    @apply w-[96%] flex-[1] rounded-[10rem]  py-2 px-4  outline-none bg-[#131720] mb-[2px] ;
+  }
+  .emoji-picker h5 {
+    @apply mb-0 text-[#b1b1b1] uppercase text-[0.8rem] cursor-default ;
+  }
+  .emoji-picker .emojis {
+    @apply flex flex-wrap justify-between ;
+  }
+  .emoji-picker .emojis:after {
+    content: "";
+    flex: auto;
+  }
+  .emoji-picker .emojis span {
+    @apply p-[0.2rem] cursor-pointer rounded-md ;
+  }
+  .emoji-picker .emojis span:hover {
+    @apply bg-[#ececec] cursor-pointer ;
+  }
 
-.emoji-picker::-webkit-scrollbar
-{
-  @apply w-[10px] bg-gray-700 rounded-lg ;
-}
+  .emoji-picker::-webkit-scrollbar-track
+  {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  }
 
-.emoji-picker::-webkit-scrollbar-thumb
-{
-  @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
-}
+  .emoji-picker::-webkit-scrollbar
+  {
+    @apply w-[10px] bg-gray-700 rounded-lg ;
+  }
 
-.grid-img::-webkit-scrollbar
-{
-  @apply w-[10px] bg-gray-700 rounded-lg ;
-}
+  .emoji-picker::-webkit-scrollbar-thumb
+  {
+    @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
+  }
 
-.grid-img::-webkit-scrollbar-thumb
-{
-  @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
-}
-.mention-item{
-  @apply  text-white py-1 hover:bg-gray-600
-}
- .vue-popover-theme{
-  @apply bg-gray-700 p-1 rounded-md min-w-[120px]
- }
-.mention-selected {
-  @apply bg-gray-600;
-}
-.mention-user{
-  @apply bg-[#1f4a82]
-}
-</style>
+  .grid-img::-webkit-scrollbar
+  {
+    @apply w-[10px] bg-gray-700 rounded-lg ;
+  }
+
+  .grid-img::-webkit-scrollbar-thumb
+  {
+    @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
+  }
+  .mention-item{
+    @apply  text-white py-1 hover:bg-gray-600
+  }
+   .vue-popover-theme{
+    @apply bg-gray-700 p-1 rounded-md min-w-[120px]
+   }
+  .mention-selected {
+    @apply bg-gray-600;
+  }
+  .mention-user{
+    @apply bg-[#1f4a82]
+  }
+  </style>

@@ -2,7 +2,7 @@
   <div class="flex text-white items-center p-3 rounded-lg bg-edit ">
     <div class="w-20 min-h-[80px]  rounded-md relative" @mouseover="upHere = true" @mouseleave="upHere=false">
       <nuxt-link tag="div" :to="`/profile_detail/${friend.userDetail._id}`">
-        <img class="w-20 min-h-[80px] object-cover rounded-md cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
+        <img class="w-20 h-20 object-cover rounded-md cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
       </nuxt-link>
       <div v-if="upHere" class="z-50 absolute bottom-[90%] transition-all">
         <friend-view :friend="friend" />
