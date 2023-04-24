@@ -26,6 +26,7 @@ export default {
   middleware: ['auth'],
   computed: {
     ...mapGetters(['isOpenFollower'])
+
   }
 }
 </script>
@@ -53,5 +54,15 @@ export default {
   animation-name: scaleDefaultAnimation;
   animation-duration: 0.6s;
   transition: all ease-in-out;
+}
+
+body::-webkit-scrollbar
+{
+  @apply w-[10px] bg-gray-700 rounded-lg ;
+}
+
+body::-webkit-scrollbar-thumb
+{
+  @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
 }
 </style>

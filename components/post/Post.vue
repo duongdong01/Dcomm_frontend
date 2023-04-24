@@ -52,8 +52,8 @@
           </div>
         </div>
       </div>
-      <div class="flex justify-center items-center -mt-1">
-        <div class="hover:bg-gray-700 p-2 rounded-lg cursor-pointer">
+      <div class="flex justify-center items-center -mt-1 relative">
+        <button class="hover:bg-gray-700 p-2 rounded-lg cursor-pointer" @click="toggleShowOption" @focusout="showOptionPost(false)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -64,13 +64,158 @@
           >
             <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
           </svg>
-        </div>
+          <!-- delete + report post -->
+          <div v-if="isShowOptionPost" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-10">
+            <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+              <svg
+
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-pencil-square"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+              </svg>
+
+              Edit Post
+            </div>
+            <div v-if="!post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+              <svg
+
+                xmlns="http://www.w3.org/2000/svg"
+                width="19"
+                height="19"
+                fill="currentColor"
+                class="bi bi-flag"
+                viewBox="0 0 16 16"
+              >
+                <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21.294 21.294 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21.317 21.317 0 0 0 14 7.655V1.222z" />
+              </svg>
+              Report post
+            </div>
+            <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="deletePost">
+              <svg
+
+                xmlns="http://www.w3.org/2000/svg"
+                width="19"
+                height="19"
+                fill="currentColor"
+                class="bi bi-trash"
+                viewBox="0 0 16 16"
+              >
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+              </svg>
+              Delete post
+            </div>
+          </div>
+        </button>
       </div>
     </header>
-    <div class="leading-9 flex justify-center flex-col">
-      <div v-if="post?.normal && post?.normal?.content?.length" v-html="post.normal.content" />
+
+    <div class="leading-9 flex justify-center flex-col ">
+      <div class="flex relative flex-col">
+        <div v-if="post?.normal && post?.normal?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.normal.content" />
+        <div v-if="isShowMoreContent" class="bg-gray_850 w-full text-center flex justify-center items-center">
+          <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-book "
+              viewBox="0 0 16 16"
+            >
+              <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+            </svg>
+            <a @click="showMoreContent"> Read more</a>
+          </div>
+        </div>
+      </div>
       <div v-if="post?.albums" class="mt-2 flex justify-center items-center overflow-hidden w-full max-h-[600px] rounded-md">
         <lightbox :items="post.albums.albumFileDetails.map(el=>el.file)" class="w-full" />
+      </div>
+      <!-- post share origin -->
+      <div v-if="post.type===PostType.SHARE && post.originPost" class="overflow-hidden  p-1">
+        <div class="flex flex-col border-gray-700 rounded-xl border p-2">
+          <header class="flex justify-between cursor-pointer">
+            <div class="flex">
+              <div class="flex justify-center items-center overflow-hidden">
+                <img src="@/static/avatar/avatar1.jpg" alt="avatar" class="rounded-full w-9 h-9">
+              </div>
+              <div class="flex flex-col ml-3  text-white font-medium">
+                <p class="text-white font-medium p-0 m-0">
+                  {{ post?.owner.fullname }}
+                </p>
+                <div class="flex items-center gap-1 justify-center w-full -mt-4">
+                  <span v-if="post" class="font-light text-white/80 text-[14px]">
+                    {{ timeAgo(post.createdAt) }}
+                  </span>
+                  <span class="-mt-2">
+                    .
+                  </span>
+                  <svg
+                    v-if="post?.privacy ===PostPrivacy.PUBLIC"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-globe-americas text-white/80"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.08.08-.162.158-.242.234-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z" />
+                  </svg>
+                  <svg
+                    v-if="post?.privacy ===PostPrivacy.FRIENDS"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-people-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                  </svg>
+                  <svg
+                    v-if="post?.privacy ===PostPrivacy.ONLY_ME"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-lock-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </header>
+          <div class="mt-2 flex justify-center items-center overflow-hidden w-full max-h-[600px] rounded-md">
+            <lightbox :items="images" class="w-full" />
+          </div>
+          <div class="flex relative flex-col mt-1">
+            <div v-if="post?.normal && post?.normal?.content?.length" ref="contentPostShare" class="leading-6 truncate" :class="isShowMoreContentShare ? ' hideContent' :''" v-html="post.normal.content" />
+            <div v-if="isShowMoreContentShare" class="bg-gray_850 w-full text-center flex justify-center items-center">
+              <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-book "
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+                </svg>
+                <a @click="showMoreContentShare"> Read more</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="flex mt-8 gap-2">
         <div class="relative flex gap-[6px]  px-4 py-1 rounded-lg justify-center items-center hover:bg-indigo-500 cursor-pointer transition-all max-w-[80px] max-h-[40px]" :class="post?.isReactions ? 'upvoted': 'bg-indigo-600'" title="Upvote" @click="reactionPost(post._id)">
@@ -100,7 +245,7 @@
             <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
           </svg>
           <p class="-mt-[2px]">
-            0
+            {{ post?.countComment || 0 }}
           </p>
         </div>
         <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4">
@@ -117,7 +262,7 @@
             <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
           </svg>
         </div>
-        <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4 ">
+        <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4" @click="showModalShare">
           <svg
             width="20"
             height="20"
@@ -127,19 +272,32 @@
             class="w-5 h-5 text-white"
             data-v-6ce1eb9f=""
           ><path d="M1.42862 19C1.42192 19 1.4169 19 1.4102 19C1.17917 18.9876 0.996697 18.7518 1.00005 18.4664C1.00172 18.3361 1.24781 5.59593 11.2857 5.24433V1.52982C11.2857 1.32507 11.3812 1.13893 11.5302 1.05207C11.6775 0.963133 11.8566 0.99002 11.9838 1.11825L18.841 8.00125C18.9414 8.1026 19 8.25358 19 8.41283C19 8.57208 18.9414 8.72306 18.8426 8.8244L11.9855 15.7074C11.8566 15.8356 11.6791 15.8605 11.5302 15.7736C11.3812 15.6867 11.2857 15.5006 11.2857 15.2958V11.5937C2.35439 11.7944 1.87225 18.2306 1.85551 18.5078C1.84045 18.787 1.65295 19 1.42862 19Z" stroke="#9CA3AF" stroke-width="1.5" class="stroke-current" /></svg>
+          <p class="-mt-[2px] ml-1">
+            {{ post?.countShare || 0 }}
+          </p>
         </div>
       </div>
+      <div class="border-b-[1px] border-gray-700 mt-2" />
     </div>
-    <Comment class="mt-4" :post-id="post?._id" />
+
+    <ItemComment v-if="false" class="mt-2 flex w-full" />
+    <Comment class="mt-2" :post-id="post?._id" />
+    <confirm-dialogue ref="confirmDialogue" />
+    <SharePost v-if="isOpenModalSharePost" class="w-full h-full top-0 left-0" :post-share="post" />
   </div>
 </template>
 
 <script>
 import Comment from '../comment/Comment.vue'
 import Lightbox from '../lightbox/Lightbox.vue'
-import { PostPrivacy } from '~/constants/post'
+import ItemComment from '../comment/ItemComment.vue'
+import ConfirmDialogue from '@/components/modal/ConfirmDialogue.vue'
+import { PostPrivacy, PostType } from '~/constants/post'
+import { ReactionOn, ReactionType } from '~/constants/reaction'
+import SharePost from '~/components/modal/SharePost.vue'
+
 export default {
-  components: { Lightbox, Comment },
+  components: { Lightbox, Comment, ItemComment, ConfirmDialogue, SharePost },
   props: {
     post: {
       type: Object,
@@ -149,28 +307,75 @@ export default {
   data: () => {
     return {
       lengthImg: [1],
-      images: [
-        'https://duong1310.s3.ap-southeast-2.amazonaws.com/1681394528876%20-5cbca2e7-c73f-4d22-8cc0-d3f424e8d080-934563089.mp4',
-        'https://i.wifegeek.com/200426/5ce1e1c7.jpg',
-        'https://i.wifegeek.com/200426/5fa51df3.jpg',
-        'https://i.wifegeek.com/200426/663181fe.jpg',
-        'https://i.wifegeek.com/200426/2d110780.jpg',
-        'https://i.wifegeek.com/200426/e73cd3fa.jpg',
-        'https://i.wifegeek.com/200426/15160d6e.jpg',
-        'https://i.wifegeek.com/200426/d0c881ae.jpg',
-        'https://i.wifegeek.com/200426/a154fc3d.jpg',
-        'https://i.wifegeek.com/200426/71d3aa61.jpg'
-      ],
       files: [],
       PostPrivacy,
+      PostType,
       postDetail: null,
-      isReactionPost: false
+      isReactionPost: false,
+      isShowOptionPost: false,
+      isShowMoreContent: false,
+      isShowMoreContentShare: false,
+      images: [
+        {
+
+          url: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/1/18/871936/Arin---Oh-My-Girl-8.jpg'
+        },
+        {
+          url: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/1/18/871936/Arin---Oh-My-Girl-5.jpg'
+        },
+        {
+          url: 'https://luv.vn/wp-content/uploads/2021/11/avatar-gai-xinh-41.jpg'
+        },
+        {
+          url: 'https://antimatter.vn/wp-content/uploads/2022/05/hinh-anh-hot-girl-han-quoc.jpg'
+        }
+
+      ]
+    }
+  },
+  computed: {
+    isOpenModalSharePost () {
+      return this.$store.getters['post/isOpenModalSharePost']
     }
   },
   created () {
     this.postDetail = { ...this.post }
   },
+  mounted () {
+    if (this.$refs.contentPost) {
+      const height = this.$refs.contentPost.clientHeight
+      if (height > 160) {
+        this.isShowMoreContent = true
+      }
+    } else {
+      this.isShowMoreContent = false
+    }
+
+    if (this.$refs.contentPostShare) {
+      const height = this.$refs.contentPostShare.clientHeight
+      if (height > 160) {
+        this.isShowMoreContentShare = true
+      }
+    } else {
+      this.isShowMoreContentShare = false
+    }
+  },
   methods: {
+    showMoreContent () {
+      this.isShowMoreContent = false
+    },
+    showMoreContentShare () {
+      this.isShowMoreContentShare = false
+    },
+    showModalShare () {
+      this.$store.commit('post/setSharePostModal', true)
+    },
+    toggleShowOption () {
+      this.isShowOptionPost = !this.isShowOptionPost
+    },
+    showOptionPost (e) {
+      this.isShowOptionPost = e
+    },
     timeAgo (time) {
       const getTime = new Date(time).getTime()
       const getMonth = new Date(time).getMonth()
@@ -187,28 +392,35 @@ export default {
         return `${result} minutes ago`
       }
       if (result / 3600 < 24) {
-        result = Math.ceil(result / 3600)
+        result = (result / 3600).toFixed()
         return `${result} hours ago`
       }
       if (result / 86400 < 5) {
-        result = Math.ceil(result / 86400)
+        result = (result / 86400).toFixed()
         return `${result} day ago`
       }
       const dateResult = this.$dayjs(time).format('DD YYYY')
       return `${monthNames[getMonth]} ${dateResult}`
     },
     reactionPost (postId) {
-      this.$store.commit('post/toggleLikePost', postId)
-      // if (this.postDetail.isReactions) {
-      //   if (this.postDetail.countReaction > 0) {
-      //     this.postDetail.countReaction -= 1
-      //     this.postDetail.isReactions = false
-      //   }
-      // } else {
-      //   this.postDetail.countReaction += 1
-      //   this.postDetail.isReactions = true
-      // }
+      this.$store.dispatch('post/reactionPost', { on: ReactionOn.POST, type: ReactionType.OK, postId })
+    },
+    async  deletePost () {
+      try {
+        const deletePost = await this.$refs.confirmDialogue.show({
+          title: 'Delete to your post?',
+          message: 'Are you sure you want to delete this post? It cannot be undone.',
+          okButton: 'Delete'
+        })
+        if (deletePost) {
+          this.$store.commit('post/deletePost', this.post._id)
+          await this.$api.post.deletePostById(this.post._id)
+        }
+      } catch (err) {
+        //
+      }
     }
+
   }
 }
 </script>
@@ -217,4 +429,12 @@ export default {
 .upvoted{
   background: linear-gradient(90.9deg, #E21344 0%, #E85E23 82.29%, #EEAB00 100%);
 }
+.mention-user{
+  @apply bg-transparent text-blue-600
+}
+.hideContent {
+    overflow: hidden;
+    max-height: 160px;
+}
+
 </style>

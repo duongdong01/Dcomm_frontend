@@ -22,6 +22,7 @@
     "dayjs": "^1.11.7",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
+    "vue-confirm-dialog": "^1.1.0",
     "vue-emoji-picker": "^1.0.3",
     "vue-mention": "^1.1.0",
     "vue-server-renderer": "^2.7.10",
