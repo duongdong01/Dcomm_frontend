@@ -12,7 +12,9 @@
           :keys="['@']"
           :items="items"
           offset="6"
-          @open="onOpen"
+          filtering-disabled
+          @open="onOpen()"
+          @search="onOpen($event)"
           @apply="onApply"
         >
           <div
@@ -24,16 +26,18 @@
           />
 
           <template #no-result>
-            <div class="text-white">
+            <div class="text-white mt-1">
               No result
             </div>
           </template>
           <template #item="{ item }">
-            <div class="user">
-              {{ item.fullname }}
-              <!-- <span class="dim">
-                ({{ item.fullname }})
-              </span> -->
+            <div class="flex  py-[1px] space-x-2 cursor-pointer">
+              <img :src="item.userDetail.avatar" class="w-9 h-9 rounded-full" alt="photo">
+              <div class="flex items-center">
+                <p>
+                  {{ item.userDetail.fullname }}
+                </p>
+              </div>
             </div>
           </template>
         </Mentionable>
@@ -144,11 +148,6 @@
 import { Mentionable } from 'vue-mention'
 import Loading from '../loading/Loading.vue'
 import { PostType, PostPrivacy } from '@/constants/post'
-const users = [
-  { _id: '642d8ba569ad9f52970f0053', email: 'user1@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr7' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user2@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr8' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user3@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr9' }
-]
 export default {
   directives: {
     focus: {
@@ -170,7 +169,13 @@ export default {
       search: '',
       count: 0,
       privacy: PostPrivacy.PUBLIC,
-      isLoadCreatePost: false
+      isLoadCreatePost: false,
+      isDebounce: null
+    }
+  },
+  computed: {
+    userInfo () {
+      return this.$store.getters.userInfo
     }
   },
   mounted () {
@@ -179,8 +184,25 @@ export default {
     this.$refs.textarea.addEventListener('keydown', this.cursor_position)
   },
   methods: {
-    onOpen (key) {
-      this.items = users
+    debounce (func, timeout = 300) {
+      this.isLoadMore = true
+      let timer
+      return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => { func.apply(this, args) }, timeout)
+      }
+    },
+    onOpen (searchText = '') {
+      try {
+        // this.isLoaded = false
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          const friendData = await this.$api.friend.getListFriend({ userParam: this.userInfo._id, limit: 4, page: 1, keyword: searchText })
+          this.items = friendData.data.friends
+        }, 300)
+      } catch (err) {
+        //
+      }
     },
     placeCaretAtEnd (el) {
       el.focus()
@@ -201,7 +223,7 @@ export default {
     },
     onApply (item, key, replacedWith) {
       const lastMentionIndex = this.$refs.textarea.innerHTML.lastIndexOf('@')
-      const newText = this.$refs.textarea.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item._id}" class="mention-user">` + item.fullname + '</a>' + ' ' + this.$refs.textarea.innerHTML.substring(lastMentionIndex + 10, this.$refs.textarea.innerHTML.length
+      const newText = this.$refs.textarea.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item.userDetail._id}" class="mention-user">` + item.userDetail.fullname + '</a>' + ' ' + this.$refs.textarea.innerHTML.substring(lastMentionIndex + 10, this.$refs.textarea.innerHTML.length
       )
       this.$refs.textarea.innerHTML = newText
       // set focus
@@ -330,14 +352,20 @@ export default {
           postBody.payloadPost = payloadPost
           const dataCreatePost = await this.$api.post.createPost(postBody)
           this.$store.commit('post/newPost', dataCreatePost.data.post)
-          console.log(dataCreatePost)
         }
         this.isLoadCreatePost = false
-        this.isCreatePost = false
+        this.reset()
       } catch (err) {
         this.$toast.error('System error.')
         this.isLoadCreatePost = false
       }
+    },
+    reset () {
+      this.$refs.textarea.innerHTML = ''
+      this.isCreatePost = true
+      this.previewImage = []
+      this.imageUpload = []
+      this.resize()
     }
   }
 }
@@ -345,7 +373,9 @@ export default {
 
 <style lang="scss">
 .post{
-
+  .mention-user{
+  @apply bg-[#1f4a82] text-white;
+  }
   .create_post{
       .post-textarea{
           @apply outline-0 border-0 resize-none w-full font-normal text-base text-white overflow-hidden;
@@ -453,15 +483,13 @@ export default {
   @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
 }
 .mention-item{
-  @apply  text-white py-1 hover:bg-gray-600
+  @apply  text-white hover:bg-gray-600 px-1 min-h-[32px] items-center z-30
 }
  .vue-popover-theme{
-  @apply bg-gray-700 p-1 rounded-md min-w-[120px]
+  @apply bg-gray-700  rounded-md min-w-[200px] p-0 overflow-hidden min-h-[32px] text-center z-30
  }
 .mention-selected {
-  @apply bg-gray-600;
+  @apply bg-gray-600 z-30;
 }
-.mention-user{
-  @apply bg-[#1f4a82]
-}
+
 </style>

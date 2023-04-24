@@ -1,6 +1,7 @@
 export const state = () => ({
   feeds: [],
-  pageDetail: {}
+  pageDetail: {},
+  isOpenModalSharePost: false
 })
 
 export const getters = {
@@ -9,9 +10,15 @@ export const getters = {
   },
   pageDetail: (state) => {
     return state.pageDetail
+  },
+  isOpenModalSharePost: (state) => {
+    return state.isOpenModalSharePost
   }
 }
 export const mutations = {
+  setSharePostModal: (state, show) => {
+    state.isOpenModalSharePost = show
+  },
   setFeeds: (state, { isLoadMore, data }) => {
     if (isLoadMore) {
       state.feeds.push(...data)
@@ -25,8 +32,18 @@ export const mutations = {
   newPost: (state, data) => {
     state.feeds.unshift(data)
   },
+  deletePost: (state, postId) => {
+    let count = 0
+    for (let i = 0; i < state.feeds.length; i++) {
+      if (state.feeds[i]._id.toString() === postId.toString()) {
+        count = i
+        break
+      }
+    }
+    state.feeds.splice(count, 1)
+    console.log(state.feeds, count, count + 1)
+  },
   toggleLikePost: (state, postId) => {
-    console.log('liked')
     state.feeds.forEach((el) => {
       if (el._id.toString() === postId.toString()) {
         if (el.isReactions) {
@@ -40,18 +57,32 @@ export const mutations = {
         }
       }
     })
+  },
+  commentPost: (state, postId) => {
+    state.feeds.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        el.countComment += 1
+      }
+    })
   }
 }
 export const actions = {
   async getPostFeeds ({ commit, state }, { limit, page, isLoadMore }) {
     try {
       const feedData = await this.$api.post.getPostFeeds({ limit, page })
-      console.log(feedData)
       commit('setFeeds', { isLoadMore, data: feedData.data.posts })
       commit('setPageDetail', feedData.data.pageDetail)
-      console.log(state.feeds.length)
     } catch (err) {
       //
+    }
+  },
+  async reactionPost ({ commit, state }, { on, type, postId }) {
+    try {
+      commit('toggleLikePost', postId)
+      await this.$api.reaction.reactionPost({ on, type, postId })
+    } catch (err) {
+      //
+      commit('toggleLikePost', postId)
     }
   }
 }

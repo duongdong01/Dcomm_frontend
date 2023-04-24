@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="flex items-center col-span-2 gap-6 justify-end">
-      <div v-if="isLogin" class="flex space-x-4">
+      <div class="flex space-x-4">
         <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -139,15 +139,6 @@
           </div>
         </div>
       </button>
-
-      <div v-if="!isLogin" class="flex gap-4">
-        <button class="w-32 px-6 py-[10px] bg-gray-700 text-white font-semibold rounded-md hover:bg-gray-600 transition-all" @click="ShowLoginModal">
-          Log in
-        </button>
-        <button class="w-32 px-6 py-[10px] bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 transition-all" @click="ShowSignupModal">
-          Sign up
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -195,6 +186,7 @@ export default {
         if (window.localStorage.getItem('access_token')) {
           const dataUser = await this.$api.user.getMe()
           this.user = dataUser.data.user
+          this.$store.commit('setUserInfo', this.user)
         }
       } catch (err) {
       }

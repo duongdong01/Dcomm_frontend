@@ -1,7 +1,5 @@
 export const state = () => ({
-  userInfo: {
-    isLogin: true
-  },
+  userInfo: null,
   systemInfo: {
     openLoginModal: false,
     openSignupModal: false,
@@ -10,12 +8,12 @@ export const state = () => ({
 })
 
 export const getters = {
-  isLogin: (state) => {
-    return state.userInfo.isLogin
+  userInfo: (state) => {
+    return state.userInfo
   },
-  isLoginModalOpen: (state) => {
-    return state.systemInfo.openLoginModal
-  },
+  // isLoginModalOpen: (state) => {
+  //   return state.systemInfo.openLoginModal
+  // },
   isSignupModalOpen: (state) => {
     return state.systemInfo.openSignupModal
   },
@@ -23,13 +21,16 @@ export const getters = {
 }
 
 export const mutations = {
-  showModalLogin: (state, show) => {
-    state.systemInfo.openLoginModal = show
-  },
-  showModalSignup: (state, show) => {
-    state.systemInfo.openSignupModal = show
-  },
+  // showModalLogin: (state, show) => {
+  //   state.systemInfo.openLoginModal = show
+  // },
+  // showModalSignup: (state, show) => {
+  //   state.systemInfo.openSignupModal = show
+  // },
   showFollower: (state, show) => {
     state.systemInfo.openFollower = show
+  },
+  setUserInfo: (state, data) => {
+    state.userInfo = data
   }
 }

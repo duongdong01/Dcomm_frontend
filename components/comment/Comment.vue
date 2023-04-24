@@ -1,8 +1,7 @@
 <template>
-  <div class="flex flex-col  bg-gray_850 text-base comment relative border-t-[1px] border-gray-700 pt-1">
-    <div v-if="false" class="absolute z-[2] left-0 w-full h-full flex justify-center bg-[#000] opacity-50 rounded-xl" />
-    <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
-    <div class="grid grid-cols-12 create_comment pt-2 ">
+  <div class="flex flex-col  bg-gray_850 text-base comment relative">
+    <LoadingSpin v-if="isLoaded" class="absolute w-full h-full mt-2" />
+    <div class="grid grid-cols-12 create_comment pt-1">
       <div class="w-10 h-10 overflow-hidden col-span-1">
         <a href="#" class="avatar_user  rounded-full cursor-pointer ">
           <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
@@ -15,7 +14,9 @@
           :keys="['@']"
           :items="items"
           offset="6"
-          @open="onOpen"
+          filtering-disabled
+          @open="onOpen()"
+          @search="onOpen($event)"
           @apply="onApply"
         >
           <div
@@ -25,20 +26,22 @@
             class="comment-textarea rounded-3xl pl-4 pr-[74px] pt-2 pb-2  bg-main_color transition-all ease-out duration-150 h-12 min-h-[48px] cursor-text"
             @input="resize()"
             @keyup.ctrl.enter="breakLine"
-            @keydown.enter.exact="submitTest"
+            @keydown.enter.exact="onSubmit"
           />
 
           <template #no-result>
-            <div class="text-white">
+            <div class="text-white mt-1">
               No result
             </div>
           </template>
           <template #item="{ item }">
-            <div class="user">
-              {{ item.fullname }}
-              <!-- <span class="dim">
-                  ({{ item.fullname }})
-                </span> -->
+            <div class="flex  py-[1px] space-x-2 cursor-pointer">
+              <img :src="item.userDetail.avatar" class="w-9 h-9 rounded-full" alt="photo">
+              <div class="flex items-center">
+                <p>
+                  {{ item.userDetail.fullname }}
+                </p>
+              </div>
             </div>
           </template>
         </Mentionable>
@@ -124,13 +127,7 @@
 
 <script>
 import { Mentionable } from 'vue-mention'
-import Loading from '../loading/Loading.vue'
-import { PostType, PostPrivacy } from '@/constants/post'
-const users = [
-  { _id: '642d8ba569ad9f52970f0053', email: 'user1@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr7' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user2@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr8' },
-  { _id: '642d8ba569ad9f52970f0054', email: 'user3@gmail.com', firstName: 'duong', lastName: 'dong', fullname: 'duong cr9' }
-]
+import LoadingSpin from '../loading/LoadingSpin.vue'
 export default {
   directives: {
     focus: {
@@ -139,7 +136,7 @@ export default {
       }
     }
   },
-  components: { Loading, Mentionable },
+  components: { Mentionable, LoadingSpin },
   props: ['on', 'postId'],
   data () {
     return {
@@ -148,20 +145,89 @@ export default {
       typeImage: ['mp4', 'png', 'jpg', 'webp', 'jpeg'],
       previewImage: [],
       imageUpload: [],
-      isCreatePost: true,
       search: '',
       count: 0,
-      privacy: PostPrivacy.PUBLIC,
-      isLoadCreatePost: false
+      isDebounce: null,
+      isLoadCreatePost: false,
+      isLoaded: false
+    }
+  },
+  computed: {
+    userInfo () {
+      return this.$store.getters.userInfo
     }
   },
   mounted () {
   },
   methods: {
-    submitTest (e) {
-      e.preventDefault()
+    onSubmit (e) {
+      try {
+        e.preventDefault()
+
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          this.isLoaded = true
+          this.resize()
+          if (!this.$refs.textareaComment.innerHTML.length && !this.imageUpload.length) {
+            return
+          }
+          if (this.$refs.textareaComment.innerHTML.length && !this.imageUpload.length) {
+            const checkContentNull = this.$refs.textareaComment.innerHTML.split(';')
+            const listNbsp = checkContentNull.map(el => el.trim())
+            let count = 0
+            if (listNbsp[listNbsp.length - 1].toString() !== '') {
+              count++
+            }
+            for (let i = 0; i < listNbsp.length - 1; i++) {
+              if (listNbsp[i].toString() !== '&nbsp') {
+                count++
+              }
+            }
+            if (count === 0) {
+              return
+            }
+          }
+          const listTagA = this.$refs.textareaComment.getElementsByTagName('a')
+          const userMentions = []
+          if (listTagA.length) {
+            const listHref = []
+            for (let i = 0; i < listTagA.length; i++) {
+              listHref.push(listTagA[i].href)
+            }
+            listHref.forEach((el) => {
+              userMentions.push(el.split('/')[el.split('/').length - 1])
+            })
+          }
+          const commentBody = {
+            on: 'POST',
+            content: this.$refs.textareaComment.innerHTML,
+            postId: this.postId
+          }
+          if (userMentions.length) {
+            commentBody.userMentions = userMentions
+          }
+          if (this.imageUpload.length) {
+            const formData = new FormData()
+            this.imageUpload.forEach((el) => {
+              formData.append('files', el)
+            })
+            const filesData = await this.$api.upload.uploadFilesToAws(formData)
+            commentBody.files = filesData.data[0]
+          }
+          await this.$api.comment.createComment(commentBody)
+          this.$store.commit('post/commentPost', this.postId)
+          this.reset()
+          this.isLoaded = false
+        }, 500)
+      } catch (err) {
+        //
+        this.isLoaded = false
+      }
+    },
+    reset () {
       this.$refs.textareaComment.innerHTML = ''
-      this.resize()
+      this.previewImage = []
+      this.imageUpload = []
     },
     breakLine () {
       this.$refs.textareaComment.innerHTML += '<div><br></div>'
@@ -175,12 +241,20 @@ export default {
       selection.addRange(range)
       this.$refs.textareaComment.focus()
     },
-    onOpen (key) {
-      this.items = users
+    onOpen (searchText = '') {
+      try {
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          const friendData = await this.$api.friend.getListFriend({ userParam: this.userInfo._id, limit: 4, page: 1, keyword: searchText })
+          this.items = friendData.data.friends
+        }, 300)
+      } catch (err) {
+        //
+      }
     },
     onApply (item, key, replacedWith) {
       const lastMentionIndex = this.$refs.textareaComment.innerHTML.lastIndexOf('@')
-      const newText = this.$refs.textareaComment.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item._id}" class="mention-user">` + item.fullname + '</a>' + ' ' + this.$refs.textareaComment.innerHTML.substring(lastMentionIndex + 10, this.$refs.textareaComment.innerHTML.length
+      const newText = this.$refs.textareaComment.innerHTML.substring(0, lastMentionIndex) + `<a href="/profile_detail/${item.userDetail._id}" class="mention-user">` + item.userDetail.fullname + '</a>' + ' ' + this.$refs.textareaComment.innerHTML.substring(lastMentionIndex + 10, this.$refs.textareaComment.innerHTML.length
       )
       this.$refs.textareaComment.innerHTML = newText
       // set focus
@@ -193,14 +267,9 @@ export default {
       this.$refs.textareaComment.focus()
     },
     append (emoji) {
-      this.isCreatePost = false
       this.$refs.textareaComment.innerHTML += emoji
     },
-    handleChange (value) {
-      this.privacy = value
-    },
     resize () {
-      this.isCreatePost = false
       const element = this.$refs.textareaComment
       if (this.$refs.textareaComment.length === 0) {
         element.style.height = 48 + 'px'
@@ -214,11 +283,10 @@ export default {
     },
 
     uploadImage (e) {
-      this.isCreatePost = false
       const image = e.target.files
       const listImgName = this.imageUpload.map(el => el.name)
-      if (this.previewImage.length + image.length > 8) {
-        this.$toast.error('you can only choose 8 file.')
+      if (this.previewImage.length + image.length > 1) {
+        this.$toast.error('you can only choose 1 file.')
       } else {
         for (let i = 0; i < image.length; i++) {
           let dem = 0
@@ -251,75 +319,6 @@ export default {
       })
       this.previewImage = newPreviewImg
       this.imageUpload = newImageUpload
-    },
-    async onSubmit () {
-      try {
-        this.isCreatePost = true
-        if (this.$refs.textareaComment.innerHTML.length && !this.imageUpload.length) {
-          const checkContentNull = this.$refs.textareaComment.innerHTML.split(';')
-          const listNbsp = checkContentNull.map(el => el.trim())
-          let count = 0
-          if (listNbsp[listNbsp.length - 1].toString() !== '') {
-            count++
-          }
-          for (let i = 0; i < listNbsp.length - 1; i++) {
-            if (listNbsp[i].toString() !== '&nbsp') {
-              count++
-            }
-          }
-          if (count === 0) {
-            return
-          }
-        }
-        this.isLoadCreatePost = true
-        const listTagA = this.$refs.textareaComment.getElementsByTagName('a')
-        const userMentions = []
-        if (listTagA.length) {
-          const listHref = []
-          for (let i = 0; i < listTagA.length; i++) {
-            listHref.push(listTagA[i].href)
-          }
-          listHref.forEach((el) => {
-            userMentions.push(el.split('/')[el.split('/').length - 1])
-          })
-        }
-        const postBody = {
-          on: this.on,
-          type: PostType.NORMAL,
-          privacy: this.privacy
-        }
-        if (userMentions.length) {
-          postBody.userMentions = userMentions
-        }
-        const payloadPost = {
-        }
-        if (this.$refs.textareaComment.innerHTML.length) {
-          payloadPost.content = this.$refs.textareaComment.innerHTML
-        }
-        if (this.imageUpload.length) {
-          const formData = new FormData()
-          const album = {
-            files: []
-          }
-          this.imageUpload.forEach((el) => {
-            formData.append('files', el)
-          })
-          const filesData = await this.$api.upload.uploadFilesToAws(formData)
-          album.files = filesData.data
-          payloadPost.album = album
-        }
-        if (payloadPost.content || Object.keys(payloadPost.album).length) {
-          postBody.payloadPost = payloadPost
-          const dataCreatePost = await this.$api.post.createPost(postBody)
-          this.$store.commit('post/newPost', dataCreatePost.data.post)
-          console.log(dataCreatePost)
-        }
-        this.isLoadCreatePost = false
-        this.isCreatePost = false
-      } catch (err) {
-        this.$toast.error('System error.')
-        this.isLoadCreatePost = false
-      }
     }
   }
 }
@@ -334,8 +333,22 @@ export default {
   background-color: transparent;
 }
   .comment{
-
+    .mention-item{
+    @apply  text-white py-1 hover:bg-gray-600
+  }
+   .vue-popover-theme{
+    @apply bg-gray-700 p-1 rounded-md min-w-[120px]
+   }
+  .mention-selected {
+    @apply bg-gray-600;
+  }
+  .mention-user{
+    @apply bg-[#1f4a82]
+  }
     .create_comment{
+      .mention-user{
+          @apply bg-[#1f4a82] text-white;
+      }
         .comment-textarea{
             @apply outline-0 border-0 w-full font-normal text-base text-white overflow-hidden;
         }
@@ -438,16 +451,5 @@ export default {
   {
     @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
   }
-  .mention-item{
-    @apply  text-white py-1 hover:bg-gray-600
-  }
-   .vue-popover-theme{
-    @apply bg-gray-700 p-1 rounded-md min-w-[120px]
-   }
-  .mention-selected {
-    @apply bg-gray-600;
-  }
-  .mention-user{
-    @apply bg-[#1f4a82]
-  }
+
   </style>

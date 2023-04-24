@@ -28,12 +28,12 @@ export default {
   data () {
     return {
       on: PostActionOn.PERSONAL,
-      isLoadMore: false
+      isLoadMore: false,
+      isDebounce: null
     }
   },
   computed: {
     feeds () {
-      console.log('change')
       return this.$store.getters['post/feeds']
     },
     pageDetail () {
@@ -57,15 +57,18 @@ export default {
     async getPostFeed ({ limit, page, isLoadMore }) {
       await this.$store.dispatch('post/getPostFeeds', { limit, page, isLoadMore })
     },
-    async loadMore () {
+    loadMore () {
       try {
-        if (this.pageDetail.nextPage && !this.isLoadMore) {
-          if (!this.isLoadMore && this.pageDetail.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
-            this.isLoadMore = true
-            await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore })
-            this.isLoadMore = false
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          if (this.pageDetail.nextPage && !this.isLoadMore) {
+            if (!this.isLoadMore && this.pageDetail.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
+              this.isLoadMore = true
+              await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore })
+              this.isLoadMore = false
+            }
           }
-        }
+        }, 300)
       } catch (err) {
         //
       }
