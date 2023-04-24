@@ -3,7 +3,7 @@
     <header class="flex justify-between cursor-pointer">
       <div class="flex">
         <div class="w-10 h-10 overflow-hidden">
-          <img src="@/static/avatar/avatar1.jpg" alt="avatar" class="rounded-full">
+          <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
         </div>
         <div class="flex flex-col ml-3 -mt-1">
           <p class="text-white font-medium">
@@ -118,7 +118,8 @@
 
     <div class="leading-9 flex justify-center flex-col ">
       <div class="flex relative flex-col">
-        <div v-if="post?.normal && post?.normal?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.normal.content" />
+        <div v-if="post.type==='NORMAL' && post?.normal && post?.normal?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.normal.content" />
+        <div v-if="post.type==='SHARE' && post?.shared && post?.shared?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.shared.content" />
         <div v-if="isShowMoreContent" class="bg-gray_850 w-full text-center flex justify-center items-center">
           <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
             <svg
@@ -144,11 +145,11 @@
           <header class="flex justify-between cursor-pointer">
             <div class="flex">
               <div class="flex justify-center items-center overflow-hidden">
-                <img src="@/static/avatar/avatar1.jpg" alt="avatar" class="rounded-full w-9 h-9">
+                <img :src="post?.originPost.owner.avatar" alt="avatar" class="rounded-full w-9 h-9 object-cover">
               </div>
               <div class="flex flex-col ml-3  text-white font-medium">
                 <p class="text-white font-medium p-0 m-0">
-                  {{ post?.owner.fullname }}
+                  {{ post?.originPost.owner.fullname }}
                 </p>
                 <div class="flex items-center gap-1 justify-center w-full -mt-4">
                   <span v-if="post" class="font-light text-white/80 text-[14px]">
@@ -194,11 +195,11 @@
               </div>
             </div>
           </header>
-          <div class="mt-2 flex justify-center items-center overflow-hidden w-full max-h-[600px] rounded-md">
-            <lightbox :items="images" class="w-full" />
+          <div v-if="post.originPost.albums" class="mt-2 flex justify-center items-center overflow-hidden w-full max-h-[600px] rounded-md">
+            <lightbox :items="post.originPost.albums.albumFileDetails.map(el=>el.file)" class="w-full" />
           </div>
           <div class="flex relative flex-col mt-1">
-            <div v-if="post?.normal && post?.normal?.content?.length" ref="contentPostShare" class="leading-6 truncate" :class="isShowMoreContentShare ? ' hideContent' :''" v-html="post.normal.content" />
+            <div v-if="post.originPost.normal && post.originPost.normal?.content?.length" ref="contentPostShare" class="leading-6 truncate" :class="isShowMoreContentShare ? ' hideContent' :''" v-html="post.originPost.normal.content" />
             <div v-if="isShowMoreContentShare" class="bg-gray_850 w-full text-center flex justify-center items-center">
               <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
                 <svg
@@ -283,7 +284,7 @@
     <ItemComment v-if="false" class="mt-2 flex w-full" />
     <Comment class="mt-2" :post-id="post?._id" />
     <confirm-dialogue ref="confirmDialogue" />
-    <SharePost v-if="isOpenModalSharePost" class="w-full h-full top-0 left-0" :post-share="post" />
+    <SharePost v-if="isShareModal" class="w-full h-full top-0 left-0" :post-share="post.type=== 'NORMAL' ? post : post.originPost" @hiddenShareModal="hiddenShareModal" />
   </div>
 </template>
 
@@ -315,6 +316,7 @@ export default {
       isShowOptionPost: false,
       isShowMoreContent: false,
       isShowMoreContentShare: false,
+      isShareModal: false,
       images: [
         {
 
@@ -334,9 +336,6 @@ export default {
     }
   },
   computed: {
-    isOpenModalSharePost () {
-      return this.$store.getters['post/isOpenModalSharePost']
-    }
   },
   created () {
     this.postDetail = { ...this.post }
@@ -361,14 +360,18 @@ export default {
     }
   },
   methods: {
+
     showMoreContent () {
       this.isShowMoreContent = false
     },
     showMoreContentShare () {
       this.isShowMoreContentShare = false
     },
+    hiddenShareModal (e) {
+      this.isShareModal = false
+    },
     showModalShare () {
-      this.$store.commit('post/setSharePostModal', true)
+      this.isShareModal = true
     },
     toggleShowOption () {
       this.isShowOptionPost = !this.isShowOptionPost

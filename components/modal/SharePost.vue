@@ -1,5 +1,5 @@
 <template>
-  <div ref="sharePost" class="fixed flex justify-center items-center w-full h-full top-0 left-0 z-20" style=" background-color: rgba(0, 0, 0, 0.15);">
+  <div ref="sharePost" class="fixed flex justify-center items-center w-full h-full top-0 left-0 z-20" style="background-color: rgba(0, 0, 0, 0.25);">
     <div class="relative pb-4 share-post space-y-3 max-w-lg max-h-[740px] w-[512px] flex flex-col text-white min-h-[260px] bg-gray_850 rounded-lg  border border-gray-700  lg:-mt-10 md:-mt-5" style="border-radius: 5px;box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);">
       <div class="flex py-3 border-b border-gray-700 text-white justify-center text-[18px] relative font-medium">
         <p> Write post </p>
@@ -240,7 +240,7 @@ export default {
   },
   methods: {
     hiddenModalSharePost () {
-      this.$store.commit('post/setSharePostModal', false)
+      this.$emit('hiddenShareModal', false)
     },
     handleChange (value) {
       this.privacy = value
@@ -288,7 +288,6 @@ export default {
     async createSharePost () {
       try {
         this.isCreatePost = true
-        console.log(this.postShare)
         // this.isCreatePost = true
         const sharePostBody = {
           on: PostActionOn.PERSONAL,
@@ -321,7 +320,7 @@ export default {
           payloadPost.content = this.$refs.textareaSharePost.innerHTML
         }
         sharePostBody.payloadPost = payloadPost
-        await console.log('ok')
+        await this.$api.post.createSharePost(sharePostBody)
         this.isCreatePost = false
       } catch (err) {
         //
