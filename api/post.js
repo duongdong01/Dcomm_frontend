@@ -10,5 +10,8 @@ export default axios => ({
   },
   createSharePost (data) {
     return axios.post('/post/create-share-post', data).then(_ => _.data)
+  },
+  getPostById (postId) {
+    return axios.get(`/post/get-post-by-id/${postId}`).then(_ => _.data)
   }
 })

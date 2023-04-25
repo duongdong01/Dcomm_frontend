@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col bg-gray_850 rounded-xl mt-4 text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border">
+  <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' ? 'mt-4' :'mt-[0.2px]'">
     <header class="flex justify-between cursor-pointer">
-      <div class="flex">
-        <div class="w-10 h-10 overflow-hidden">
+      <div class="flex w-fit">
+        <nuxt-link :to="`/profile_detail/${post._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
           <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
-        </div>
+        </nuxt-link>
         <div class="flex flex-col ml-3 -mt-1">
-          <p class="text-white font-medium">
+          <p class="text-white font-medium hover:underline">
             {{ post?.owner.fullname }}
           </p>
           <div class="flex items-center gap-1 justify-center w-full -mt-2">
@@ -52,8 +52,9 @@
           </div>
         </div>
       </div>
+      <nuxt-link :to="`/post/${post._id}`" tag="div" class="w-1/2 cursor-pointer" />
       <div class="flex justify-center items-center -mt-1 relative">
-        <button class="hover:bg-gray-700 p-2 rounded-lg cursor-pointer" @click="toggleShowOption" @focusout="showOptionPost(false)">
+        <button class="hover:bg-gray-700 p-2 rounded-lg cursor-pointer" @click.prevent="toggleShowOption" @focusout="showOptionPost(false)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -65,7 +66,7 @@
             <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
           </svg>
           <!-- delete + report post -->
-          <div v-if="isShowOptionPost" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-10">
+          <div v-if="isShowOptionPost" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-[4]">
             <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
               <svg
 
@@ -153,7 +154,7 @@
                 </p>
                 <div class="flex items-center gap-1 justify-center w-full -mt-4">
                   <span v-if="post" class="font-light text-white/80 text-[14px]">
-                    {{ timeAgo(post.createdAt) }}
+                    {{ timeAgo(post?.originPost.createdAt) }}
                   </span>
                   <span class="-mt-2">
                     .
@@ -219,7 +220,7 @@
         </div>
       </div>
       <div class="flex mt-8 gap-2">
-        <div class="relative flex gap-[6px]  px-4 py-1 rounded-lg justify-center items-center hover:bg-indigo-500 cursor-pointer transition-all max-w-[80px] max-h-[40px]" :class="post?.isReactions ? 'upvoted': 'bg-indigo-600'" title="Upvote" @click="reactionPost(post._id)">
+        <div class="relative flex gap-[6px]  px-4 py-1 rounded-lg justify-center items-center hover:bg-indigo-500 cursor-pointer transition-all max-w-[80px] max-h-[40px]" :class="post?.isReactions ? 'upvoted': 'bg-indigo-600'" title="Upvote" @click="reactionPost(post._id)" @contextmenu="handler">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="28"
@@ -234,7 +235,7 @@
             {{ post?.countReaction }}
           </p>
         </div>
-        <div class=" flex justify-center cursor-pointer hover:bg-btn_hover items-center gap-2 px-4  rounded-lg">
+        <nuxt-link tag="div" :to="`/post/${post._id}`" class=" flex justify-center cursor-pointer hover:bg-btn_hover items-center gap-2 px-4  rounded-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -248,7 +249,7 @@
           <p class="-mt-[2px]">
             {{ post?.countComment || 0 }}
           </p>
-        </div>
+        </nuxt-link>
         <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +264,7 @@
             <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
           </svg>
         </div>
-        <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4" @click="showModalShare">
+        <div v-if="post.privacy!==PostPrivacy.ONLY_ME" class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4" @click="showModalShare">
           <svg
             width="20"
             height="20"
@@ -274,7 +275,7 @@
             data-v-6ce1eb9f=""
           ><path d="M1.42862 19C1.42192 19 1.4169 19 1.4102 19C1.17917 18.9876 0.996697 18.7518 1.00005 18.4664C1.00172 18.3361 1.24781 5.59593 11.2857 5.24433V1.52982C11.2857 1.32507 11.3812 1.13893 11.5302 1.05207C11.6775 0.963133 11.8566 0.99002 11.9838 1.11825L18.841 8.00125C18.9414 8.1026 19 8.25358 19 8.41283C19 8.57208 18.9414 8.72306 18.8426 8.8244L11.9855 15.7074C11.8566 15.8356 11.6791 15.8605 11.5302 15.7736C11.3812 15.6867 11.2857 15.5006 11.2857 15.2958V11.5937C2.35439 11.7944 1.87225 18.2306 1.85551 18.5078C1.84045 18.787 1.65295 19 1.42862 19Z" stroke="#9CA3AF" stroke-width="1.5" class="stroke-current" /></svg>
           <p class="-mt-[2px] ml-1">
-            {{ post?.countShare || 0 }}
+            {{ post?.countShared || 0 }}
           </p>
         </div>
       </div>
@@ -360,7 +361,10 @@ export default {
     }
   },
   methods: {
-
+    handler (e) {
+      e.preventDefault()
+      console.log('hello')
+    },
     showMoreContent () {
       this.isShowMoreContent = false
     },

@@ -122,12 +122,16 @@
         </div>
       </div>
     </div>
+    <div class="flex">
+      <ItemComment />
+    </div>
   </div>
 </template>
 
 <script>
 import { Mentionable } from 'vue-mention'
 import LoadingSpin from '../loading/LoadingSpin.vue'
+import ItemComment from './ItemComment.vue'
 export default {
   directives: {
     focus: {
@@ -136,7 +140,7 @@ export default {
       }
     }
   },
-  components: { Mentionable, LoadingSpin },
+  components: { Mentionable, LoadingSpin, ItemComment },
   props: ['on', 'postId'],
   data () {
     return {

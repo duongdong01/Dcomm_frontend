@@ -4,7 +4,7 @@
     <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
     <div class="grid grid-cols-12 create_post gap-1 px-6 pt-5 ">
       <a href="#" class="avatar_user w-11 h-11 rounded-full cursor-pointer col-span-1">
-        <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
+        <img :src="userInfo?.avatar|| imgDefault" class="rounded-full object-cover  w-11 h-11" alt="avatar">
       </a>
       <div class="w-full relative col-span-11">
         <Mentionable
@@ -170,7 +170,8 @@ export default {
       count: 0,
       privacy: PostPrivacy.PUBLIC,
       isLoadCreatePost: false,
-      isDebounce: null
+      isDebounce: null,
+      imgDefault: require('@/static/avatar/avatar1.jpg')
     }
   },
   computed: {
@@ -179,7 +180,6 @@ export default {
     }
   },
   mounted () {
-    // this.getPostById()
     this.$refs.textarea.addEventListener('click', this.cursor_position)
     this.$refs.textarea.addEventListener('keydown', this.cursor_position)
   },
@@ -351,6 +351,7 @@ export default {
         if (payloadPost.content || Object.keys(payloadPost.album).length) {
           postBody.payloadPost = payloadPost
           const dataCreatePost = await this.$api.post.createPost(postBody)
+          dataCreatePost.data.post.isOwner = true
           this.$store.commit('post/newPost', dataCreatePost.data.post)
         }
         this.isLoadCreatePost = false

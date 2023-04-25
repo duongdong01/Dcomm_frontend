@@ -1,5 +1,5 @@
 <template>
-  <div class="flex space-x-2">
+  <div class="flex space-x-2 mt-2">
     <div class="min-w-[40px]">
       <a href="#" class="avatar_user  rounded-full cursor-pointer ">
         <img src="@/static/avatar/avatar1.jpg" class="rounded-full w-10 h-10" alt="avatar">
@@ -28,7 +28,14 @@
           </svg>
         </div>
       </div>
-      <img src="@/static/img-post-demo.jpg" alt="photo" class="max-h-[220px] max-w-[240px] rounded-2xl">
+      <img v-if="true" src="@/static/img-post-demo.jpg" alt="photo" class="max-h-[220px] max-w-[240px] rounded-2xl">
+      <div class="flex text-[12px] space-x-3 pl-2 font-medium">
+        <div>Upvote</div>
+        <div>Reply</div>
+        <div class="font-normal">
+          17m
+        </div>
+      </div>
     </div>
   </div>
 </template>

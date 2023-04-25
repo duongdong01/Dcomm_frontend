@@ -1,13 +1,13 @@
 <template>
-  <div class="flex flex-col ">
+  <div class="flex flex-col min-h-[100vh]">
     <div class=" fixed z-10 w-full flex justify-center bg-[#121212] border-[#303030] border-b-[1.5px]">
       <MainHeader class="max-w-[1400px] animation-default-header px-1" />
     </div>
-    <div class="grid grid-flow-col grid-cols-10  max-w-[1410px] mx-auto mt-24 gap-8">
+    <div class="grid grid-flow-col grid-cols-10  max-w-[1410px] mx-auto mt-24 gap-8 w-full">
       <div class="col-span-2 shrink">
-        <MainLeft class="overflow-y-auto sticky top-24 xl:w-[272px] md:w-[230px]" />
+        <MainLeft v-if="$route.path.split('/')[1]!=='post'" class="overflow-y-auto sticky top-24 xl:w-[272px] md:w-[230px]" />
       </div>
-      <div class="  col-span-8 flex">
+      <div class="col-span-8 flex">
         <nuxt />
       </div>
     </div>

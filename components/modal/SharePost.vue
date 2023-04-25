@@ -122,11 +122,11 @@
             </div>
             <div class="flex mt-4 px-2">
               <div class="w-9 h-9 overflow-hidden">
-                <img src="@/static/avatar/avatar1.jpg" alt="avatar" class="rounded-full">
+                <img :src="postShare.owner.avatar" alt="avatar" class="rounded-full object-cover w-9 h-9">
               </div>
               <div class="flex flex-col ml-3 -mt-1">
                 <p class="text-white font-medium">
-                  Duong Hello
+                  {{ postShare.owner.fullname }}
                 </p>
                 <div class="flex items-center gap-1 justify-center w-full -mt-2">
                   <p class="font-light text-white/80 text-sm">
@@ -136,6 +136,7 @@
                     .
                   </p>
                   <svg
+                    v-if="postShare?.privacy ===PostPrivacy.PUBLIC"
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
                     height="14"
@@ -145,8 +146,8 @@
                   >
                     <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.08.08-.162.158-.242.234-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z" />
                   </svg>
-                  <!-- <svg
-                    v-if="post?.privacy ===PostPrivacy.FRIENDS"
+                  <svg
+                    v-if="postShare?.privacy ===PostPrivacy.FRIENDS"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -155,18 +156,7 @@
                     viewBox="0 0 16 16"
                   >
                     <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                  </svg> -->
-                  <!-- <svg
-                    v-if="post?.privacy ===PostPrivacy.ONLY_ME"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-lock-fill"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
-                  </svg> -->
+                  </svg>
                 </div>
               </div>
             </div>
@@ -177,6 +167,7 @@
       <div class="flex justify-center">
         <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px] flex justify-center items-center relative" :disabled="isCreatePost" @click="createSharePost">
           Share
+          <Loading v-if="isCreatePost" class="absolute" />
         </button>
       </div>
     </div>
@@ -186,10 +177,11 @@
 <script>
 import { Mentionable } from 'vue-mention'
 import Lightbox from '../lightbox/Lightbox.vue'
+import Loading from '../loading/Loading.vue'
 import { PostActionOn, PostPrivacy, PostType } from '@/constants/post'
 
 export default {
-  components: { Mentionable, Lightbox },
+  components: { Mentionable, Lightbox, Loading },
   props: {
     postShare: {
       type: Object,
@@ -199,6 +191,7 @@ export default {
   data () {
     return {
       privacy: PostPrivacy.PUBLIC,
+      PostPrivacy,
       isCreatePost: false,
       isDebounce: null,
       items: [],
@@ -320,7 +313,10 @@ export default {
           payloadPost.content = this.$refs.textareaSharePost.innerHTML
         }
         sharePostBody.payloadPost = payloadPost
-        await this.$api.post.createSharePost(sharePostBody)
+        const dataCreatePost = await this.$api.post.createSharePost(sharePostBody)
+        dataCreatePost.data.post.isOwner = true
+        this.$store.commit('post/newPost', dataCreatePost.data.post)
+        this.hiddenModalSharePost()
         this.isCreatePost = false
       } catch (err) {
         //

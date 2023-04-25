@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-8 w-full gap-6">
+  <div ref="home" class="grid grid-cols-8 w-full gap-6">
     <div class="col-span-6 min-h-[100vh]">
       <create-post class="mb-4" :on="on" />
       <Sort />
@@ -61,7 +61,7 @@ export default {
       try {
         clearTimeout(this.isDebounce)
         this.isDebounce = setTimeout(async () => {
-          if (this.pageDetail.nextPage && !this.isLoadMore) {
+          if (this.$route.path === '/' && this.pageDetail.nextPage && !this.isLoadMore) {
             if (!this.isLoadMore && this.pageDetail.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
               this.isLoadMore = true
               await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore })

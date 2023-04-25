@@ -51,15 +51,8 @@
       </div>
       <button class="relative pr-2" @focusout="hideDropDown">
         <div class="flex justify-center items-center gap-[6px] btn-avatar h-12 px-1" @click="showDropDown()">
-          <img src="@/static/avatar/avatar-dscvr.png" alt="avatar" class="w-[38px] h-[38px] rounded-full">
-          <!-- <div class="flex flex-col text-sm font-medium text-white">
-            <h1 class="text-white font-bold truncate max-w-[96px]">
-              Duong1102a
-            </h1>
-            <div class="flex gap-1">
-              <img src="@/static/logo/dscvr-logo.png" alt="" class="w-4 h-4"> <span>230</span>
-            </div>
-          </div> -->
+          <img v-if="isLoaded" :src="user.avatar || imageData" alt="avatar" class="w-[38px] h-[38px] rounded-full object-cover">
+          <div v-if="!isLoaded" class="bg-white w-[38px] h-[38px] rounded-full" />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class=" text-white btn-svg_select"
@@ -148,11 +141,10 @@ export default {
   data: () => {
     return {
       isShowDropDown: false,
-      user: {
-        fullmame: '',
-        _id: ''
-      },
-      accessToken: window.localStorage.getItem('access_token')
+      user: {},
+      accessToken: window.localStorage.getItem('access_token'),
+      imageData: require('@/static/avatar/avatar1.jpg'),
+      isLoaded: false
 
     }
   },
@@ -183,11 +175,13 @@ export default {
     },
     async getMe () {
       try {
+        this.isLoaded = false
         if (window.localStorage.getItem('access_token')) {
           const dataUser = await this.$api.user.getMe()
           this.user = dataUser.data.user
           this.$store.commit('setUserInfo', this.user)
         }
+        this.isLoaded = true
       } catch (err) {
       }
     }
