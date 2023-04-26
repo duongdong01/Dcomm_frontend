@@ -9,7 +9,7 @@
           <p class="text-white font-medium hover:underline">
             {{ post?.owner.fullname }}
           </p>
-          <div class="flex items-center gap-1 justify-center w-full -mt-2">
+          <div class="flex items-center gap-1  w-full -mt-2">
             <p v-if="post" class="font-light text-white/80 text-sm">
               {{ timeAgo(post.createdAt) }}
             </p>
@@ -282,8 +282,11 @@
       <div class="border-b-[1px] border-gray-700 mt-2" />
     </div>
 
-    <ItemComment v-if="false" class="mt-2 flex w-full" />
-    <Comment class="mt-2" :post-id="post?._id" />
+    <!-- <ItemComment v-if="false" class="mt-2 flex w-full" /> -->
+    <Comment class="mt-2" :post-id="post?._id" :comments="$route.path.split('/')[1]==='post'? commentList : post.comments" />
+    <nuxt-link v-if="post.countComment>1 && $route.path==='/'" :to="`/post/${post._id}`" class="font-medium mt-[1px] hover:underline cursor-pointer" tag="div">
+      View more comments
+    </nuxt-link>
     <confirm-dialogue ref="confirmDialogue" />
     <SharePost v-if="isShareModal" class="w-full h-full top-0 left-0" :post-share="post.type=== 'NORMAL' ? post : post.originPost" @hiddenShareModal="hiddenShareModal" />
   </div>
@@ -292,18 +295,22 @@
 <script>
 import Comment from '../comment/Comment.vue'
 import Lightbox from '../lightbox/Lightbox.vue'
-import ItemComment from '../comment/ItemComment.vue'
 import ConfirmDialogue from '@/components/modal/ConfirmDialogue.vue'
 import { PostPrivacy, PostType } from '~/constants/post'
 import { ReactionOn, ReactionType } from '~/constants/reaction'
 import SharePost from '~/components/modal/SharePost.vue'
 
 export default {
-  components: { Lightbox, Comment, ItemComment, ConfirmDialogue, SharePost },
+  components: { Lightbox, Comment, ConfirmDialogue, SharePost },
   props: {
     post: {
       type: Object,
       default: () => {}
+    },
+    commentList: {
+      type: Array,
+      default: () => [],
+      required: false
     }
   },
   data: () => {

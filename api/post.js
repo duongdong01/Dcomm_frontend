@@ -13,5 +13,8 @@ export default axios => ({
   },
   getPostById (postId) {
     return axios.get(`/post/get-post-by-id/${postId}`).then(_ => _.data)
+  },
+  getPostByUserId ({ userId, limit, page }) {
+    return axios.get(`/post/get-posts-by-user-id/${userId}?page=${page}&limit=${limit}`).then(_ => _.data)
   }
 })

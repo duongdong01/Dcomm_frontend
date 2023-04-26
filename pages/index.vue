@@ -29,22 +29,32 @@ export default {
     return {
       on: PostActionOn.PERSONAL,
       isLoadMore: false,
-      isDebounce: null
+      isDebounce: null,
+      count: 0
     }
   },
   computed: {
     feeds () {
+      console.log('11111111111', this.$store.getters['post/feeds'])
       return this.$store.getters['post/feeds']
     },
     pageDetail () {
       return this.$store.getters['post/pageDetail']
     }
   },
+  watch: {
+
+  },
   mounted () {
-    window.addEventListener('scroll', this.debounce(this.loadMore, 300))
+    if (this.$route.path === '/') {
+      window.addEventListener('scroll', this.loadMore)
+    }
   },
   async created () {
     await this.getPostFeed({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
+  },
+  beforeDestroy () {
+    window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
     debounce (func, timeout = 300) {

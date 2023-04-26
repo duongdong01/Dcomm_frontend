@@ -4,7 +4,7 @@
     <div class="grid grid-cols-12 create_comment pt-1">
       <div class="w-10 h-10 overflow-hidden col-span-1">
         <a href="#" class="avatar_user  rounded-full cursor-pointer ">
-          <img src="@/static/avatar/avatar1.jpg" class="rounded-full" alt="avatar">
+          <img :src="userInfo?.avatar" class="rounded-full object-cover w-10 h-10" alt="avatar">
         </a>
       </div>
       <!-- mention -->
@@ -103,7 +103,6 @@
         <div v-for="(item,index) in previewImage" :key="index" class="py-2 h-[25vh] rounded-xl flex justify-center flex-col relative ">
           <video v-if="['mp4'].includes(item.name.split('.')[item.name.split('.').length-1])" controls class="h-full rounded-xl w-[100%] object-cover">
             <source :src="item.dataImg" type="video/mp4">
-            Your browser does not support the video tag.
           </video>
           <img v-else :src="item.dataImg" class="h-full rounded-xl w-[100%] object-cover">
           <div class="flex justify-center items-center w-6 h-6 absolute top-3 right-2 rounded-full bg-gray-800 cursor-pointer hover:bg-btn_hover">
@@ -122,8 +121,11 @@
         </div>
       </div>
     </div>
-    <div class="flex">
-      <ItemComment />
+    <div v-for="item in listOwnerCreateComment" :key="item._id" class="flex">
+      <ItemComment :comment="item" />
+    </div>
+    <div v-for="(item) in comments" :key="item._id" class="flex">
+      <ItemComment :comment="item" />
     </div>
   </div>
 </template>
@@ -141,7 +143,16 @@ export default {
     }
   },
   components: { Mentionable, LoadingSpin, ItemComment },
-  props: ['on', 'postId'],
+  props: {
+    postId: {
+      type: String,
+      default: () => String
+    },
+    comments: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
       text: '',
@@ -153,7 +164,8 @@ export default {
       count: 0,
       isDebounce: null,
       isLoadCreatePost: false,
-      isLoaded: false
+      isLoaded: false,
+      listOwnerCreateComment: []
     }
   },
   computed: {
@@ -216,9 +228,11 @@ export default {
               formData.append('files', el)
             })
             const filesData = await this.$api.upload.uploadFilesToAws(formData)
-            commentBody.files = filesData.data[0]
+            commentBody.fileUrl = filesData.data[0].url
           }
-          await this.$api.comment.createComment(commentBody)
+          const commentData = await this.$api.comment.createComment(commentBody)
+          console.log(commentData)
+          this.listOwnerCreateComment.unshift(commentData.data.data.comment)
           this.$store.commit('post/commentPost', this.postId)
           this.reset()
           this.isLoaded = false

@@ -337,7 +337,9 @@
     <div class="w-full grid grid-cols-8 gap-2">
       <div class=" w-full" :class="$route.path.split('/')[3] === 'friends' ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
-          <Post />
+          <div v-for="item in feedProfile" :key="item._id">
+            <Post :post="item" />
+          </div>
         </div>
         <NuxtChild class="px-4" />
       </div>
@@ -387,17 +389,38 @@ export default {
       isLoadedCancelRequest: false,
       isLoadedAcceptFriend: false,
       isLoadedRefuseFriend: false,
-      isDisable: false
+      isDisable: false,
+      posts: [],
+      isLoadMore: false,
+      isDebounce: null
     }
   },
   computed: {
     defaultAvatar () {
       return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZjxtpW8HD6X1SbNWDdsLRnv_gISY1LVJ8L4si0KBw&s'
+    },
+    feedProfile () {
+      return this.$store.getters['post/feedProfile']
+    },
+    pageDetailPostProfile () {
+      return this.$store.getters['post/pageDetailPostProfile']
     }
   },
   async created () {
     await this.getUserProfile()
+    await this.getPostFeedProfile({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
     this.isLoaded = true
+  },
+  mounted () {
+    console.log('mounted')
+    if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3) {
+      console.log('1111111111')
+      window.addEventListener('scroll', this.loadMore)
+    }
+  },
+  beforeDestroy () {
+    console.log('delete')
+    window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
     ...mapMutations(['showFollower']),
@@ -422,6 +445,9 @@ export default {
       } catch (err) {
         this.$router.push('/')
       }
+    },
+    async getPostByUserId (post, limit, page) {
+
     },
     async removeFriendByUserId () {
       try {
@@ -488,6 +514,32 @@ export default {
         this.isLoadedAcceptFriend = false
         this.isDisable = false
         console.log(err)
+      }
+    },
+
+    // post-------------------------------post----------------------------
+    async getPostFeedProfile ({ limit, page, isLoadMore }) {
+      try {
+        await this.$store.dispatch('post/getPostFeedProfile', { userId: this.$route.params.id, limit, page, isLoadMore })
+      } catch (err) {
+        //
+      }
+    },
+    loadMore () {
+      try {
+        console.log('loadMore')
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3 && this.pageDetailPostProfile.nextPage && !this.isLoadMore) {
+            if (!this.isLoadMore && this.pageDetailPostProfile.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
+              this.isLoadMore = true
+              await this.getPostFeedProfile({ limit: 5, page: this.pageDetailPostProfile.nextPage, isLoadMore: this.isLoadMore })
+              this.isLoadMore = false
+            }
+          }
+        }, 300)
+      } catch (err) {
+        //
       }
     }
   }

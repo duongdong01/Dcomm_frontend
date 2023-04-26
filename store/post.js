@@ -1,6 +1,8 @@
 export const state = () => ({
   feeds: [],
   pageDetail: {},
+  feedProfile: [],
+  pageDetailPostProfile: {},
   isOpenModalSharePost: false
 })
 
@@ -11,6 +13,12 @@ export const getters = {
   pageDetail: (state) => {
     return state.pageDetail
   },
+  feedProfile: (state) => {
+    return state.feedProfile
+  },
+  pageDetailPostProfile: (state) => {
+    return state.pageDetailPostProfile
+  },
   isOpenModalSharePost: (state) => {
     return state.isOpenModalSharePost
   }
@@ -19,12 +27,32 @@ export const mutations = {
   setSharePostModal: (state, show) => {
     state.isOpenModalSharePost = show
   },
+  setFeedProfile: (state, { isLoadMore, data }) => {
+    if (isLoadMore) {
+      state.feedProfile.push(...data)
+    } else {
+      state.feedProfile = data
+    }
+  },
   setFeeds: (state, { isLoadMore, data }) => {
     if (isLoadMore) {
       state.feeds.push(...data)
     } else {
       state.feeds = data
     }
+  },
+  setPageDetailPostProfile: (state, data) => {
+    state.pageDetailPostProfile = data
+  },
+  deletePostPostProfile: (state, postId) => {
+    let count = 0
+    for (let i = 0; i < state.feedProfile.length; i++) {
+      if (state.feedProfile[i]._id.toString() === postId.toString()) {
+        count = i
+        break
+      }
+    }
+    state.feedProfile.splice(count, 1)
   },
   setPageDetail: (state, data) => {
     state.pageDetail = data
@@ -41,7 +69,6 @@ export const mutations = {
       }
     }
     state.feeds.splice(count, 1)
-    console.log(state.feeds, count, count + 1)
   },
   toggleLikePost: (state, postId) => {
     state.feeds.forEach((el) => {
@@ -72,6 +99,15 @@ export const actions = {
       const feedData = await this.$api.post.getPostFeeds({ limit, page })
       commit('setFeeds', { isLoadMore, data: feedData.data.posts })
       commit('setPageDetail', feedData.data.pageDetail)
+    } catch (err) {
+      //
+    }
+  },
+  async getPostFeedProfile ({ commit, state }, { userId, limit, page, isLoadMore }) {
+    try {
+      const feedData = await this.$api.post.getPostByUserId({ userId, limit, page })
+      commit('setFeedProfile', { isLoadMore, data: feedData.data.posts })
+      commit('setPageDetailPostProfile', feedData.data.pageDetail)
     } catch (err) {
       //
     }

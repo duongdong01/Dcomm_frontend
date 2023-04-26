@@ -1,7 +1,7 @@
 <template>
-  <div class="grid grid-cols-8 w-full gap-6 mb-3">
+  <div class="grid grid-cols-8 w-full gap-6 mb-20 h-auto">
     <div class="col-span-6">
-      <Post v-if="isLoaded" :post="post" class="w-full" />
+      <Post v-if="isLoaded" :post="post" class="w-full" :comment-list="comments" />
     </div>
   </div>
 </template>
@@ -15,11 +15,14 @@ export default {
     return {
       PostActionOn,
       post: {},
-      isLoaded: false
+      isLoaded: false,
+      comments: [],
+      isLoadedComment: false
     }
   },
   async created () {
     await this.getPostById(this.$route.params.id)
+    await this.getCommentByPostId(this.$route.params.id, 10, 1)
   },
   methods: {
     async getPostById (postId) {
@@ -32,6 +35,17 @@ export default {
         //
         this.$toast.error('System error.', { timeout: 1500 })
         this.$router.push('/')
+      }
+    },
+    async getCommentByPostId (postId, limit, page) {
+      try {
+        this.isLoadedComment = false
+        const commentData = await this.$api.comment.getCommentByPostId({ postId, limit, page })
+        this.comments.push(...commentData.data.comments)
+        console.log(this.comments)
+        this.isLoadedComment = true
+      } catch (err) {
+        //
       }
     }
   }
