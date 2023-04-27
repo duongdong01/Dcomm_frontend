@@ -4,7 +4,7 @@
     <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
     <div class="grid grid-cols-12 create_post gap-1 px-6 pt-5 ">
       <a href="#" class="avatar_user w-11 h-11 rounded-full cursor-pointer col-span-1">
-        <img :src="userInfo?.avatar|| imgDefault" class="rounded-full object-cover  w-11 h-11" alt="avatar">
+        <img :src="userInfo?.avatar" class="rounded-full object-cover  w-11 h-11" alt="avatar">
       </a>
       <div class="w-full relative col-span-11">
         <Mentionable

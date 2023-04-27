@@ -337,7 +337,7 @@
     <div class="w-full grid grid-cols-8 gap-2">
       <div class=" w-full" :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
-          <div v-for="item in feedProfile" :key="item._id">
+          <div v-for="item in feedProfile" :key="item._id" class="mb-4">
             <Post :post="item" />
           </div>
         </div>
@@ -412,18 +412,17 @@ export default {
   },
   async created () {
     await this.getUserProfile()
+    console.log('get 99999999')
     await this.getPostFeedProfile({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
     this.isLoaded = true
   },
   mounted () {
     console.log('mounted')
     if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3) {
-      console.log('1111111111')
       window.addEventListener('scroll', this.loadMore)
     }
   },
   beforeDestroy () {
-    console.log('delete')
     window.removeEventListener('scroll', this.loadMore)
   },
   methods: {

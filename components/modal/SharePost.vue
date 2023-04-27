@@ -181,6 +181,13 @@ import Loading from '../loading/Loading.vue'
 import { PostActionOn, PostPrivacy, PostType } from '@/constants/post'
 
 export default {
+  directives: {
+    focus: {
+      inserted (el) {
+        el.focus()
+      }
+    }
+  },
   components: { Mentionable, Lightbox, Loading },
   props: {
     postShare: {
@@ -211,18 +218,12 @@ export default {
           url: 'https://antimatter.vn/wp-content/uploads/2022/05/hinh-anh-hot-girl-han-quoc.jpg'
         }
 
-      ],
-      postTest: this.postShare
+      ]
     }
   },
   computed: {
     userInfo () {
       return this.$store.getters.userInfo
-    }
-  },
-  watch: {
-    postTest () {
-      console.log('111111111', this.postTest)
     }
   },
   mounted () {

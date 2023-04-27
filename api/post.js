@@ -16,5 +16,8 @@ export default axios => ({
   },
   getPostByUserId ({ userId, limit, page }) {
     return axios.get(`/post/get-posts-by-user-id/${userId}?page=${page}&limit=${limit}`).then(_ => _.data)
+  },
+  updatePostNormal (postId, data) {
+    return axios.put(`/post/update-post-normal/${postId}`, { ...data })
   }
 })

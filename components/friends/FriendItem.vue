@@ -38,7 +38,6 @@
         </div>
       </div>
     </button>
-    <friend-view :current="current" class="z-15 absolute top-56" />
   </div>
 </template>
 <script>

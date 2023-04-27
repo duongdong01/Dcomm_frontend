@@ -4,7 +4,7 @@
       <create-post class="mb-4" :on="on" />
       <Sort />
       <div>
-        <div v-for="item in feeds" :key="item._id">
+        <div v-for="(item,index) in feeds" :key="`${item._id}+${index}`">
           <Post :post="item" />
         </div>
         <nuxt-child />
@@ -35,7 +35,6 @@ export default {
   },
   computed: {
     feeds () {
-      console.log('11111111111', this.$store.getters['post/feeds'])
       return this.$store.getters['post/feeds']
     },
     pageDetail () {

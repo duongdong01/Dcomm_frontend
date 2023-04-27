@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-8 w-full gap-6 mb-20 h-auto">
+  <div class="grid grid-cols-8 w-full gap-6 mb-24 h-auto">
     <div class="col-span-6">
       <Post v-if="isLoaded" :post="post" class="w-full" :comment-list="comments" />
     </div>

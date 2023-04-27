@@ -5,7 +5,7 @@
         v-for="(file, i) in items"
         v-if="i<cells"
         :key="i"
-        class="lb-item bg-white/80"
+        class="lb-item bg-white/90"
         :class="items.length > 2 ? 'border-t-[#fff] border-t-[2px]  bg-cover':'bg-contain'"
         :href="items[i].url"
         role="link"

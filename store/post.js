@@ -84,7 +84,22 @@ export const mutations = {
         }
       }
     })
+
+    state.feedProfile.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        if (el.isReactions) {
+          if (el.countReaction > 0) {
+            el.isReactions = false
+            el.countReaction -= 1
+          }
+        } else {
+          el.isReactions = true
+          el.countReaction += 1
+        }
+      }
+    })
   },
+
   commentPost: (state, postId) => {
     state.feeds.forEach((el) => {
       if (el._id.toString() === postId.toString()) {

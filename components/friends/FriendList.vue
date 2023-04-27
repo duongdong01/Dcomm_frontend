@@ -49,7 +49,6 @@ export default {
   components: { FriendItem },
   data () {
     return {
-      countFriends: 123,
       isLoaded: false,
       friends: [],
       pageDetail: {},

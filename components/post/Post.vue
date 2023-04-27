@@ -2,13 +2,13 @@
   <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' ? 'mt-4' :'mt-[0.2px]'">
     <header class="flex justify-between cursor-pointer">
       <div class="flex w-fit">
-        <nuxt-link :to="`/profile_detail/${post._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
+        <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
           <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
         </nuxt-link>
         <div class="flex flex-col ml-3 -mt-1">
-          <p class="text-white font-medium hover:underline">
+          <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="text-white font-medium hover:underline" tag="div">
             {{ post?.owner.fullname }}
-          </p>
+          </nuxt-link>
           <div class="flex items-center gap-1  w-full -mt-2">
             <p v-if="post" class="font-light text-white/80 text-sm">
               {{ timeAgo(post.createdAt) }}
@@ -67,7 +67,7 @@
           </svg>
           <!-- delete + report post -->
           <div v-if="isShowOptionPost" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-[4]">
-            <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+            <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="showModalEdit">
               <svg
 
                 xmlns="http://www.w3.org/2000/svg"
@@ -289,6 +289,7 @@
     </nuxt-link>
     <confirm-dialogue ref="confirmDialogue" />
     <SharePost v-if="isShareModal" class="w-full h-full top-0 left-0" :post-share="post.type=== 'NORMAL' ? post : post.originPost" @hiddenShareModal="hiddenShareModal" />
+    <EditPost v-if="isEditModal" :post="post" @hiddenEditModal="hiddenEditModal" />
   </div>
 </template>
 
@@ -299,9 +300,10 @@ import ConfirmDialogue from '@/components/modal/ConfirmDialogue.vue'
 import { PostPrivacy, PostType } from '~/constants/post'
 import { ReactionOn, ReactionType } from '~/constants/reaction'
 import SharePost from '~/components/modal/SharePost.vue'
+import EditPost from '@/components/modal/EditPost.vue'
 
 export default {
-  components: { Lightbox, Comment, ConfirmDialogue, SharePost },
+  components: { Lightbox, Comment, ConfirmDialogue, SharePost, EditPost },
   props: {
     post: {
       type: Object,
@@ -325,6 +327,7 @@ export default {
       isShowMoreContent: false,
       isShowMoreContentShare: false,
       isShareModal: false,
+      isEditModal: false,
       images: [
         {
 
@@ -383,6 +386,12 @@ export default {
     },
     showModalShare () {
       this.isShareModal = true
+    },
+    showModalEdit () {
+      this.isEditModal = true
+    },
+    hiddenEditModal () {
+      this.isEditModal = false
     },
     toggleShowOption () {
       this.isShowOptionPost = !this.isShowOptionPost

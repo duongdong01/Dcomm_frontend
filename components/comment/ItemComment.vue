@@ -1,9 +1,9 @@
 <template>
   <div class="flex space-x-2 mt-2">
     <div class="min-w-[40px]">
-      <a href="#" class="avatar_user  rounded-full cursor-pointer ">
+      <nuxt-link :to="`/profile_detail/${comment.ownerId}`" class="avatar_user  rounded-full cursor-pointer ">
         <img :src="comment?.owner?.avatar" class="rounded-full w-10 h-10 object-cover" alt="avatar">
-      </a>
+      </nuxt-link>
     </div>
     <div class="flex flex-col">
       <div class="flex space-x-2 relative">
