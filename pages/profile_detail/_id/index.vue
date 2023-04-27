@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full min-h-screen ">
+  <div class="flex flex-col w-full min-h-screen">
     <div class="header-profile bg-gray_850 h-[520px] w-full rounded-2xl  relative">
       <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
         <div class="animate-pulse flex space-x-4" />
@@ -335,7 +335,7 @@
       </div>
     </div>
     <div class="w-full grid grid-cols-8 gap-2">
-      <div class=" w-full" :class="$route.path.split('/')[3] === 'friends' ? 'col-span-8' :'col-span-6'">
+      <div class=" w-full" :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
           <div v-for="item in feedProfile" :key="item._id">
             <Post :post="item" />
@@ -343,15 +343,18 @@
         </div>
         <NuxtChild class="px-4" />
       </div>
-      <div :class="$route.path.split('/')[3] === 'friends' ? 'hidden' :''" class="col-span-2 w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
-        <p class="text-[18px] font-semibold">
-          About
-        </p>
-        <p>Hello world</p>
-        <p>
-          Music magazine in web3.
-        </p>
-        <p>   Discover new music.</p>
+      <div :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'hidden' :''" class="col-span-2 text-white flex flex-col">
+        <div class="w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
+          <p class="text-[18px] font-semibold">
+            About
+          </p>
+          <p>Hello world</p>
+          <p>
+            Music magazine in web3.
+          </p>
+          <p>   Discover new music.</p>
+        </div>
+        <AlbumShort />
       </div>
     </div>
   </div>
@@ -360,10 +363,11 @@
 import { mapMutations } from 'vuex'
 import Post from '~/components/post/Post.vue'
 import Loading from '@/components/loading/Loading.vue'
+import AlbumShort from '~/components/album/AlbumShort.vue'
 export default {
   name: 'ProfileDetailId',
   components: {
-    Post, Loading
+    Post, Loading, AlbumShort
   },
   data: () => {
     return {

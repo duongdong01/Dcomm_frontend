@@ -46,12 +46,17 @@ export default {
   data () {
     return {
       listFollower: [],
-      countPage: 1
+      countPage: 1,
+      isLoadMore: false
     }
   },
   async mounted () {
     await this.getListFriendRequests(this.countPage, 10, '')
-    document.getElementById('scrollFollower').addEventListener('scroll', this.loadMoreFollower)
+    document.getElementById('scrollFollower').addEventListener('scroll', this.loadMore)
+    document.querySelector('body').classList.add('disable-scroll')
+  },
+  destroyed () {
+    document.querySelector('body').classList.remove('disable-scroll')
   },
   methods: {
     ...mapMutations(['showFollower']),
@@ -67,11 +72,21 @@ export default {
     fetchFollower (id) {
       this.listFollower = this.listFollower.filter(current => current._id.toString() !== id.toString())
     },
-    loadMoreFollower () {
-      const tmp = document.getElementById('scrollFollower')
-
-      if (this.countPage !== null && tmp.scrollTop >= 100) {
-        this.getListFriendRequests(this.countPage, 10, '')
+    loadMore () {
+      try {
+        clearTimeout(this.isDebounce)
+        this.isDebounce = setTimeout(async () => {
+          const tmp = document.getElementById('scrollFollower')
+          if (this.countPage && !this.isLoadMore) {
+            if (!this.isLoadMore && this.countPage && tmp.scrollTop + tmp.clientHeight >= tmp.scrollHeight - 10) {
+              this.isLoadMore = true
+              await this.getListFriendRequests(this.countPage, 10, '')
+              this.isLoadMore = false
+            }
+          }
+        }, 300)
+      } catch (err) {
+        //
       }
     }
   }
@@ -96,5 +111,10 @@ export default {
 .scroll-right-edit::-webkit-scrollbar-thumb {
   background-color: #686868;
   border: 2px solid #686868;
+}
+
+.disable-scroll {
+  height: 100vh;
+  overflow-y: hidden;
 }
 </style>

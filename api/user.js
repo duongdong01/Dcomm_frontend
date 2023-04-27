@@ -4,5 +4,8 @@ export default axios => ({
   },
   getUserProfile (userId) {
     return axios.get(`/users/profile/${userId}`).then(_ => _.data)
+  },
+  getListMedias ({ userId, page, limit }) {
+    return axios.get(`album-file/get-all-media-by-user/${userId}?page=${page}&limit=${limit}`).then(_ => _.data)
   }
 })
