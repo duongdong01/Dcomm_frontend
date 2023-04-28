@@ -5,8 +5,8 @@
         v-for="(file, i) in items"
         v-if="i<cells"
         :key="i"
-        class="lb-item bg-white/90"
-        :class="items.length > 2 ? 'border-t-[#fff] border-t-[2px]  bg-cover':'bg-contain'"
+        class="lb-item "
+        :class="[items.length > 2 ? 'border-t-[#fff] border-t-[2px] bg-cover  ':'bg-contain ',items.length >= 2 ?'bg-image':'bg-white' ]"
         :href="items[i].url"
         role="link"
         :style="!['mp4'].includes(file.url.split('.')[file.url.split('.').length-1]) ? bg(file.url) :''"
@@ -148,6 +148,12 @@ export default {
 </script>
 
 <style lang="scss">
+.bg-image {
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .lb-grid{
   @apply md:h-[400px] lg:h-[600px] h-[300px]
 }
@@ -293,6 +299,7 @@ export default {
 .lb-modal-img img ,video{
     max-width: 100%;
     max-height: 100%;
+    min-width: 240px;
     vertical-align: middle;
     object-fit: contain;
 }

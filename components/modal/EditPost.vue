@@ -79,7 +79,7 @@
             </div>
           </template>
         </Mentionable>
-        <div class="flex justify-center text-center absolute top-[72px] right-12">
+        <div v-if="post.type === PostType.NORMAL" class="flex justify-center text-center absolute top-[72px] right-12">
           <label :for="`file-edit${post._id}`" class="flex"><svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -222,8 +222,9 @@
         </div>
       </div>
       <div class="flex justify-center">
-        <button class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px] flex justify-center items-center relative" @click="savePost">
+        <button :disable="isEditPosted" class="text-white bg-primary px-4 py-[10px] rounded-xl min-w-[140px] flex justify-center items-center relative" @click="savePost">
           Save
+          <Loading v-if="isEditPosted" class="absolute" />
         </button>
       </div>
     </div>
@@ -232,6 +233,7 @@
 
 <script>
 import { Mentionable } from 'vue-mention'
+import Loading from '../loading/Loading.vue'
 import { PostPrivacy, PostType } from '@/constants/post'
 export default {
   directives: {
@@ -241,7 +243,7 @@ export default {
       }
     }
   },
-  components: { Mentionable },
+  components: { Mentionable, Loading },
   props: {
     post: {
       type: Object,
@@ -261,7 +263,8 @@ export default {
       editPost: this.post,
       imageUpload: [],
       albums: [],
-      removeFiles: []
+      removeFiles: [],
+      isEditPosted: false
     }
   },
   computed: {
@@ -334,28 +337,6 @@ export default {
       })
       this.albums = newImg
     },
-    checkEmpty () {
-      if (!this.$refs.textareaEditPost.innerHTML.length && !this.imageUpload.length && !this.albums.length) {
-        return
-      }
-      if (this.$refs.textareaEditPost.innerHTML.length && !this.imageUpload.length && !this.albums.length) {
-        const checkContentNull = this.$refs.textareaEditPost.innerHTML.split(';')
-        const listNbsp = checkContentNull.map(el => el.trim())
-        let count = 0
-        if (listNbsp[listNbsp.length - 1].toString() !== '') {
-          count++
-        }
-        for (let i = 0; i < listNbsp.length - 1; i++) {
-          if (listNbsp[i].toString() !== '&nbsp') {
-            count++
-          }
-        }
-        if (count === 0) {
-          //
-
-        }
-      }
-    },
     filterUserMentions (userMentions) {
       // neu post co mention
       const addUserMentions = []
@@ -386,11 +367,12 @@ export default {
     },
     async savePost () {
       try {
-        if (this.$refs.textareaEditPost.textContent.length === 0 && !this.albums.length && !this.imageUpload.length) {
-          console.log('empty ')
-          return
+        this.isEditPosted = true
+        if (this.post.type === PostType.NORMAL) {
+          if (this.$refs.textareaEditPost.textContent.length === 0 && !this.albums.length && !this.imageUpload.length) {
+            return
+          }
         }
-        console.log('OK')
         const postBody = {
           privacy: this.privacy
         }
@@ -421,31 +403,44 @@ export default {
         }
         const updatePostNormal = {
         }
-        if (this.$refs.textareaEditPost.textContent.length) {
-          updatePostNormal.content = this.$refs.textareaEditPost.innerHTML
-        }
+        updatePostNormal.content = this.$refs.textareaEditPost.innerHTML
         if (Object.keys(updatePostNormal).length) {
-          postBody.updatePostNormal = updatePostNormal
+          if (this.post.type === PostType.NORMAL) {
+            postBody.updatePostNormal = updatePostNormal
+          } else {
+            postBody.updatePostShare = updatePostNormal
+          }
         }
-        const album = {}
-        if (this.imageUpload.length) {
-          const formData = new FormData()
-          this.imageUpload.forEach((el) => {
-            formData.append('files', el)
-          })
-          const filesData = await this.$api.upload.uploadFilesToAws(formData)
-          album.addFiles = filesData.data
+        if (this.post.type === PostType.NORMAL) {
+          const album = {}
+          if (this.imageUpload.length) {
+            const formData = new FormData()
+            this.imageUpload.forEach((el) => {
+              formData.append('files', el)
+            })
+            const filesData = await this.$api.upload.uploadFilesToAws(formData)
+            album.addFiles = filesData.data
+          }
+          if (this.removeFiles.length) {
+            album.removeFiles = this.removeFiles
+          }
+          if (Object.keys(album).length) {
+            postBody.updatePostNormal.album = album
+          }
         }
-        if (this.removeFiles.length) {
-          album.removeFiles = this.removeFiles
+
+        if (this.post.type === PostType.NORMAL) {
+          const postData = await this.$api.post.updatePostNormal(this.post._id, postBody)
+          this.$store.commit('post/updatePost', postData.data.post)
+        } else {
+          await this.$api.post.updatePostShare(this.post._id, postBody)
         }
-        if (Object.keys(album).length) {
-          postBody.updatePostNormal.album = album
-        }
-        await this.$api.post.updatePostNormal(this.post._id, postBody)
+        this.isEditPosted = false
         this.hiddenModalEdit()
       } catch (err) {
         //
+        this.isEditPosted = false
+        this.hiddenModalEdit()
       }
     },
     hiddenModalEdit () {

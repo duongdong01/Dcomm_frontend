@@ -324,11 +324,11 @@
             width="20"
             height="20"
             fill="currentColor"
-            class="bi bi-person-check-fill w-6 h-6"
+            class="bi bi-images"
             viewBox="0 0 16 16"
           >
-            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+            <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
           </svg>
           Medias
         </nuxt-link>
@@ -344,15 +344,19 @@
         <NuxtChild class="px-4" />
       </div>
       <div :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'hidden' :''" class="col-span-2 text-white flex flex-col">
-        <div class="w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 mt-4 border border-gray-700">
-          <p class="text-[18px] font-semibold">
+        <div class="w-full h-40 rounded-xl text-white bg-gray_850 px-3 py-3 flex flex-col space-y-3 border border-gray-700">
+          <p class=" font-semibold">
             About
           </p>
-          <p>Hello world</p>
-          <p>
+          <p class="text-gray-400">
+            Hello world
+          </p>
+          <p class="text-gray-400">
             Music magazine in web3.
           </p>
-          <p>   Discover new music.</p>
+          <p class="text-gray-400">
+            Discover new music.
+          </p>
         </div>
         <AlbumShort />
       </div>

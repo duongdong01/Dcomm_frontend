@@ -106,6 +106,16 @@ export const mutations = {
         el.countComment += 1
       }
     })
+  },
+  updatePost: (state, post) => {
+    let index = 0
+    for (let i = 0; i < state.feeds.length; i++) {
+      if (state.feeds[i]._id.toString() === post._id.toString()) {
+        index = i
+        break
+      }
+    }
+    state.feeds.splice(index, 1, post)
   }
 }
 export const actions = {
