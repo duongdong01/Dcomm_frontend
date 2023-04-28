@@ -1,7 +1,7 @@
 <template>
   <div class=" rounded-xl text-white bg-gray_850 px-3 py-3 mt-4 border border-gray-700 grid grid-cols-2 gap-1">
     <div class="flex justify-between col-span-2 mb-1">
-      <div>
+      <div class="font-semibold">
         Media
       </div>
       <nuxt-link :to="`/profile_detail/${$route.params.id}/medias`" tag="button">
