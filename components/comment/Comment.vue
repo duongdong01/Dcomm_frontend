@@ -74,8 +74,8 @@
                 <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
               </svg>
             </button>
-            <div slot="emoji-picker" slot-scope="{ emojis, insert }" >
-              <div class="emoji-picker" :class="$route.path.split('/')[1]==='post' ?'absolute -bottom-28':''" >
+            <div slot="emoji-picker" slot-scope="{ emojis, insert }">
+              <div class="emoji-picker" :class="$route.path.split('/')[1]==='post' ?'absolute -bottom-28':''">
                 <div class="emoji-picker__search">
                   <input v-model="search" v-focus type="text">
                 </div>
@@ -122,10 +122,10 @@
       </div>
     </div>
     <div v-for="item in listOwnerCreateComment" :key="item._id" class="flex">
-      <ItemComment :comment="item" />
+      <ItemComment :comment="item" @upvote="upvoteNew(item._id)" @deleteComment="deleteComment" />
     </div>
     <div v-for="(item) in comments" :key="item._id" class="flex">
-      <ItemComment :comment="item" />
+      <ItemComment :comment="item" @upvoteCommentInFeed="upvoteCommentInFeed(item._id)" @deleteComment="deleteCommentInFeed" />
     </div>
   </div>
 </template>
@@ -176,6 +176,55 @@ export default {
   mounted () {
   },
   methods: {
+    deleteComment (data) {
+      const { commentId } = data
+      let index = 0
+      for (let i = 0; i < this.listOwnerCreateComment.length; i++) {
+        if (this.listOwnerCreateComment[i]._id.toString() === commentId.toString()) {
+          index = 0
+          break
+        }
+      }
+      this.listOwnerCreateComment.splice(index, 1)
+    },
+    upvoteNew (commentId) {
+      for (let i = 0; i < this.listOwnerCreateComment.length; i++) {
+        if (this.listOwnerCreateComment[i]._id.toString() === commentId.toString()) {
+          if (this.listOwnerCreateComment[i].isReaction) {
+            if (this.listOwnerCreateComment[i].countReaction > 0) {
+              this.listOwnerCreateComment[i].isReaction = false
+              this.listOwnerCreateComment[i].countReaction -= 1
+              break
+            }
+          } else {
+            this.listOwnerCreateComment[i].isReaction = true
+            this.listOwnerCreateComment[i].countReaction += 1
+            break
+          }
+        }
+      }
+    },
+    deleteCommentInFeed (data) {
+      if (this.$route.path === '/') {
+        this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'FEED' })
+      }
+      if (this.$route.path.split('/')[1] === 'profile_detail') {
+        this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'PROFILE' })
+      }
+      if (this.$route.path.split('/')[1] === 'post') {
+        const { commentId, postId } = data
+        this.$store.commit('comment/deleteComment', commentId)
+        this.$store.commit('post/changeCountComment', { postId, type: 'REMOVE' })
+        console.log('11111111111111111')
+        // await this.$api.comment.deleteComment(commentId)
+        // this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'PROFILE' })
+      }
+    },
+    upvoteCommentInFeed (commentId) {
+      if (this.$route.path === '/' || this.$route.path.split('/')[1] === 'profile_detail') {
+        this.$store.commit('post/toggleLikeComment', { commentId, postId: this.postId })
+      }
+    },
     onSubmit (e) {
       try {
         e.preventDefault()
@@ -231,8 +280,10 @@ export default {
             commentBody.fileUrl = filesData.data[0].url
           }
           const commentData = await this.$api.comment.createComment(commentBody)
-          console.log(commentData)
           this.listOwnerCreateComment.unshift(commentData.data.data.comment)
+          if (this.$route.path.split('/')[1] === 'post') {
+            this.$store.commit('post/changeCountComment', { postId: this.postId, type: 'ADD' })
+          }
           this.$store.commit('post/commentPost', this.postId)
           this.reset()
           this.isLoaded = false

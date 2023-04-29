@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-8 w-full gap-6 mb-24 h-auto">
     <div class="col-span-6">
-      <Post v-if="isLoaded" :post="post" class="w-full" :comment-list="comments" />
+      <Post v-if="isLoaded" :post="post" class="w-full" :comment-list="comments" @fetchPostEdited="fetchPostById" />
     </div>
   </div>
 </template>
@@ -14,22 +14,32 @@ export default {
   data: function () {
     return {
       PostActionOn,
-      post: {},
+      // post: {},
       isLoaded: false,
-      comments: [],
+      // comments: [],
       isLoadedComment: false
     }
   },
+  computed: {
+    comments () {
+      return this.$store.getters['comment/comments']
+    },
+    post () {
+      return this.$store.getters['post/postDetail']
+    }
+  },
   async created () {
-    await this.getPostById(this.$route.params.id)
     await this.getCommentByPostId(this.$route.params.id, 10, 1)
+    await this.getPostById(this.$route.params.id)
   },
   methods: {
+    async fetchPostById () {
+      await this.getPostById(this.$route.params.id)
+    },
     async getPostById (postId) {
       try {
         this.isLoaded = false
-        const postData = await this.$api.post.getPostById(postId)
-        this.post = postData.data.post
+        await this.$store.dispatch('post/getPostById', { postId })
         this.isLoaded = true
       } catch (err) {
         //
@@ -39,11 +49,7 @@ export default {
     },
     async getCommentByPostId (postId, limit, page) {
       try {
-        this.isLoadedComment = false
-        const commentData = await this.$api.comment.getCommentByPostId({ postId, limit, page })
-        this.comments.push(...commentData.data.comments)
-        console.log(this.comments)
-        this.isLoadedComment = true
+        await this.$store.dispatch('comment/getCommentByPostId', { postId, limit, page })
       } catch (err) {
         //
       }

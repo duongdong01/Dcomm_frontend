@@ -2,10 +2,13 @@
   <div ref="home" class="grid grid-cols-8 w-full gap-6">
     <div class="col-span-6 min-h-[100vh]">
       <create-post class="mb-4" :on="on" />
-      <Sort />
+      <Sort @sort="sortPost" />
       <div>
-        <div v-for="(item,index) in feeds" :key="`${item._id}+${index}`">
-          <Post :post="item" />
+        <div v-if="feeds.length >0">
+          <Post v-for="(item,index) in feeds" :key="`${item._id}+${index}`" :post="item" />
+        </div>
+        <div v-else class=" w-full flex justify-center items-center h-20 text-[18px] text-gray-400 font-medium bg-gray_850 mt-4 rounded-xl">
+          No Content
         </div>
         <nuxt-child />
       </div>
@@ -30,7 +33,9 @@ export default {
       on: PostActionOn.PERSONAL,
       isLoadMore: false,
       isDebounce: null,
-      count: 0
+      count: 0,
+      type: 'ALL',
+      sort: 'CREATED_AT'
     }
   },
   computed: {
@@ -50,12 +55,16 @@ export default {
     }
   },
   async created () {
-    await this.getPostFeed({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
+    await this.getPostFeed({ limit: 5, page: 1, type: this.type, sort: this.sort, isLoadMore: this.isLoadMore })
   },
   beforeDestroy () {
     window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
+    async sortPost (sort) {
+      this.sort = sort
+      await this.getPostFeed({ limit: 5, page: 1, sort: this.sort, type: this.type, isLoadMore: false })
+    },
     debounce (func, timeout = 300) {
       let timer
       return (...args) => {
@@ -63,8 +72,8 @@ export default {
         timer = setTimeout(() => { func.apply(this, args) }, timeout)
       }
     },
-    async getPostFeed ({ limit, page, isLoadMore }) {
-      await this.$store.dispatch('post/getPostFeeds', { limit, page, isLoadMore })
+    async getPostFeed ({ limit, page, sort, type, isLoadMore }) {
+      await this.$store.dispatch('post/getPostFeeds', { limit, page, sort, type, isLoadMore })
     },
     loadMore () {
       try {
@@ -73,7 +82,7 @@ export default {
           if (this.$route.path === '/' && this.pageDetail.nextPage && !this.isLoadMore) {
             if (!this.isLoadMore && this.pageDetail.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
               this.isLoadMore = true
-              await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore })
+              await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore, sort: this.sort, type: this.type })
               this.isLoadMore = false
             }
           }

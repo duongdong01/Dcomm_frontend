@@ -145,13 +145,13 @@
         <div class="flex flex-col border-gray-700 rounded-xl border p-2">
           <header class="flex justify-between cursor-pointer">
             <div class="flex">
-              <div class="flex justify-center items-center overflow-hidden">
+              <nuxt-link tag="div" :to="`/profile_detail/${post.originPost.owner._id}`" class="flex justify-center items-center overflow-hidden cursor-pointer">
                 <img :src="post?.originPost.owner.avatar" alt="avatar" class="rounded-full w-9 h-9 object-cover">
-              </div>
+              </nuxt-link>
               <div class="flex flex-col ml-3  text-white font-medium">
-                <p class="text-white font-medium p-0 m-0">
+                <nuxt-link :to="`/profile_detail/${post.originPost.owner._id}`" class="text-white font-medium p-0 m-0 hover:underline" tag="p">
                   {{ post?.originPost.owner.fullname }}
-                </p>
+                </nuxt-link>
                 <div class="flex items-center gap-1 justify-center w-full -mt-4">
                   <span v-if="post" class="font-light text-white/80 text-[14px]">
                     {{ timeAgo(post?.originPost.createdAt) }}
@@ -160,7 +160,7 @@
                     .
                   </span>
                   <svg
-                    v-if="post?.privacy ===PostPrivacy.PUBLIC"
+                    v-if="post?.originPost.privacy ===PostPrivacy.PUBLIC"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -171,7 +171,7 @@
                     <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.08.08-.162.158-.242.234-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z" />
                   </svg>
                   <svg
-                    v-if="post?.privacy ===PostPrivacy.FRIENDS"
+                    v-if="post?.originPost.privacy ===PostPrivacy.FRIENDS"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -182,7 +182,7 @@
                     <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
                   </svg>
                   <svg
-                    v-if="post?.privacy ===PostPrivacy.ONLY_ME"
+                    v-if="post?.originPost.privacy ===PostPrivacy.ONLY_ME"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -322,7 +322,6 @@ export default {
       PostPrivacy,
       PostType,
       postDetail: null,
-      isReactionPost: false,
       isShowOptionPost: false,
       isShowMoreContent: false,
       isShowMoreContentShare: false,
@@ -392,6 +391,7 @@ export default {
     },
     hiddenEditModal () {
       this.isEditModal = false
+      this.$emit('fetchPostEdited', true)
     },
     toggleShowOption () {
       this.isShowOptionPost = !this.isShowOptionPost

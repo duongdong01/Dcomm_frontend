@@ -337,8 +337,11 @@
     <div class="w-full grid grid-cols-8 gap-2">
       <div class=" w-full" :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
-          <div v-for="item in feedProfile" :key="item._id" class="mb-4">
-            <Post :post="item" />
+          <div v-if="feedProfile.length>0">
+            <Post v-for="item in feedProfile" :key="item._id" :post="item" class="mb-4" />
+          </div>
+          <div v-else class=" w-full flex justify-center items-center h-20 text-[18px] text-gray-400 font-medium bg-gray_850 rounded-xl">
+            No Content
           </div>
         </div>
         <NuxtChild class="px-4" />

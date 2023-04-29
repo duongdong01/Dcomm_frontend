@@ -3,12 +3,16 @@ export const state = () => ({
   pageDetail: {},
   feedProfile: [],
   pageDetailPostProfile: {},
-  isOpenModalSharePost: false
+  isOpenModalSharePost: false,
+  postDetail: {}
 })
 
 export const getters = {
   feeds: (state) => {
     return state.feeds
+  },
+  postDetail: (state) => {
+    return state.postDetail
   },
   pageDetail: (state) => {
     return state.pageDetail
@@ -21,9 +25,15 @@ export const getters = {
   },
   isOpenModalSharePost: (state) => {
     return state.isOpenModalSharePost
+  },
+  isFetchPost: (state) => {
+    return state.isFetchPost
   }
 }
 export const mutations = {
+  setPostDetail: (state, data) => {
+    state.postDetail = data
+  },
   setSharePostModal: (state, show) => {
     state.isOpenModalSharePost = show
   },
@@ -99,7 +109,81 @@ export const mutations = {
       }
     })
   },
-
+  toggleLikeComment: (state, data) => {
+    const { postId, commentId } = data
+    for (let i = 0; i < state.feeds.length; i++) {
+      if (state.feeds[i]._id.toString() === postId.toString()) {
+        state.feeds[i].comments.forEach((el) => {
+          if (el._id.toString() === commentId.toString()) {
+            if (el.isReaction) {
+              if (el.countReaction > 0) {
+                el.isReaction = false
+                el.countReaction -= 1
+              }
+            } else {
+              el.isReaction = true
+              el.countReaction += 1
+            }
+          }
+        })
+        break
+      }
+    }
+    for (let i = 0; i < state.feedProfile.length; i++) {
+      if (state.feedProfile[i]._id.toString() === postId.toString()) {
+        state.feedProfile[i].comments.forEach((el) => {
+          if (el._id.toString() === commentId.toString()) {
+            if (el.isReaction) {
+              if (el.countReaction > 0) {
+                el.isReaction = false
+                el.countReaction -= 1
+              }
+            } else {
+              el.isReaction = true
+              el.countReaction += 1
+            }
+          }
+        })
+        break
+      }
+    }
+  },
+  deleteCommentInFeed: (state, data) => {
+    const { postId, commentId, type } = data
+    if (type === 'FEED') {
+      let indexComment = 0
+      let indexPost = 0
+      for (let i = 0; i < state.feeds.length; i++) {
+        if (state.feeds[i]._id.toString() === postId.toString()) {
+          state.feeds[i].comments.forEach((el, vIndex) => {
+            if (el._id.toString() === commentId.toString()) {
+              indexComment = vIndex
+            }
+          })
+          indexPost = i
+          break
+        }
+      }
+      state.feeds[indexPost].comments.splice(indexComment, 1)
+      state.feeds[indexPost].countComment -= 1
+    } else {
+      let indexComment = 0
+      let indexPost = 0
+      for (let i = 0; i < state.feedProfile.length; i++) {
+        if (state.feedProfile[i]._id.toString() === postId.toString()) {
+          state.feedProfile[i].comments.forEach((el, vIndex) => {
+            if (el._id.toString() === commentId.toString()) {
+              indexComment = vIndex
+            }
+          })
+          indexPost = i
+          break
+        }
+      }
+      state.feedProfile[indexPost].comments.splice(indexComment, 1)
+      state.feedProfile[indexPost].countComment -= 1
+    }
+  },
   commentPost: (state, postId) => {
     state.feeds.forEach((el) => {
       if (el._id.toString() === postId.toString()) {
@@ -116,12 +200,25 @@ export const mutations = {
       }
     }
     state.feeds.splice(index, 1, post)
+  },
+  changeCountComment: (state, data) => {
+    // type === ADD , REMOVE
+    const { postId, type } = data
+
+    if (type === 'ADD' && state.postDetail._id.toString() === postId.toString()) {
+      state.postDetail.countComment += 1
+    }
+    if (type === 'REMOVE' && state.postDetail._id.toString() === postId.toString()) {
+      if (state.postDetail.countComment > 0) {
+        state.postDetail.countComment -= 1
+      }
+    }
   }
 }
 export const actions = {
-  async getPostFeeds ({ commit, state }, { limit, page, isLoadMore }) {
+  async getPostFeeds ({ commit, state }, { limit, page, isLoadMore, type, sort }) {
     try {
-      const feedData = await this.$api.post.getPostFeeds({ limit, page })
+      const feedData = await this.$api.post.getPostFeeds({ limit, page, type, sort })
       commit('setFeeds', { isLoadMore, data: feedData.data.posts })
       commit('setPageDetail', feedData.data.pageDetail)
     } catch (err) {
@@ -144,6 +241,16 @@ export const actions = {
     } catch (err) {
       //
       commit('toggleLikePost', postId)
+    }
+  },
+  async getPostById ({ commit, state }, { postId }) {
+    try {
+      const postData = await this.$api.post.getPostById(postId)
+      commit('setPostDetail', postData.data.post)
+    } catch (err) {
+      //
+      this.$toast.error('System error.', { timeout: 1500 })
+      this.$router.push('/')
     }
   }
 }
