@@ -1,10 +1,15 @@
 <template>
-  <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' ? 'mt-4' :'mt-[0.2px]'">
+  <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' || $route.path.split('/')[1]==='following' ? 'mt-4' :'mt-[0.2px]'">
     <header class="flex justify-between cursor-pointer">
       <div class="flex w-fit">
-        <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
-          <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
-        </nuxt-link>
+        <div class="relative" @mouseover="getUserHover" @mouseleave="hiddenUserHover">
+          <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
+            <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
+          </nuxt-link>
+          <div v-if="upHere" class="z-50 absolute  transition-all" :class="$route.path.split('/')[1]==='post'? 'top-[90%]' :'bottom-[90%]'">
+            <UserView :user-id="post.ownerId" />
+          </div>
+        </div>
         <div class="flex flex-col ml-3 -mt-1">
           <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="text-white font-medium hover:underline" tag="div">
             {{ post?.owner.fullname }}
@@ -141,13 +146,19 @@
         <lightbox :items="post.albums.albumFileDetails.map(el=>el.file)" class="w-full" />
       </div>
       <!-- post share origin -->
-      <div v-if="post.type===PostType.SHARE && post.originPost" class="overflow-hidden  p-1">
+      <div v-if="post.type===PostType.SHARE && post.originPost" class=" p-1">
         <div class="flex flex-col border-gray-700 rounded-xl border p-2">
           <header class="flex justify-between cursor-pointer">
             <div class="flex">
-              <nuxt-link tag="div" :to="`/profile_detail/${post.originPost.owner._id}`" class="flex justify-center items-center overflow-hidden cursor-pointer">
-                <img :src="post?.originPost.owner.avatar" alt="avatar" class="rounded-full w-9 h-9 object-cover">
-              </nuxt-link>
+              <div class="relative flex" @mouseover="getUserHover2" @mouseleave="hiddenUserHover2">
+                <nuxt-link tag="div" :to="`/profile_detail/${post.originPost.owner._id}`" class="flex justify-center items-center overflow-hidden cursor-pointer">
+                  <img :src="post?.originPost.owner.avatar" alt="avatar" class="rounded-full w-9 h-9 object-cover">
+                </nuxt-link>
+                <div v-if="upHere2" class="z-50 absolute  transition-all" :class="$route.path.split('/')[1]==='post'? 'top-[90%]' :'bottom-[90%]'">
+                  <UserView :user-id="post.originPost.ownerId" />
+                </div>
+              </div>
+
               <div class="flex flex-col ml-3  text-white font-medium">
                 <nuxt-link :to="`/profile_detail/${post.originPost.owner._id}`" class="text-white font-medium p-0 m-0 hover:underline" tag="p">
                   {{ post?.originPost.owner.fullname }}
@@ -296,6 +307,7 @@
 <script>
 import Comment from '../comment/Comment.vue'
 import Lightbox from '../lightbox/Lightbox.vue'
+import UserView from '../friends/UserView.vue'
 import ConfirmDialogue from '@/components/modal/ConfirmDialogue.vue'
 import { PostPrivacy, PostType } from '~/constants/post'
 import { ReactionOn, ReactionType } from '~/constants/reaction'
@@ -303,7 +315,7 @@ import SharePost from '~/components/modal/SharePost.vue'
 import EditPost from '@/components/modal/EditPost.vue'
 
 export default {
-  components: { Lightbox, Comment, ConfirmDialogue, SharePost, EditPost },
+  components: { Lightbox, Comment, ConfirmDialogue, SharePost, EditPost, UserView },
   props: {
     post: {
       type: Object,
@@ -317,6 +329,9 @@ export default {
   },
   data: () => {
     return {
+      userHover: {},
+      upHere: false,
+      upHere2: false,
       lengthImg: [1],
       files: [],
       PostPrivacy,
@@ -370,9 +385,20 @@ export default {
     }
   },
   methods: {
+    getUserHover () {
+      this.upHere = true
+    },
+    hiddenUserHover () {
+      this.upHere = false
+    },
+    getUserHover2 () {
+      this.upHere2 = true
+    },
+    hiddenUserHover2 () {
+      this.upHere2 = false
+    },
     handler (e) {
       e.preventDefault()
-      console.log('hello')
     },
     showMoreContent () {
       this.isShowMoreContent = false
@@ -437,6 +463,8 @@ export default {
         })
         if (deletePost) {
           this.$store.commit('post/deletePost', this.post._id)
+          this.$store.commit('post/deletePostSearch', this.post._id)
+          this.$store.commit('post/deletePostProfile', this.post._id)
           await this.$api.post.deletePostById(this.post._id)
         }
       } catch (err) {

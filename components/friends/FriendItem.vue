@@ -5,7 +5,8 @@
         <img class="w-20 h-20 object-cover rounded-md cursor-pointer" :src="friend.userDetail.avatar" alt="photo">
       </nuxt-link>
       <div v-if="upHere" class="z-50 absolute bottom-[90%] transition-all">
-        <friend-view :friend="friend" />
+        <UserView :user-id="friend.userDetail._id" />
+        <!-- <friend-view :friend="friend" /> -->
       </div>
     </div>
     <div class="flex-1 min-w-[45%] pl-[16px]">
@@ -14,7 +15,7 @@
           {{ friend.userDetail.fullname }}
         </nuxt-link>
         <div v-if="upHere2" class="z-50 absolute bottom-4 transition-all">
-          <friend-view :friend="friend" />
+          <UserView :user-id="friend.userDetail._id" />
         </div>
       </div>
       <div class="font-light text-sm">
@@ -41,9 +42,10 @@
   </div>
 </template>
 <script>
-import FriendView from './FriendView.vue'
+// import FriendView from './FriendView.vue'
+import UserView from './UserView.vue'
 export default {
-  components: { FriendView },
+  components: { UserView },
   props: {
     friend: {
       type: Object,

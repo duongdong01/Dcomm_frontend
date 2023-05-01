@@ -38,12 +38,10 @@
         </div>
       </div>
     </div>
-    <!-- <LoadingDot v-if="!isLoaded ||isLoadMore " class="transition-all ease-in-out" /> -->
   </div>
 </template>
 
 <script>
-// import LoadingDot from '../loading/LoadingDot.vue'
 import FriendItem from './FriendItem.vue'
 export default {
   components: { FriendItem },

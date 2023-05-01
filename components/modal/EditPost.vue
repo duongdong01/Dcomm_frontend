@@ -433,7 +433,8 @@ export default {
           const postData = await this.$api.post.updatePostNormal(this.post._id, postBody)
           this.$store.commit('post/updatePost', postData.data.post)
         } else {
-          await this.$api.post.updatePostShare(this.post._id, postBody)
+          const postData = await this.$api.post.updatePostShare(this.post._id, postBody)
+          this.$store.commit('post/updatePost', postData.data.post)
         }
         this.isEditPosted = false
         this.hiddenModalEdit()

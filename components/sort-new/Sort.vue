@@ -1,6 +1,6 @@
 <template>
-  <div class="flex h-[60px] items-center px-6  w-full bg-gray_850 rounded-xl space-x-2">
-    <div class="flex hover:bg-gray-700 rounded-lg justify-between gap-2 py-2 px-2 text-white font-medium cursor-pointer text-base" @click="sort('CREATED_AT')">
+  <div class="flex h-[60px] items-center px-6  w-full rounded-xl space-x-2  bg-gray_850">
+    <div class="flex hover:bg-gray-700 rounded-lg justify-between gap-2 py-2 px-2 text-white font-medium cursor-pointer text-base" :class="!isSort ? 'bg-gray-700' :'bg-gray_850' " @click="sort('CREATED_AT')">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,7 @@
       </div>
       <p>New</p>
     </div>
-    <div class="flex hover:bg-gray-700 bg-gray-700 rounded-lg justify-between gap-2 py-2 px-2 text-white font-medium cursor-pointer text-base" @click="sort('REACTION')">
+    <div class="flex hover:bg-gray-700 rounded-lg justify-between gap-2 py-2 px-2 text-white font-medium cursor-pointer text-base " :class="isSort? 'bg-gray-700':'bg-gray_850'" @click="sort('REACTION')">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,8 +50,18 @@
 
 <script>
 export default {
+  data () {
+    return {
+      isSort: false
+    }
+  },
   methods: {
     sort (sort) {
+      if (sort === 'CREATED_AT') {
+        this.isSort = false
+      } else {
+        this.isSort = true
+      }
       this.$emit('sort', sort)
     }
   }

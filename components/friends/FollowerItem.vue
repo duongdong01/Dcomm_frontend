@@ -2,9 +2,9 @@
   <div class="h-20 flex justify-between border-solid border-b-2 border-gray-500">
     <div class="flex items-center ">
       <div>
-        <div class="w-12 h-12 rounded-full mr-2">
+        <nuxt-link :to="`/profile_detail/${follower.userSender._id}`" class="w-12 h-12 rounded-full mr-2 cursor-pointer" tag="div">
           <img class="w-12 h-12 object-cover rounded-full" :src="follower.userSender.avatar" alt="img">
-        </div>
+        </nuxt-link>
       </div>
       <div>{{ follower.userSender.firstName+ follower.userSender.lastName }}</div>
     </div>

@@ -4,10 +4,18 @@ export const state = () => ({
   feedProfile: [],
   pageDetailPostProfile: {},
   isOpenModalSharePost: false,
-  postDetail: {}
+  postDetail: {},
+  postSearch: [],
+  pageDetailPostSearch: {}
 })
 
 export const getters = {
+  postSearch: (state) => {
+    return state.postSearch
+  },
+  pageDetailPostSearch: (state) => {
+    return state.pageDetailPostSearch
+  },
   feeds: (state) => {
     return state.feeds
   },
@@ -37,6 +45,24 @@ export const mutations = {
   setSharePostModal: (state, show) => {
     state.isOpenModalSharePost = show
   },
+  setPostSearch: (state, { isLoadMore, data }) => {
+    console.log('data: ', data)
+    if (isLoadMore) {
+      state.postSearch.push(...data)
+    } else {
+      state.postSearch = data
+    }
+  },
+  deletePostSearch: (state, postId) => {
+    let count = 0
+    for (let i = 0; i < state.postSearch.length; i++) {
+      if (state.postSearch[i]._id.toString() === postId.toString()) {
+        count = i
+        break
+      }
+    }
+    state.postSearch.splice(count, 1)
+  },
   setFeedProfile: (state, { isLoadMore, data }) => {
     if (isLoadMore) {
       state.feedProfile.push(...data)
@@ -51,10 +77,13 @@ export const mutations = {
       state.feeds = data
     }
   },
+  setPageDetailPostSearch: (state, data) => {
+    state.pageDetailPostSearch = data
+  },
   setPageDetailPostProfile: (state, data) => {
     state.pageDetailPostProfile = data
   },
-  deletePostPostProfile: (state, postId) => {
+  deletePostProfile: (state, postId) => {
     let count = 0
     for (let i = 0; i < state.feedProfile.length; i++) {
       if (state.feedProfile[i]._id.toString() === postId.toString()) {
@@ -108,6 +137,33 @@ export const mutations = {
         }
       }
     })
+    state.postSearch.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        if (el.isReactions) {
+          if (el.countReaction > 0) {
+            el.isReactions = false
+            el.countReaction -= 1
+          }
+        } else {
+          el.isReactions = true
+          el.countReaction += 1
+        }
+      }
+    })
+
+    if (Object.keys(state.postDetail).length) {
+      if (state.postDetail._id.toString() === postId.toString()) {
+        if (state.postDetail.isReactions) {
+          if (state.postDetail.countReaction > 0) {
+            state.postDetail.isReactions = false
+            state.postDetail.countReaction -= 1
+          }
+        } else {
+          state.postDetail.isReactions = true
+          state.postDetail.countReaction += 1
+        }
+      }
+    }
   },
   toggleLikeComment: (state, data) => {
     const { postId, commentId } = data
@@ -192,14 +248,36 @@ export const mutations = {
     })
   },
   updatePost: (state, post) => {
-    let index = 0
+    let index = null
     for (let i = 0; i < state.feeds.length; i++) {
       if (state.feeds[i]._id.toString() === post._id.toString()) {
         index = i
         break
       }
     }
-    state.feeds.splice(index, 1, post)
+    let indexProfile = null
+    for (let i = 0; i < state.feedProfile.length; i++) {
+      if (state.feedProfile[i]._id.toString() === post._id.toString()) {
+        indexProfile = i
+        break
+      }
+    }
+    let indexPostSearch = null
+    for (let i = 0; i < state.postSearch.length; i++) {
+      if (state.postSearch[i]._id.toString() === post._id.toString()) {
+        indexPostSearch = i
+        break
+      }
+    }
+    if (index === 0 || index) {
+      state.feeds.splice(index, 1, post)
+    }
+    if (indexProfile === 0 || indexProfile) {
+      state.feedProfile.splice(indexProfile, 1, post)
+    }
+    if (indexPostSearch === 0 || indexPostSearch) {
+      state.postSearch.splice(indexPostSearch, 1, post)
+    }
   },
   changeCountComment: (state, data) => {
     // type === ADD , REMOVE
@@ -230,6 +308,15 @@ export const actions = {
       const feedData = await this.$api.post.getPostByUserId({ userId, limit, page })
       commit('setFeedProfile', { isLoadMore, data: feedData.data.posts })
       commit('setPageDetailPostProfile', feedData.data.pageDetail)
+    } catch (err) {
+      //
+    }
+  },
+  async searchGlobalPost ({ commit, state }, { limit, page, keyword, isLoadMore }) {
+    try {
+      const postData = await this.$api.search.searchGlobalPost({ limit, page, keyword })
+      commit('setPostSearch', { isLoadMore, data: postData.data.posts })
+      commit('setPageDetailPostSearch', postData.data.pageDetail)
     } catch (err) {
       //
     }
