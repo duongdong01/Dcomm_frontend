@@ -7,9 +7,8 @@
           <span class="text-white font-semibold text-lg">DCOMM</span>
         </nuxt-link>
       </div>
-      <div class="search_header flex justify-start items-center w-full leading-[70px] col-span-3 px-2">
-        <input type="search" placeholder="Search" class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg">
-        <i class="fa-solid fa-magnifying-glass absolute ml-4 text-base text-white" />
+      <div class="search_header flex justify-start items-center w-full col-span-3 px-2">
+        <SearchHeader />
       </div>
     </div>
     <div class="flex items-center col-span-2 gap-6 justify-end">
@@ -137,7 +136,9 @@
 </template>
 
 <script>
+import SearchHeader from '../search/SearchHeader.vue'
 export default {
+  components: { SearchHeader },
   data: () => {
     return {
       isShowDropDown: false,
@@ -158,6 +159,7 @@ export default {
     await this.getMe()
   },
   methods: {
+
     showDropDown () {
       this.isShowDropDown = !this.isShowDropDown
     },

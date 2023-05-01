@@ -38,7 +38,7 @@
           <div> <span class="nav_item ">Following</span></div>
         </div>
       </nuxt-link>
-      <nuxt-link to="/" tag="a" class="nav_left-menu">
+      <!-- <nuxt-link to="/" tag="a" class="nav_left-menu">
         <div ref="home" class="flex" :class="$route.path === '/follow' ? 'focus_item_nav' : ''">
           <div>
             <svg
@@ -54,7 +54,7 @@
           </div>
           <div> <span class="nav_item" style="margin-left: 11px;">Popular</span></div>
         </div>
-      </nuxt-link>
+      </nuxt-link> -->
       <nuxt-link to="/" tag="a" class="nav_left-menu">
         <div ref="home" class="flex" :class="$route.path === '/follow' ? 'focus_item_nav' : ''">
           <div>

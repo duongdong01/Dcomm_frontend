@@ -1,9 +1,14 @@
 <template>
   <div class="flex space-x-2 mt-2 w-full item-comment">
     <div class="min-w-[40px]">
-      <nuxt-link :to="`/profile_detail/${comment.ownerId}`" class="avatar_user  rounded-full cursor-pointer ">
-        <img :src="comment?.owner?.avatar" class="rounded-full w-10 h-10 object-cover" alt="avatar">
-      </nuxt-link>
+      <div class="relative" @mouseover="upHere=true" @mouseleave="upHere=false">
+        <nuxt-link :to="`/profile_detail/${comment.ownerId}`" class="avatar_user  rounded-full cursor-pointer ">
+          <img :src="comment?.owner?.avatar" class="rounded-full w-10 h-10 object-cover" alt="avatar">
+        </nuxt-link>
+        <div v-if="upHere" class="z-50 absolute  transition-all bottom-[90%]">
+          <UserView :user-id="comment.ownerId" />
+        </div>
+      </div>
     </div>
     <div class="flex flex-col">
       <div class="flex space-x-2 relative">
@@ -96,8 +101,10 @@
 </template>
 
 <script>
+import UserView from '../friends/UserView.vue'
 import { ReactionOn, ReactionType } from '@/constants/reaction'
 export default {
+  components: { UserView },
   props: {
     comment: {
       type: Object,
@@ -107,7 +114,9 @@ export default {
   data () {
     return {
       ReactionOn,
-      isShowOptionComment: false
+      isShowOptionComment: false,
+      upHere: false
+
     }
   },
   methods: {

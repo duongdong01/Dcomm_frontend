@@ -22,7 +22,8 @@
         <div class="text-base font-bold">
           {{ friend.userDetail.fullname }}
         </div>
-        <div v-if="friend.mutualCount +1 > 0" class="flex flex-row ">
+
+        <div v-if="friend.mutualCount > 0" class="flex flex-row ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -34,8 +35,7 @@
             <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
           </svg>
           <div class="ml-[10px] text-sm">
-            <!-- {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }} -->
-            10 mutual friends
+            {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }}
           </div>
         </div>
         <div class="flex flex-row justify-center">
@@ -51,7 +51,34 @@
             <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
           </svg>
           <div class="ml-[10px] text-sm">
-            Your friend since {{ $dayjs(friend.userDetail.createdAt).format('MMM Do YYYY') }}
+            Your friend since {{ $dayjs(friend.createdAt).format('MMM Do YYYY') }}
+          </div>
+        </div>
+        <div v-if="friend.mutualCount === 0" class="flex flex-row ">
+          <svg
+            v-if="friend.userDetail.gender ==='FEMALE'"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="bi bi-gender-female"
+            viewBox="0 0 16 16"
+          >
+            <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z" />
+          </svg>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="bi bi-gender-male"
+            viewBox="0 0 16 16"
+          >
+            <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
+          </svg>
+          <div class="ml-[10px] text-sm">
+            {{ friend.userDetail.gender=== 'OTHER' ? 'Other':'' }} {{ friend.userDetail.gender=== 'FEMALE' ? 'Female' :'' }} {{ friend.userDetail.gender=== 'MALE' ? 'Male' :'' }}
           </div>
         </div>
       </div>

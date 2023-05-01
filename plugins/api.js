@@ -5,6 +5,7 @@ import Upload from '@/api/upload'
 import Post from '@/api/post'
 import Reaction from '@/api/reaction'
 import Comment from '@/api/comment'
+import Search from '@/api/search'
 
 export default (context, inject) => {
   // Initialize API factories
@@ -15,7 +16,8 @@ export default (context, inject) => {
     upload: Upload(context.$axios),
     post: Post(context.$axios),
     reaction: Reaction(context.$axios),
-    comment: Comment(context.$axios)
+    comment: Comment(context.$axios),
+    search: Search(context.$axios)
   }
 
   // Inject $api
