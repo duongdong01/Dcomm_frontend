@@ -4,7 +4,24 @@
       <div v-if="!isLoaded" class=" shadow  w-full h-full rounded-2xl">
         <div class="animate-pulse flex space-x-4" />
       </div>
-      <div v-if="isLoaded" class="w-full object-cover cover-img h-full rounded-2xl rounded-b-3xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" />
+      <div v-if="isLoaded" class="w-full relative object-cover cover-img h-full cursor-pointer rounded-2xl rounded-b-3xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" @click="showSingleCoverImg(user.coverImage)">
+        <button class="absolute bottom-40 text-white font-semibold right-10 bg-gray-500/30 rounded-md py-[6px] px-2 flex space-x-2" @click.stop="showUploadCover">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            fill="currentColor"
+            class="bi bi-camera-fill text-white"
+            viewBox="0 0 16 16"
+          >
+            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+            <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z" />
+          </svg>
+          <p>
+            Edit cover photo
+          </p>
+        </button>
+      </div>
       <div class="w-full bg-gray_850 grid grid-cols-5 h-36 z-[2] absolute bottom-0 text-white rounded-b-2xl">
         <div v-if="!isLoaded" class=" shadow rounded-md p-4 w-full mx-auto grid grid-cols-3 col-span-3">
           <div class="animate-pulse flex space-x-4">
@@ -23,7 +40,20 @@
         </div>
         <div v-if="isLoaded" class="grid grid-cols-3 col-span-3 ">
           <div class="relative w-full h-full flex ml-10 col-span-1">
-            <img :src="user.avatar || defaultAvatar" alt="" class="w-36 h-36 rounded-full -top-10 absolute object-cover">
+            <img :src="user.avatar || defaultAvatar" alt="" class="w-36 h-36 rounded-full -top-10 absolute object-cover cursor-pointer" @click="showSingleAvatarImg(user.avatar)">
+            <div class="absolute left-24 bottom-11 w-8 h-8 bg-gray-600 rounded-full flex justify-center items-center cursor-pointer" @click="showUploadAvatar">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                class="bi bi-camera-fill text-white"
+                viewBox="0 0 16 16"
+              >
+                <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z" />
+              </svg>
+            </div>
           </div>
           <div class="flex flex-col text-white  justify-start col-span-2 py-4  space-y-2">
             <p class="font-semibold text-xl mt-[1px]">
@@ -364,17 +394,21 @@
         <AlbumShort />
       </div>
     </div>
+    <ShowSingle ref="showSingleImg" :image="singleUrl" />
+    <UploadSingle ref="uploadSingle" @updateUser="fetchUserInfo" />
   </div>
 </template>
 <script>
 import { mapMutations } from 'vuex'
+import ShowSingle from '~/components/modal/ShowSingle.vue'
+import UploadSingle from '@/components/modal/UploadSingle.vue'
 import Post from '~/components/post/Post.vue'
 import Loading from '@/components/loading/Loading.vue'
 import AlbumShort from '~/components/album/AlbumShort.vue'
 export default {
   name: 'ProfileDetailId',
   components: {
-    Post, Loading, AlbumShort
+    Post, Loading, AlbumShort, ShowSingle, UploadSingle
   },
   data: () => {
     return {
@@ -387,6 +421,7 @@ export default {
         countFriend: 0,
         countFollower: 0
       },
+      singleUrl: '',
       isFriend: false,
       isPending: false,
       isYourProfile: false,
@@ -407,8 +442,12 @@ export default {
     }
   },
   computed: {
+
     defaultAvatar () {
-      return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZjxtpW8HD6X1SbNWDdsLRnv_gISY1LVJ8L4si0KBw&s'
+      return this.$store.getters.avatar
+    },
+    defaultCover () {
+      return this.$store.getters.cover
     },
     feedProfile () {
       return this.$store.getters['post/feedProfile']
@@ -419,12 +458,11 @@ export default {
   },
   async created () {
     await this.getUserProfile()
-    console.log('get 99999999')
     await this.getPostFeedProfile({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
     this.isLoaded = true
   },
+
   mounted () {
-    console.log('mounted')
     if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3) {
       window.addEventListener('scroll', this.loadMore)
     }
@@ -433,6 +471,32 @@ export default {
     window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
+    showUploadAvatar () {
+      this.$refs.uploadSingle.show('AVATAR')
+    },
+    async fetchUserInfo () {
+      await this.getUserProfile()
+    },
+    showUploadCover () {
+      this.$refs.uploadSingle.show('COVER')
+    },
+    showSingleAvatarImg (img) {
+      if (img) {
+        this.singleUrl = img
+        this.$refs.showSingleImg.show()
+      } else {
+        this.singleUrl = this.defaultAvatar
+        this.$refs.showSingleImg.show()
+      }
+    },
+    showSingleCoverImg (img) {
+      if (img) {
+        this.singleUrl = img
+      } else {
+        this.singleUrl = this.defaultCover
+      }
+      this.$refs.showSingleImg.show()
+    },
     ...mapMutations(['showFollower']),
     showSetting (e) {
       this.isSettingShow = e

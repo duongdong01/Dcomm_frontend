@@ -11,14 +11,14 @@
         <a-input v-model="ruleForm.email" placeholder="@gmail.com" />
       </a-form-model-item>
       <a-form-model-item label="Gender" prop="gender">
-        <a-select v-model="ruleForm.gender" default-value="Male" placeholder="Please select your gender">
-          <a-select-option value="Male">
+        <a-select v-model="ruleForm.gender" default-value="MALE" placeholder="Please select your gender">
+          <a-select-option value="MALE">
             Male
           </a-select-option>
-          <a-select-option value="FeMale">
-            FeMale
+          <a-select-option value="FEMALE">
+            Female
           </a-select-option>
-          <a-select-option value="Other">
+          <a-select-option value="OTHER">
             Other
           </a-select-option>
         </a-select>
@@ -182,11 +182,9 @@ export default {
               type: 'SIGNUP'
             }
             await this.$api.auth.verifyOtp(verifyOtp)
-            let genderUser = 'GENDER'
-            if (this.ruleForm.gender === 'FEMALE') {
-              genderUser = 'FEMALE'
-            } else {
-              genderUser = 'OTHER'
+            let genderUser = 'MALE'
+            if (this.ruleForm.gender) {
+              genderUser = this.ruleForm.gender
             }
             const signupParam = {
               firstName: this.ruleForm.firstName,

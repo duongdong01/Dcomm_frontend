@@ -1,6 +1,7 @@
 export const state = () => ({
   userInfo: null,
   avatar: require('@/static/avatar/avatar1.jpg'),
+  cover: require('@/static/avatar/cover.jpg'),
   systemInfo: {
     openLoginModal: false,
     openSignupModal: false,
@@ -14,6 +15,9 @@ export const getters = {
   },
   avatar: (state) => {
     return state.avatar
+  },
+  cover: (state) => {
+    return state.cover
   },
   // isLoginModalOpen: (state) => {
   //   return state.systemInfo.openLoginModal

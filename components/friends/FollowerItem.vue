@@ -6,7 +6,7 @@
           <img class="w-12 h-12 object-cover rounded-full" :src="follower.userSender.avatar" alt="img">
         </nuxt-link>
       </div>
-      <div>{{ follower.userSender.firstName+ follower.userSender.lastName }}</div>
+      <div>{{ follower.userSender.fullname }}</div>
     </div>
     <div class="flex items-center">
       <div class="p-2 bg-indigo-600 hover:bg-indigo-500 rounded-md cursor-pointer mr-2 relative flex items-center overflow-hidden" @click="acceptFriendRequestById">
