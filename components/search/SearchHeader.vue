@@ -67,6 +67,9 @@ export default {
   mounted () {
     document.addEventListener('click', this.handleClickOutsideBox)
   },
+  beforeDestroy () {
+    document.removeEventListener('click', this.handleClickOutsideBox)
+  },
   methods: {
     handleClickOutsideBox (event) {
       const box = document.getElementById('box-search')
