@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link class="flex space-x-4 hover:bg-drak_chat rounded-xl cursor-pointer px-1 py-2" :to="`/conversation/direct/${discussion._id}`" tag="div">
+  <nuxt-link class="flex space-x-4 hover:bg-drak_chat rounded-xl cursor-pointer px-1 py-2" :to="`/conversation/direct/${discussion._id}`" tag="div" :class="$route.path.split('/')[3]===discussion._id ? 'bg-blue-900/20 hover:bg-blue-900/30':''">
     <div class="flex relative">
       <img :src=" discussion.userChat.avatar|| avatar" alt="photo" class="w-14 h-14 rounded-full">
       <div v-if="isOnline" class="w-4 h-4 right-1 bottom-0  bg-green-600 absolute rounded-full border-2 border-black" />

@@ -54,6 +54,9 @@ export default {
   async created () {
     await this.getListConversation({ limit: 20, page: 1, isLoadMore: this.isLoadMore })
     this.isLoaded = true
+    if (this.listConversation && this.listConversation.length) {
+      this.$router.push({ path: `/conversation/direct/${this.listConversation[0]._id}` })
+    }
   },
   methods: {
     async getListConversation ({ page, limit, isLoadMore }) {

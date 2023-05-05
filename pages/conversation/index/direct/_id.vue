@@ -42,6 +42,7 @@
         <div ref="elementEnd" />
       </div>
       <!-- input chat -->
+
       <div class="w-full absolute -bottom-[46px] max-h-[42px]">
         <div class="flex items-center space-x-[2px]">
           <!-- upload file -->
@@ -80,6 +81,9 @@
           </div>
           <!-- emoji -->
           <div class="w-full relative">
+            <div v-if="isLoaded" class=" absolute w-full left-6 -top-[2px]">
+              <div class="loader-line" />
+            </div>
             <textarea
               ref="textareaConversation"
               class="w-full bg-gray-600 text-white rounded-3xl outline-none border-none pl-8 pr-9 pt-[9px] h-10 input-send-message"
@@ -133,7 +137,7 @@
               </video>
               <div v-if="['docx','pdf'].includes(item.name.split('.')[item.name.split('.').length-1])" class="py-6 px-4 max-h-[200px] bg-gray-500 flex items-end rounded-xl">
                 <div>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Adobe_PDF_icon.svg/1200px-Adobe_PDF_icon.svg.png" alt="photo" class="w-12">
+                  <img src="@/static/file_icon.png" alt="photo" class="w-12">
                 </div>
                 <div class="max-w-[140px] truncate">
                   {{ item.name }}
@@ -160,7 +164,7 @@
       </div>
     </div>
     <div v-if="!isHiddenRight" class="col-span-2  rounded-r-lg border-l-[1.5px] border-[#303030]">
-      <RightConversation />
+      <RightConversation :user="userReceiverMessage" :is-online="checkIsOnline(userReceiverMessage._id) ? true :false" />
     </div>
   </div>
 </template>
@@ -189,7 +193,10 @@ export default {
       imageUpload: [],
       maxSize: 0,
       isLoadMore: false,
-      isDebounce: null
+      isDebounce: null,
+      isOnline: false,
+      isDebounce2: null,
+      isLoaded: false
     }
   },
   computed: {
@@ -259,6 +266,11 @@ export default {
     scrollToEnd () {
       this.$refs.chatContent.scrollTop = this.$refs.chatContent.scrollHeight
     },
+    scrollToEnd2 () {
+      this.$nextTick(() => {
+        this.$refs.elementEnd.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      })
+    },
     async getListMessageByConversationId ({ limit, page, conversationId, isLoadMore }) {
       try {
         await this.$store.dispatch('conversation/getListMessage', { limit, page, conversationId, isLoadMore })
@@ -292,6 +304,10 @@ export default {
     },
     async onSubmit () {
       try {
+        if (!this.$refs.textareaConversation.value.trim().length && !this.imageUpload.length) {
+          return
+        }
+        this.isLoaded = true
         const messageBody = {
           conversationId: this.$route.params.id
         }
@@ -310,18 +326,21 @@ export default {
         }
         messageBody.type = type
         const data = await this.$api.conversation.sendMessage(messageBody)
+        this.$store.commit('conversation/setNewMessage', data.data.message)
         window.socket.emit('conversation:send-text-message', {
           roomId: this.$route.params.id,
           conversationUserId: data.data.message._id
         })
-        this.$store.commit('conversation/setNewMessage', data.data.message)
+        this.isLoaded = false
         this.reset()
+        await this.$store.dispatch('conversation/getListConversation', { page: 1, limit: 20, isLoadMore: false })
         setTimeout(() => {
-          this.scrollToEnd()
-        }, 50)
+          this.scrollToEnd2()
+        }, 30)
       } catch (err) {
         //
         this.reset()
+        this.isLoaded = false
       }
     },
     append (emoji) {
@@ -456,4 +475,44 @@ border: 2px solid #686868;
   @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
 }
 }
+.loader-line {
+            width: 94%;
+            height: 1.5px;
+            position: relative;
+            overflow: hidden;
+            background-color: #ddd;
+            // margin: 100px auto;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 20px;
+        }
+
+        .loader-line:before {
+            content: "";
+            position: absolute;
+            left: -50%;
+            height: 3px;
+            width: 40%;
+            background-color: coral;
+            -webkit-animation: lineAnim 1s linear infinite;
+            -moz-animation: lineAnim 1s linear infinite;
+            animation: lineAnim 1s linear infinite;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 20px;
+        }
+
+        @keyframes lineAnim {
+            0% {
+                left: -40%;
+            }
+            50% {
+                left: 20%;
+                width: 80%;
+            }
+            100% {
+                left: 100%;
+                width: 100%;
+            }
+        }
 </style>
