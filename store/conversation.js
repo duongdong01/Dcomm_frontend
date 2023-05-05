@@ -4,11 +4,15 @@ export const state = () => ({
   listMessage: [],
   pageDetailListMessage: {},
   userReceiverMessage: {},
-  listUserOnline: []
+  listUserOnline: [],
+  countMessageOutSide: 0
 })
 export const getters = {
   listConversation: (state) => {
     return state.listConversation
+  },
+  countMessageOutSide: (state) => {
+    return state.countMessageOutSide
   },
   pageDetail: (state) => {
     return state.pageDetail
@@ -28,6 +32,9 @@ export const getters = {
 }
 
 export const mutations = {
+  setCountMessageOutSide: (state, data) => {
+    state.countMessageOutSide = data
+  },
   setListUserOnline: (state, data) => {
     state.listUserOnline = data
   },
@@ -74,6 +81,14 @@ export const actions = {
       commit('setListMessage', { isLoadMore, data: messageData.data.messages })
       commit('setPageDetailListMessage', messageData.data.pageDetail)
       commit('setUserReceiverMessage', messageData.data.userReceiverMessage)
+    } catch (err) {
+      //
+    }
+  },
+  async getCountMessage ({ commit, state }) {
+    try {
+      const countMessageData = await this.$api.conversation.getCountMessage()
+      commit('setCountMessageOutSide', countMessageData.data.countMessage)
     } catch (err) {
       //
     }

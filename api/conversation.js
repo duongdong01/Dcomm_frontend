@@ -7,5 +7,8 @@ export default axios => ({
   },
   sendMessage (data) {
     return axios.post('/conversation/send-message', data).then(_ => _.data)
+  },
+  getCountMessage () {
+    return axios.get('/conversation/get-count-message').then(_ => _.data)
   }
 })
