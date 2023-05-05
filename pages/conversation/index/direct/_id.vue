@@ -35,7 +35,7 @@
         </div>
       </div>
       <!-- list message -->
-      <div ref="chatContent" class="overflow-y-scroll h-full conversation_left px-4 overflow-hidden flex flex-col max-h-[80vh] min-h-[80vh]">
+      <div ref="chatContent" class="overflow-y-scroll h-full conversation_left px-4 overflow-hidden flex flex-col max-h-[79.7vh] min-h-[79.7vh]">
         <div v-for="(item,index) in listMessage" :key="`${item._id}+${index}`">
           <MessageItem :is-owner="item.isOwner" :message="item" />
         </div>
