@@ -6,6 +6,7 @@ import Post from '@/api/post'
 import Reaction from '@/api/reaction'
 import Comment from '@/api/comment'
 import Search from '@/api/search'
+import Conversation from '@/api/conversation'
 import Token from '@/api/token'
 
 export default (context, inject) => {
@@ -19,6 +20,7 @@ export default (context, inject) => {
     reaction: Reaction(context.$axios),
     comment: Comment(context.$axios),
     search: Search(context.$axios),
+    conversation: Conversation(context.$axios),
     token: Token(context.$axios)
   }
 

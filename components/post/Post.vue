@@ -124,8 +124,8 @@
 
     <div class="leading-9 flex justify-center flex-col ">
       <div class="flex relative flex-col">
-        <div v-if="post.type==='NORMAL' && post?.normal && post?.normal?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.normal.content" />
-        <div v-if="post.type==='SHARE' && post?.shared && post?.shared?.content?.length" ref="contentPost" class="leading-6 truncate" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.shared.content" />
+        <div v-if="post.type==='NORMAL' && post?.normal && post?.normal?.content?.length" ref="contentPost" class="leading-6  text-content" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.normal.content" />
+        <div v-if="post.type==='SHARE' && post?.shared && post?.shared?.content?.length" ref="contentPost" class="leading-6 text-content" :class="isShowMoreContent ? ' hideContent' :''" v-html="post.shared.content" />
         <div v-if="isShowMoreContent" class="bg-gray_850 w-full text-center flex justify-center items-center">
           <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
             <svg
@@ -211,7 +211,7 @@
             <lightbox :items="post.originPost.albums.albumFileDetails.map(el=>el.file)" class="w-full" />
           </div>
           <div class="flex relative flex-col mt-1">
-            <div v-if="post.originPost.normal && post.originPost.normal?.content?.length" ref="contentPostShare" class="leading-6 truncate" :class="isShowMoreContentShare ? ' hideContent' :''" v-html="post.originPost.normal.content" />
+            <div v-if="post.originPost.normal && post.originPost.normal?.content?.length" ref="contentPostShare" class="leading-6 text-content " :class="isShowMoreContentShare ? ' hideContent' :''" v-html="post.originPost.normal.content" />
             <div v-if="isShowMoreContentShare" class="bg-gray_850 w-full text-center flex justify-center items-center">
               <div class="flex bg-gray-700  text-gray-200 justify-center items-center space-x-1 h-5 px-1 py-1 rounded-lg text-[14px] cursor-pointer hover:text-blue-400">
                 <svg
@@ -487,5 +487,8 @@ export default {
     overflow: hidden;
     max-height: 160px;
 }
-
+.text-content {
+  // inline-size: 200px;
+  overflow-wrap: break-word;
+}
 </style>

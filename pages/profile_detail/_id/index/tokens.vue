@@ -1,10 +1,10 @@
 <template>
-  <div class="text-white">
-    <div class="text-lg ml-44 mb-8 pl-2">
+  <div class="text-white flex justify-center flex-col w-full">
+    <div class="text-lg ml-40 mb-8 pl-2 font-medium">
       Daily Task
     </div>
-    <div class="px-4 flex justify-between mb-8">
-      <div class="relative ml-16">
+    <div class="px-4 flex justify-center space-x-5 mb-8 w-full">
+      <div class="relative">
         <div class="">
           <svg width="300" height="300" viewBox="0 0 100 100">
             <linearGradient id="linear" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -48,11 +48,9 @@
             />
           </svg>
         </div>
-        <div class="text-lg absolute top-[45%] left-[20%]">
+        <div class="text-lg absolute top-[40%] left-[20%]">
           {{ countTaskComplete }}/{{ list.length }} Tasks Completed
-        </div>
-        <div id="the-final-countdown">
-          <p />
+          <div id="the-final-countdown" />
         </div>
       </div>
       <div v-if="isLoad">
@@ -73,11 +71,28 @@ export default {
       list: [],
       isLoad: false,
       countTaskComplete: 0,
-      valueDashOffset: 0
+      valueDashOffset: 0,
+      counterInterval: null
     }
   },
-  mounted () {
-    this.getTaskDaily()
+  async mounted () {
+    await this.getTaskDaily()
+    this.counterInterval = setInterval(function time () {
+      const d = new Date()
+      const hours = 23 - d.getHours()
+      let min = 60 - d.getMinutes()
+      if ((min + '').length === 1) {
+        min = '0' + min
+      }
+      let sec = 60 - d.getSeconds()
+      if ((sec + '').length === 1) {
+        sec = '0' + sec
+      }
+      document.getElementById('the-final-countdown').innerHTML = hours + ':' + min + ':' + sec
+    }, 1000)
+  },
+  beforeDestroy () {
+    clearInterval(this.counterInterval)
   },
   methods: {
     async getTaskDaily () {
@@ -85,10 +100,10 @@ export default {
         this.list = await this.$api.token.getTaskDaily()
         this.isLoad = true
         this.list = this.list.data.getTaskDaily
-        this.list.forEach(function (current) {
+        this.list.forEach((current) => {
           const tmp = current.numberTaskDone / current.numberTask
-          if (tmp === 1) {
-            this.countTaskComplete++
+          if (tmp >= 1) {
+            this.countTaskComplete += 1
           }
         })
         this.valueDashOffset = (1 - this.countTaskComplete / this.list.length) * 315 + 8
@@ -97,19 +112,7 @@ export default {
     }
   }
 }
-setInterval(function time () {
-  const d = new Date()
-  const hours = 23 - d.getHours()
-  let min = 60 - d.getMinutes()
-  if ((min + '').length === 1) {
-    min = '0' + min
-  }
-  let sec = 60 - d.getSeconds()
-  if ((sec + '').length === 1) {
-    sec = '0' + sec
-  }
-  ('#the-final-countdown p').html(hours + ':' + min + ':' + sec)
-}, 1000)
+
 </script>
 
 <style lang="scss">

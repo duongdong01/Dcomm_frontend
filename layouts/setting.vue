@@ -20,6 +20,7 @@ import { mapGetters } from 'vuex'
 import LeftBar from '@/components/user-setting/LeftBar.vue'
 import MainHeader from '@/components/main_layout/MainHeader.vue'
 import Follower from '@/components/modal/Follower.vue'
+import SocketioService from '@/socket/socketio.service'
 
 export default {
   components: { LeftBar, MainHeader, Follower },
@@ -27,6 +28,14 @@ export default {
   computed: {
     ...mapGetters(['isOpenFollower'])
 
+  },
+  beforeDestroy () {
+    SocketioService.disconnect()
+  },
+  mounted () {
+    if (window.localStorage.getItem('access_token')) {
+      SocketioService.setupSocketConnection()
+    }
   }
 }
 </script>
