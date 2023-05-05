@@ -5,7 +5,7 @@
         <div class="animate-pulse flex space-x-4" />
       </div>
       <div v-if="isLoaded" class="w-full relative object-cover cover-img h-full cursor-pointer rounded-2xl rounded-b-3xl" :style="user.coverImage ? { backgroundImage :`url(${user.coverImage})`}:cssProps" @click="showSingleCoverImg(user.coverImage)">
-        <button class="absolute bottom-40 text-white font-semibold right-10 bg-gray-500/30 rounded-md py-[6px] px-2 flex space-x-2" @click.stop="showUploadCover">
+        <button v-if="isYourProfile" class="absolute bottom-40 text-white font-semibold right-10 bg-gray-500/30 rounded-md py-[6px] px-2 flex space-x-2" @click.stop="showUploadCover">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
@@ -41,7 +41,8 @@
         <div v-if="isLoaded" class="grid grid-cols-3 col-span-3 ">
           <div class="relative w-full h-full flex ml-10 col-span-1">
             <img :src="user.avatar || defaultAvatar" alt="" class="w-36 h-36 rounded-full -top-10 absolute object-cover cursor-pointer" @click="showSingleAvatarImg(user.avatar)">
-            <div class="absolute left-24 bottom-11 w-8 h-8 bg-gray-600 rounded-full flex justify-center items-center cursor-pointer" @click="showUploadAvatar">
+            <div v-if="!isYourProfile" class="w-4 h-4 rounded-full  absolute left-[108px] bottom-12" :class="isOnline? 'bg-green-500' :''" />
+            <div v-if="isYourProfile" class="absolute left-24 bottom-11 w-8 h-8 bg-gray-600 rounded-full flex justify-center items-center cursor-pointer" @click="showUploadAvatar">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -314,7 +315,7 @@
 
           Portals
         </nuxt-link>
-        <nuxt-link tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}/tokens`" :class="$route.path.split('/')[3] === 'tokens' ? 'border-b-[3px] border-white' :''">
+        <nuxt-link v-if="isYourProfile" tag="button" class="flex items-center gap-2 pb-2 " :to="`/profile_detail/${$route.params.id}/tokens`" :class="$route.path.split('/')[3] === 'tokens' ? 'border-b-[3px] border-white' :''">
           <svg
             width="20"
             height="20"
@@ -438,7 +439,8 @@ export default {
       isDisable: false,
       posts: [],
       isLoadMore: false,
-      isDebounce: null
+      isDebounce: null,
+      isOnline: false
     }
   },
   computed: {
@@ -466,11 +468,20 @@ export default {
     if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3) {
       window.addEventListener('scroll', this.loadMore)
     }
+    if (!this.isYourProfile) {
+      window.socket.emit('getOnlineGroupUsers', { userId: this.$route.params.id })
+      window.socket.on('onlineGroupUsersReceived', this.handleOnline)
+    }
   },
   beforeDestroy () {
     window.removeEventListener('scroll', this.loadMore)
+    window.socket.off('onlineGroupUsersReceived', this.handleOnline)
   },
   methods: {
+    handleOnline (data) {
+      this.isOnline = data.isOnline
+      console.log('data: ', data, this.isOnline)
+    },
     showUploadAvatar () {
       this.$refs.uploadSingle.show('AVATAR')
     },

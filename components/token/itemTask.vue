@@ -69,6 +69,7 @@ export default {
     load () {
       this.TaskAction = TaskAction
       const tmp = this.daily.numberTaskDone / this.daily.numberTask
+      this.isDone = this.daily.isDone
       if (tmp === 1) {
         this.isClaim = true
       } else {
@@ -84,9 +85,13 @@ export default {
         this.nameAction = `Share ${this.daily.numberTask} post`
       }
     },
-    claimToken () {
-      this.isDone = true
-      this.$api.token.acceptTaskDaily(this.daily._id)
+    async claimToken () {
+      try {
+        await this.$api.token.acceptTaskDaily(this.daily._id)
+        this.isDone = true
+      } catch (err) {
+      //
+      }
     }
   }
 }

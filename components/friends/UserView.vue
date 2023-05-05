@@ -5,7 +5,7 @@
         <nuxt-link tag="div" class="overflow-hidden rounded-full" :to="`/profile_detail/${user._id}`">
           <img class="w-[100px] h-[100px] object-cover cursor-pointer" :src="user.avatar" alt="photo">
         </nuxt-link>
-        <div class="absolute bottom-2.5 right-1.5">
+        <div v-if="isOnline" class="absolute bottom-2.5 right-1.5">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -219,13 +219,26 @@ export default {
       isPending: false,
       isReceiver: false,
       user: {},
-      loaded: false
+      loaded: false,
+      isOnline: false
     }
   },
   async created () {
     await this.getUserHover()
   },
+  mounted () {
+    if (!this.isYourProfile) {
+      window.socket.emit('getOnlineGroupUsers', { userId: this.userId })
+      window.socket.on('onlineGroupUsersReceived', this.handleOnline)
+    }
+  },
+  beforeDestroy () {
+    window.socket.off('onlineGroupUsersReceived', this.handleOnline)
+  },
   methods: {
+    handleOnline (data) {
+      this.isOnline = data.isOnline
+    },
     async createFriendRequest () {
       try {
         this.isDisable = true

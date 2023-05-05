@@ -11,12 +11,31 @@
 
 <script>
 import MainHeader from '@/components/main_layout/MainHeader.vue'
+import SocketioService from '~/socket/socketio.service'
 export default {
   components: {
     MainHeader
   },
+  directives: {
+    focus: {
+      inserted (el) {
+        el.focus()
+      }
+    }
+  },
   layout: 'conversation',
-  middleware: ['auth']
+  middleware: ['auth'],
+  beforeDestroy () {
+    SocketioService.disconnect()
+  },
+  beforeMount () {
+    // this.$socket.on('connect', () => {
+    //   console.log('Socket connected')
+    // })
+    if (window.localStorage.getItem('access_token')) {
+      SocketioService.setupSocketConnection()
+    }
+  }
 }
 </script>
 <style>

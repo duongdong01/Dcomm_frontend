@@ -46,7 +46,6 @@ export const mutations = {
     state.isOpenModalSharePost = show
   },
   setPostSearch: (state, { isLoadMore, data }) => {
-    console.log('data: ', data)
     if (isLoadMore) {
       state.postSearch.push(...data)
     } else {
