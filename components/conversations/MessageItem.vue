@@ -11,7 +11,21 @@
           </div> -->
           <div v-if="message.conversationFile.length" class="grid  gap-1 " :class="message.conversationFile.length===1 ? 'grid-cols-1':'grid-cols-2'">
             <div v-for="(item,index) in message.conversationFile" :key="index">
-              <img :src="item.url " alt="photo" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'">
+              <img v-if="item.type==='IMAGE'" :src="item.url " alt="photo" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'">
+              <video v-if="item.type==='VIDEO'" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'" preload="metadata">
+                <source :src="item.url" type="video/mp4">
+              </video>
+              <a v-if="item.type==='DOCS'" target="_blank" :href="item.url" class="py-6 px-4 max-h-[200px] bg-gray-500 flex items-end rounded-xl" :class="isOwner? 'float-right':'float-left'">
+                <div>
+                  <img src="@/static/file_icon.png" alt="photo" class="w-12">
+                </div>
+                <div class="flex flex-col px-1">
+                  <p>{{ item.size }}</p>
+                  <div class="max-w-[140px] truncate">
+                    {{ item.name }}
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
           <div v-if="message.message && message.message.length" class="w-full flex mt-[4px]" :class="isOwner ? ' justify-end':' justify-start'">
