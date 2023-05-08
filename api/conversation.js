@@ -10,5 +10,8 @@ export default axios => ({
   },
   getCountMessage () {
     return axios.get('/conversation/get-count-message').then(_ => _.data)
+  },
+  getListSticker () {
+    return axios.get('/sticker/get-list-sticker').then(_ => _.data)
   }
 })

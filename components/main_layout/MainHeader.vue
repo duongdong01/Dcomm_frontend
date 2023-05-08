@@ -13,7 +13,7 @@
     </div>
     <div class="flex items-center col-span-2 gap-6 justify-end">
       <div class="flex space-x-4">
-        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications">
+        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" @click="showNotification">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -28,6 +28,9 @@
             <p class="text-white font-medium text-[13px]">
               9+
             </p>
+          </div>
+          <div v-if="isLoadNotification" class="absolute max-h-[80vh] overflow-y-auto bg-gray-800 rounded-md shadow-sm w-[360px] max-w-[360px] top-14 notification-modal" @click.stop="test">
+            <Notification />
           </div>
         </button>
         <nuxt-link tag="button" to="/conversation" class="bg-main-color btn-messenger focus:outline-none h-12 w-12 flex items-center justify-center relative" title="messenger" :class="$route.path === '/conversation' ? 'bg-btn_hover rounded-lg':'' ">
@@ -136,16 +139,18 @@
 </template>
 
 <script>
+import Notification from '../notification/Notification.vue'
 import SearchHeader from '../search/SearchHeader.vue'
 export default {
-  components: { SearchHeader },
+  components: { SearchHeader, Notification },
   data: () => {
     return {
       isShowDropDown: false,
       user: {},
       accessToken: window.localStorage.getItem('access_token'),
       imageData: require('@/static/avatar/avatar1.jpg'),
-      isLoaded: false
+      isLoaded: false,
+      isLoadNotification: false
 
     }
   },
@@ -160,11 +165,27 @@ export default {
   },
   async mounted () {
     await this.getMe()
+    if (this.$route.path.split('/')[1] !== 'conversation') {
+      window.socket.on('conversation:get-count-new-message', this.handleCountNewMessage)
+    }
+  },
+  beforeDestroy () {
+    window.socket.off('conversation:get-count-new-message', this.handleCountNewMessage)
   },
   async created () {
     await this.getCountMessage()
   },
   methods: {
+    test () {
+      console.log('1111')
+    },
+    showNotification () {
+      console.log(11111)
+      this.isLoadNotification = !this.isLoadNotification
+    },
+    handleCountNewMessage (data) {
+      this.$store.commit('conversation/setCountMessageOutSide', data.countMessage)
+    },
     async getCountMessage () {
       await this.$store.dispatch('conversation/getCountMessage')
     },
@@ -219,7 +240,14 @@ export default {
 .btn-avatar:hover{
   @apply  bg-btn_hover rounded-lg
 }
-// .btn-svg_select{
-//   @apply  bg-btn_hover rounded-lg
-// }
+
+.notification-modal::-webkit-scrollbar
+{
+  @apply w-[10px] bg-gray-700 rounded-lg ;
+}
+
+.notification-modal::-webkit-scrollbar-thumb
+{
+  @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
+}
 </style>

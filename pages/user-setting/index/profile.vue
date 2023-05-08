@@ -19,7 +19,7 @@
         <div>
           Cover photo
         </div>
-        <button class="text-[16px] px-2 hover:bg-gray-700 font-medium text-blue-500 rounded-md">
+        <button class="text-[16px] px-2 hover:bg-gray-700 font-medium text-blue-500 rounded-md" @click="showUploadCover">
           Edit
         </button>
       </div>
@@ -241,9 +241,11 @@ export default {
     },
     hiddenGender () {
       this.isEditGender = false
+      this.disabledGender = true
     },
     hiddenFullName () {
       this.isEditFullName = false
+      this.disabledFullname = true
     },
     async getUser () {
       try {

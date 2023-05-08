@@ -37,6 +37,9 @@
       <!-- list message -->
       <div ref="chatContent" class="overflow-y-scroll h-full conversation_left px-4 overflow-hidden flex flex-col max-h-[79.7vh] min-h-[79.7vh]">
         <div v-for="(item,index) in listMessage" :key="`${item._id}+${index}`">
+          <div v-if="index%10===0" class="flex justify-center text-gray-200">
+            {{ $dayjs(item.createdAt).format('MMM D, YYYY h:mm A') }}
+          </div>
           <MessageItem :is-owner="item.isOwner" :message="item" />
         </div>
         <div ref="elementEnd" />
@@ -69,7 +72,7 @@
               @change="uploadImage"
             >
           </div>
-          <div class="flex w-10 h-10 rounded-full justify-center items-center hover:bg-gray-600 mb-[6px] cursor-pointer">
+          <div class="flex w-10 h-10 rounded-full justify-center items-center hover:bg-gray-600 mb-[6px] cursor-pointer relative">
             <svg
               class="w-6"
               height="20px"
@@ -77,7 +80,13 @@
               width="20px"
               x="0px"
               y="0px"
+              @click="getListSticker"
             ><g fill-rule="evenodd"><circle cx="5.5" cy="5.5" fill="none" r="1" /><circle cx="11.5" cy="4.5" fill="none" r="1" /><path d="M5.3 9c-.2.1-.4.4-.3.7.4 1.1 1.2 1.9 2.3 2.3h.2c.2 0 .4-.1.5-.3.1-.3 0-.5-.3-.6-.8-.4-1.4-1-1.7-1.8-.1-.2-.4-.4-.7-.3z" fill="none" /><path d="M10.4 13.1c0 .9-.4 1.6-.9 2.2 4.1-1.1 6.8-5.1 6.5-9.3-.4.6-1 1.1-1.8 1.5-2 1-3.7 3.6-3.8 5.6z" fill="#0084ff" /><path d="M2.5 13.4c.1.8.6 1.6 1.3 2 .5.4 1.2.6 1.8.6h.6l.4-.1c1.6-.4 2.6-1.5 2.7-2.9.1-2.4 2.1-5.4 4.5-6.6 1.3-.7 1.9-1.6 1.9-2.8l-.2-.9c-.1-.8-.6-1.6-1.3-2-.7-.5-1.5-.7-2.4-.5L3.6 1.5C1.9 1.8.7 3.4 1 5.2l1.5 8.2zm9-8.9c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1zm-3.57 6.662c.3.1.4.4.3.6-.1.3-.3.4-.5.4h-.2c-1-.4-1.9-1.3-2.3-2.3-.1-.3.1-.6.3-.7.3-.1.5 0 .6.3.4.8 1 1.4 1.8 1.7zM5.5 5.5c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1z" fill="#0084ff" fill-rule="nonzero" /></g></svg>
+            <button v-if="isShowSticker" class="absolute grid grid-cols-4 bottom-12 w-[270px] sticker bg-gray-700 gap-1 rounded-lg py-2">
+              <div v-for="(item, index) in listSticker" :key="index" class="hover:bg-gray-500 p-1 rounded-md" @click="hiddenSticker(item.url)">
+                <img :src="item.url" alt="photo" class="object-cover">
+              </div>
+            </button>
           </div>
           <!-- emoji -->
           <div class="w-full relative">
@@ -196,7 +205,9 @@ export default {
       isDebounce: null,
       isOnline: false,
       isDebounce2: null,
-      isLoaded: false
+      isLoaded: false,
+      isShowSticker: false,
+      listSticker: []
     }
   },
   computed: {
@@ -248,6 +259,41 @@ export default {
     }
   },
   methods: {
+    async hiddenSticker (stickerUrl) {
+      try {
+        const messageBody = {
+          conversationId: this.$route.params.id,
+          type: MessageType.TEXT,
+          stickerUrl
+        }
+        const data = await this.$api.conversation.sendMessage(messageBody)
+        this.isShowSticker = false
+        this.$store.commit('conversation/setNewMessage', data.data.message)
+        window.socket.emit('conversation:send-text-message', {
+          roomId: this.$route.params.id,
+          conversationUserId: data.data.message._id
+        })
+        await this.$store.dispatch('conversation/getListConversation', { page: 1, limit: 20, isLoadMore: false })
+        setTimeout(() => {
+          this.scrollToEnd2()
+        }, 30)
+      } catch (err) {
+        //
+      }
+    },
+    async getListSticker () {
+      try {
+        if (!this.isShowSticker) {
+          const dataSticker = await this.$api.conversation.getListSticker()
+          this.listSticker = dataSticker
+          this.isShowSticker = true
+        } else {
+          this.isShowSticker = false
+        }
+      } catch (error) {
+        //
+      }
+    },
     handleSendTextMessage (data) {
       this.$store.commit('conversation/setNewMessage', data)
       setTimeout(() => {
@@ -285,7 +331,7 @@ export default {
           if (this.$route.path.split('/')[1] === 'conversation' && this.pageDetailListMessage.nextPage && !this.isLoadMore) {
             if (!this.isLoadMore && this.pageDetailListMessage.nextPage && this.$refs.chatContent.scrollTop === 0) {
               this.isLoadMore = true
-              await this.getListMessageByConversationId({ conversationId: this.$route.params.id, limit: 10, page: this.pageDetailListMessage.nextPage, isLoadMore: true })
+              await this.getListMessageByConversationId({ conversationId: this.$route.params.id, limit: 20, page: this.pageDetailListMessage.nextPage, isLoadMore: true })
               this.isLoadMore = false
             }
           }
@@ -331,6 +377,10 @@ export default {
           roomId: this.$route.params.id,
           conversationUserId: data.data.message._id
         })
+        window.socket.emit('conversation:get-count-new-message', {
+          receiverId: this.userReceiverMessage._id
+        })
+
         this.isLoaded = false
         this.reset()
         await this.$store.dispatch('conversation/getListConversation', { page: 1, limit: 20, isLoadMore: false })
@@ -515,4 +565,14 @@ border: 2px solid #686868;
                 width: 100%;
             }
         }
+
+.sticker:before {
+  content: '';
+  border-top: 10px solid rgb(55 65 81);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  position: absolute;
+  bottom: -10px;
+  right: 46%;
+}
 </style>
