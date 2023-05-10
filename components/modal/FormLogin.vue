@@ -84,10 +84,12 @@ export default {
             setTimeout(() => {
               this.$router.push({ path: '/' })
             }, 1200)
+            this.spinning = false
           } else {
             return false
           }
         } catch (err) {
+          this.spinning = false
           if (err.data && Object.keys(err.data).length) {
             this.$toast.error(err.data.message, { timeout: 1500 })
           }

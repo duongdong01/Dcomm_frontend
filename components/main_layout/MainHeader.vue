@@ -13,7 +13,7 @@
     </div>
     <div class="flex items-center col-span-2 gap-6 justify-end">
       <div class="flex space-x-4">
-        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" @click="showNotification">
+        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" :disabled="$route.path.split('/')[1]==='notification'? true : false" :class="$route.path.split('/')[1] === 'notification' ? 'bg-btn_hover rounded-lg':''" @click="showNotification">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -24,13 +24,13 @@
           >
             <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
           </svg>
-          <div class="absolute rounded-[50%] w-[22px] h-[22px] flex justify-center items-end bg-red-500 top-[1px] left-6">
+          <div v-if="countNotification>0" class="absolute rounded-[50%] w-[22px] h-[22px] flex justify-center items-end bg-red-500 top-[1px] left-6">
             <p class="text-white font-medium text-[13px]">
-              9+
+              {{ countNotification }}
             </p>
           </div>
-          <div v-if="isLoadNotification" class="absolute max-h-[80vh] overflow-y-auto bg-gray-800 rounded-md shadow-sm w-[360px] max-w-[360px] top-14 notification-modal" @click.stop="test">
-            <Notification />
+          <div v-if="isLoadNotification && $route.path.split('/')[1]!=='notification'" class="absolute max-h-[80vh] overflow-y-auto bg-gray-800 rounded-md shadow-sm w-[360px] max-w-[360px] top-14 notification-modal">
+            <Notification :notifications="listNotification" @unread="showUnreadNotification" />
           </div>
         </button>
         <nuxt-link tag="button" to="/conversation" class="bg-main-color btn-messenger focus:outline-none h-12 w-12 flex items-center justify-center relative" title="messenger" :class="$route.path === '/conversation' ? 'bg-btn_hover rounded-lg':'' ">
@@ -150,7 +150,9 @@ export default {
       accessToken: window.localStorage.getItem('access_token'),
       imageData: require('@/static/avatar/avatar1.jpg'),
       isLoaded: false,
-      isLoadNotification: false
+      isLoadNotification: false,
+      isLoadMore: false,
+      type: 'ALL'
 
     }
   },
@@ -161,27 +163,59 @@ export default {
     },
     countMessageOutSide () {
       return this.$store.getters['conversation/countMessageOutSide']
+    },
+    countNotification () {
+      return this.$store.getters['notification/countNotification']
+    },
+    listNotification () {
+      return this.$store.getters['notification/listNotification']
     }
   },
   async mounted () {
+    this.isLoadNotification = false
     await this.getMe()
     if (this.$route.path.split('/')[1] !== 'conversation') {
       window.socket.on('conversation:get-count-new-message', this.handleCountNewMessage)
     }
+    window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
   },
   beforeDestroy () {
     window.socket.off('conversation:get-count-new-message', this.handleCountNewMessage)
+    window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
   },
   async created () {
     await this.getCountMessage()
+    await this.getCountNotification()
   },
   methods: {
     test () {
-      console.log('1111')
+      console.log('ok')
     },
-    showNotification () {
-      console.log(11111)
+    handleCountNewNotification (data) {
+      this.$store.commit('notification/setCountNotification', data.countNotification)
+    },
+    async getNotification ({ page, limit, type, isLoadMore }) {
+      await this.$store.dispatch('notification/getListNotification', { page, limit, type, isLoadMore })
+    },
+    async getCountNotification () {
+      await this.$store.dispatch('notification/getCountNotification')
+    },
+    async showNotification () {
       this.isLoadNotification = !this.isLoadNotification
+      this.type = 'ALL'
+      if (this.isLoadNotification === true) {
+        await this.getNotification({ page: 1, limit: 100, type: this.type, isLoadMore: false })
+        this.$store.commit('notification/setCountNotification', 0)
+      }
+    },
+    async showUnreadNotification (e) {
+      if (e === true) {
+        this.type = 'UNREAD'
+        await this.getNotification({ page: 1, limit: 100, type: this.type, isLoadMore: false })
+      } else {
+        this.type = 'ALL'
+        await this.getNotification({ page: 1, limit: 100, type: this.type, isLoadMore: false })
+      }
     },
     handleCountNewMessage (data) {
       this.$store.commit('conversation/setCountMessageOutSide', data.countMessage)
@@ -243,7 +277,7 @@ export default {
 
 .notification-modal::-webkit-scrollbar
 {
-  @apply w-[10px] bg-gray-700 rounded-lg ;
+  @apply w-[6px] bg-gray-700 rounded-lg ;
 }
 
 .notification-modal::-webkit-scrollbar-thumb
