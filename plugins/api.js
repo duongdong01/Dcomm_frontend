@@ -8,6 +8,7 @@ import Comment from '@/api/comment'
 import Search from '@/api/search'
 import Conversation from '@/api/conversation'
 import Token from '@/api/token'
+import Notification from '~/api/notification'
 
 export default (context, inject) => {
   // Initialize API factories
@@ -21,7 +22,8 @@ export default (context, inject) => {
     comment: Comment(context.$axios),
     search: Search(context.$axios),
     conversation: Conversation(context.$axios),
-    token: Token(context.$axios)
+    token: Token(context.$axios),
+    notification: Notification(context.$axios)
   }
 
   // Inject $api

@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-
+import MyToast from '~/components/toast/MyToast.vue'
 import MainRight from '@/components/main_layout/MainRight.vue'
 import CreatePost from '~/components/post/CreatePost.vue'
 import Post from '~/components/post/Post.vue'
@@ -63,6 +63,27 @@ export default {
     window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
+    showToast () {
+      // Define the content object with the component, props and listeners
+      const content = {
+        component: MyToast,
+        // Any prop can be passed, but don't expect them to be reactive
+        props: {
+          counter: this.counter
+        },
+        // Listen and react to events using callbacks. In this case we listen for
+        // the "click" event emitted when clicking the toast button
+        listeners: {
+          click: () => {
+            this.counter++
+            this.$toast.success(`Toast with counter ${this.counter}`, { position: 'top-left' })
+          }
+        }
+      }
+
+      // Render the toast and its contents
+      this.$toast(content, { position: 'bottom-right', toastClassName: 'my-custom-toast-class' })
+    },
     async sortPost (sort) {
       this.sort = sort
       await this.getPostFeed({ limit: 5, page: 1, sort: this.sort, type: this.type, isLoadMore: false })

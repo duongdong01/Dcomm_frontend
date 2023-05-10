@@ -18,10 +18,10 @@
       </div>
     </div>
     <div class="flex my-1 space-x-2">
-      <button class="py-2 px-3 rounded-3xl bg-blue-600/50 text-white font-semibold text-[16px] hover:bg-gray-600">
+      <button class="py-2 px-3 rounded-3xl  text-white font-semibold text-[16px] hover:bg-gray-600" :class="isAll ? 'bg-blue-600/50':''" @click.stop="showUnreadNotification(false)">
         All
       </button>
-      <button class="py-2 px-3 rounded-3xl  text-white font-semibold text-[16px] hover:bg-gray-600">
+      <button class="py-2 px-3 rounded-3xl  text-white font-semibold text-[16px] hover:bg-gray-600" :class="!isAll ? 'bg-blue-600/50':''" @click.stop="showUnreadNotification(true)">
         Unread
       </button>
     </div>
@@ -29,20 +29,13 @@
       <div>
         Earlier
       </div>
-      <nuxt-link to="/notification" tag="div" class="text-[#1876f2] text-[14px] cursor-pointer">
+      <nuxt-link v-if="$route.path.split('/')[1]!=='notification'" to="/notification" tag="div" class="text-[#1876f2] text-[14px] cursor-pointer">
         See all
       </nuxt-link>
     </div>
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
-    <NotificationItem />
+    <div v-for="(item,index) in notifications" :key="index">
+      <NotificationItem :notification="item" />
+    </div>
   </div>
 </template>
 
@@ -51,6 +44,23 @@ import NotificationItem from './NotificationItem.vue'
 export default {
   components: {
     NotificationItem
+  },
+  props: {
+    notifications: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      isAll: true
+    }
+  },
+  methods: {
+    showUnreadNotification (e) {
+      this.$emit('unread', e)
+      this.isAll = !e
+    }
   }
 }
 </script>

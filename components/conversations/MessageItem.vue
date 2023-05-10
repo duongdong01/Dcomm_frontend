@@ -13,7 +13,7 @@
             <div v-if="message.conversationFile.length" class="grid  gap-1 " :class="message.conversationFile.length===1 ? 'grid-cols-1':'grid-cols-2'">
               <div v-for="(item,index) in message.conversationFile" :key="index">
                 <img v-if="item.type==='IMAGE'" :src="item.url " alt="photo" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'">
-                <video v-if="item.type==='VIDEO'" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'" preload="metadata">
+                <video controls="controls" v-if="item.type==='VIDEO'" class="rounded-lg shadow-sm max-h-[200px]" :class="isOwner? 'float-right':'float-left'" preload="metadata">
                   <source :src="item.url" type="video/mp4">
                 </video>
                 <a v-if="item.type==='DOCS'" target="_blank" :href="item.url" class="py-6 px-4 max-h-[200px] bg-gray-500 flex items-end rounded-xl" :class="isOwner? 'float-right':'float-left'">
