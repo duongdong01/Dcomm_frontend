@@ -13,5 +13,8 @@ export default axios => ({
   },
   getListSticker () {
     return axios.get('/sticker/get-list-sticker').then(_ => _.data)
+  },
+  createConversation ({ userIds }) {
+    return axios.post('/conversation/create-conversation', { userIds })
   }
 })

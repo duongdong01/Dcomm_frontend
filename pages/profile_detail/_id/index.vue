@@ -72,7 +72,7 @@
               <div class="flex gap-2  items-center justify-center">
                 <img src="@/static/logo/dscvr-logo.png" alt="logo" class="w-6 h-6">
                 <p class="text-white text-base">
-                  240
+                  {{ user.token?.currentTotal }}
                 </p>
               </div>
               <div class="flex gap-2 items-center">
@@ -382,15 +382,7 @@
           <p class=" font-semibold">
             About
           </p>
-          <p class="text-gray-400">
-            Hello world
-          </p>
-          <p class="text-gray-400">
-            Music magazine in web3.
-          </p>
-          <p class="text-gray-400">
-            Discover new music.
-          </p>
+          <textarea :placeholder="user.aboutMe" class="bg-gray_850 resize-none" disabled/>
         </div>
         <AlbumShort />
       </div>
