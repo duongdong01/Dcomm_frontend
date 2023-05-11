@@ -156,7 +156,7 @@
         <span class="ml-1">Accept </span>
       </button>
 
-      <div class="basis-5/12 px-2 py-[6px] text-center bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer flex justify-center items-center  max-h-[37px]">
+      <div class="basis-5/12 px-2 py-[6px] text-center bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer flex justify-center items-center  max-h-[37px]" @click="nextToConversation">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -238,6 +238,13 @@ export default {
   methods: {
     handleOnline (data) {
       this.isOnline = data.isOnline
+    },
+    nextToConversation () {
+      try {
+        console.log('ok')
+      } catch (error) {
+        //
+      }
     },
     async createFriendRequest () {
       try {

@@ -140,10 +140,10 @@
             send you a friend request
           </p>
           <div class="flex space-x-3 justify-start">
-            <button class="bg-[#1876f2] font-medium rounded-md px-2 py-2 text-white">
+            <button class="bg-[#1876f2] font-medium rounded-md px-2 py-2 text-white" @click.stop.prevent="acceptFriendRequestByUserId(notification.senderUser._id,notification._id)">
               Confirm
             </button>
-            <button class="bg-gray-400 font-medium rounded-md px-2 py-2 text-white">
+            <button class="bg-gray-400 font-medium rounded-md px-2 py-2 text-white" @click.stop.prevent="refuseFriendRequestByUserId(notification.senderUser._id,notification._id)">
               Delete
             </button>
           </div>
@@ -246,6 +246,22 @@ export default {
         await this.$api.notification.deleteNotification({ notificationId })
       } catch (err) {
         //
+      }
+    },
+    async refuseFriendRequestByUserId (userId, notificationId) {
+      try {
+        await this.$api.friend.refuseFriendRequestByUserId(userId)
+        await this.removerNotification(notificationId)
+      } catch (err) {
+      }
+    },
+    async acceptFriendRequestByUserId (userId, notificationId) {
+      try {
+        await this.$api.friend.acceptFriendRequestByUserId(userId)
+        await this.removerNotification(notificationId)
+        this.$toast.success('Accept friend successfully.', { timeout: 1500 })
+      } catch (err) {
+        console.log(err)
       }
     }
   }
