@@ -70,7 +70,7 @@ export default {
       this.TaskAction = TaskAction
       const tmp = this.daily.numberTaskDone / this.daily.numberTask
       this.isDone = this.daily.isDone
-      if (tmp === 1) {
+      if (tmp >= 1) {
         this.isClaim = true
       } else {
         this.isClaim = false

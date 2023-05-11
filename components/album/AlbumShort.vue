@@ -13,7 +13,7 @@
     <div v-if="isLoad" class="col-span-2 grid grid-cols-2 gap-1">
       <div v-for="(item,index) in list" :key="index" class="h-[122px]">
         <nuxt-link :to="`/profile_detail/${$route.params.id}/medias`" tag="button" class="col-span-1 rounded-md overflow-hidden w-full h-[122px] cursor-pointer">
-          <AlbumItem :album="item" />
+          <AlbumItem class="w-full h-[122px]" :album="item" />
         </nuxt-link>
       </div>
     </div>

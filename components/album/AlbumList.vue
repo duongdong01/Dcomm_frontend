@@ -4,11 +4,14 @@
       <div class="text-base mb-3">
         Photos and Videos
       </div>
-      <div class="grid grid-cols-4 gap-1">
-        <div v-for="(item, index) in listalbum" :key="index">
-          <AlbumItem :album="item" :index="index" class="col-span-1 overflow-hidden rounded-md w-full cursor-pointer h-[263px]" @updateIndex="displayAlbumDetail" />
+      <div v-if="isLoad" class="grid grid-cols-4 gap-1">
+        <div v-for="(item, index) in list" :key="index">
+          <AlbumItem :album="item" :index="index" class="col-span-1 overflow-hidden rounded-md w-full cursor-pointer h-[263px]" @earseAlbum="messageDisplay" @updateIndex="displayAlbumDetail" />
         </div>
       </div>
+    </div>
+    <div v-if="messageErase" class="fixed top-0 left-0 w-full h-full z-10">
+      <MessageErase @deleteAlbum="deleteAlbum" @holdAlbum="holdAlbum" />
     </div>
     <div v-if="indexDisplay != null" class="fixed w-full h-full top-0 left-0 background-edit z-10 text-white">
       <button class="absolute z-50 top-4 right-4 cursor-pointer" @click="hiddenAlbum">
@@ -56,10 +59,12 @@
 
 import AlbumItem from '~/components/album/AlbumItem.vue'
 import MediasLayout from '~/components/modal/MediasLayout.vue'
+import MessageErase from '~/components/modal/MessageErase.vue'
 export default {
   components: {
     AlbumItem,
-    MediasLayout
+    MediasLayout,
+    MessageErase
   },
   props: {
     listalbum: {
@@ -74,13 +79,20 @@ export default {
   data () {
     return {
       list: [],
-      indexDisplay: null
+      indexDisplay: null,
+      messageErase: false,
+      indexDelete: null,
+      isLoad: false
     }
   },
   watch: {
     listalbum () {
       this.list = this.listalbum
     }
+  },
+  beforeMount () {
+    this.list = this.listalbum
+    this.isLoad = true
   },
   methods: {
     displayAlbumDetail (e) {
@@ -105,6 +117,28 @@ export default {
     },
     nextIndex () {
       this.indexDisplay++
+    },
+    messageDisplay (e) {
+      this.messageErase = true
+      this.indexDelete = e
+    },
+    async deleteAlbum () {
+      try {
+        this.messageErase = false
+        const tmp = this.listalbum[this.indexDelete].albumFileDetail
+        const listFilesDelet = [{ fileId: tmp.fileId, albumId: tmp.albumId }]
+        const listdel = { listFilesDelete: listFilesDelet }
+        this.refresh()
+        await this.$api.user.earseAlbum(listdel)
+      } catch (error) {
+
+      }
+    },
+    holdAlbum () {
+      this.messageErase = false
+    },
+    refresh () {
+      this.list = this.list.filter((current, index) => index !== this.indexDelete)
     }
   }
 
