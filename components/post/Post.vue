@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' || $route.path.split('/')[1]==='following' ? 'mt-4' :'mt-[0.2px]'">
+  <div class="flex flex-col bg-gray_850 rounded-xl text-white px-6  pt-5 pb-4 text-base outline-none border-gray-700 border" :class="$route.path==='/' || $route.path.split('/')[1]==='following' || $route.path.split('/')[1]==='global' ? 'mt-4' :'mt-[0.2px]'">
     <header class="flex justify-between cursor-pointer">
       <div class="flex w-fit">
         <div class="relative" @mouseover="getUserHover" @mouseleave="hiddenUserHover">

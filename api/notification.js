@@ -10,5 +10,8 @@ export default axios => ({
   },
   readNotification ({ notificationId }) {
     return axios.post('/notification/read-notification-by-id', { notificationId })
+  },
+  readAllNotification () {
+    return axios.post('/notification/read-all-notification')
   }
 })

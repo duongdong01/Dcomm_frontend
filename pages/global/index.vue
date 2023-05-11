@@ -4,7 +4,7 @@
       <create-post class="mb-4" :on="on" />
       <Sort @sort="sortPost" />
       <div>
-        <div v-if="feeds.length >0 && $route.path==='/'">
+        <div v-if="feeds.length >0 && $route.path.split('/')[1]==='global'">
           <Post v-for="(item,index) in feeds" :key="`${item._id}+${index}`" :post="item" />
         </div>
         <div v-if="feeds.length===0" class=" w-full flex justify-center items-center h-20 text-[18px] text-gray-400 font-medium bg-gray_850 mt-4 rounded-xl">
@@ -33,7 +33,7 @@ export default {
       isLoadMore: false,
       isDebounce: null,
       count: 0,
-      type: 'ALL',
+      type: 'GLOBAL',
       sort: 'CREATED_AT'
     }
   },
@@ -49,10 +49,7 @@ export default {
 
   },
   mounted () {
-    if (this.$route.path === '/') {
-      window.addEventListener('scroll', this.loadMore)
-    }
-    if (this.$route.path.split('/')[1] === 'following') {
+    if (this.$route.path.split('/')[1] === 'global') {
       window.addEventListener('scroll', this.loadMore)
     }
   },
@@ -67,23 +64,16 @@ export default {
       this.sort = sort
       await this.getPostFeed({ limit: 5, page: 1, sort: this.sort, type: this.type, isLoadMore: false })
     },
-    debounce (func, timeout = 300) {
-      let timer
-      return (...args) => {
-        clearTimeout(timer)
-        timer = setTimeout(() => { func.apply(this, args) }, timeout)
-      }
-    },
     async getPostFeed ({ limit, page, sort, type, isLoadMore }) {
-      if (this.$route.path === '/') {
-        await this.$store.dispatch('post/getPostFeeds', { limit, page, sort, type, isLoadMore })
+      if (this.$route.path.split('/')[1] === 'global') {
+        await this.$store.dispatch('post/getPostFeeds', { limit, page, sort, type: 'GLOBAL', isLoadMore })
       }
     },
     loadMore () {
       try {
         clearTimeout(this.isDebounce)
         this.isDebounce = setTimeout(async () => {
-          if (this.$route.path === '/' && this.pageDetail.nextPage && !this.isLoadMore) {
+          if (this.$route.path.split('/')[1] === 'global' && this.pageDetail.nextPage && !this.isLoadMore) {
             if (!this.isLoadMore && this.pageDetail.nextPage && document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 120) {
               this.isLoadMore = true
               await this.getPostFeed({ limit: 5, page: this.pageDetail.nextPage, isLoadMore: this.isLoadMore, sort: this.sort, type: this.type })

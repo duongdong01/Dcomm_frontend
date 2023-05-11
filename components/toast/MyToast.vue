@@ -1,21 +1,18 @@
 <template>
-  <div class="t-container bg-white">
-    <img src="@/static/ads2.jpeg" alt="" class="w-6 h-6 rounded-full">
-    <span>Toasts {{ counter }} from toasts!</span>
-    <button class="action" @click.stop="clicked">
-      Open!
-    </button>
-  </div>
+  <NewNotification :notification="notification" />
 </template>
 <script>
+import NewNotification from './NewNotification.vue'
 export default {
-  props: ['counter'],
-  methods: {
-    clicked () {
-      // Emit a "click" event when clicked.
-      // Can be any event though and even pass parameters back
-      this.$emit('click')
+  components: { NewNotification },
+  props: {
+    notification: {
+      type: Object,
+      default: () => Object
     }
+
+  },
+  methods: {
   }
 }
 </script>
@@ -35,6 +32,15 @@ export default {
     border: thin solid currentColor;
   }
   .Vue-Toastification__toast--default.my-custom-toast-class {
-        background-color: red;
+  @apply bg-gray-800
+    }
+
+    .Vue-Toastification__toast-body.custom-class-1 {
+        /* font-size: 30px; */
+    }
+
+    /* Applied to a wrapper div when using a custom component as content */
+    .Vue-Toastification__toast-component-body.custom-class-2 {
+        width: 350px;
     }
   </style>

@@ -19,7 +19,7 @@
         <div class="notification-content">
           <p v-if="notification.type==='LIKE_POST'" class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            {{ notification.post.countReaction>1 ? `and ${notification.post.countReaction-1} others`:'' }}  react to your post
+            {{ notification.post.countReaction>1 ? `and ${notification.post.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>
@@ -59,7 +59,7 @@
         <div class="notification-content">
           <p class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            comment on your post {{ notification.post?.postNormal?.content || notification.post?.postShare?.content }}
+            comment on your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>
@@ -99,7 +99,7 @@
         <div class="notification-content">
           <p class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            mentioned you in a  post {{ notification.post?.postNormal?.content || notification.post?.postShare?.content }}
+            mentioned you in a  post
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>

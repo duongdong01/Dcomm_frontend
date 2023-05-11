@@ -13,7 +13,7 @@
     </div>
     <div class="flex items-center col-span-2 gap-6 justify-end">
       <div class="flex space-x-4">
-        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" :disabled="$route.path.split('/')[1]==='notification'? true : false" :class="$route.path.split('/')[1] === 'notification' ? 'bg-btn_hover rounded-lg':''" @click="showNotification">
+        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" :disabled="$route.path.split('/')[1]==='notification'? true : false" :class="[$route.path.split('/')[1] === 'notification' ? 'bg-btn_hover rounded-lg':'',isLoadNotification ?'bg-btn_hover rounded-lg':'' ]" @click="showNotification">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -29,7 +29,7 @@
               {{ countNotification }}
             </p>
           </div>
-          <div v-if="isLoadNotification && $route.path.split('/')[1]!=='notification'" class="absolute max-h-[80vh] overflow-y-auto bg-gray-800 rounded-md shadow-sm w-[360px] max-w-[360px] top-14 notification-modal">
+          <div v-if="isLoadNotification===true" class="absolute max-h-[80vh] overflow-y-auto bg-gray-800 rounded-md shadow-sm w-[360px] max-w-[360px] top-14 notification-modal pb-1">
             <Notification :notifications="listNotification" @unread="showUnreadNotification" />
           </div>
         </button>
@@ -171,17 +171,24 @@ export default {
       return this.$store.getters['notification/listNotification']
     }
   },
+  watch: {
+    $route () {
+      setTimeout(() => {
+        this.isLoadNotification = false
+      }, 30)
+    }
+  },
   async mounted () {
     this.isLoadNotification = false
     await this.getMe()
     if (this.$route.path.split('/')[1] !== 'conversation') {
-      window.socket.on('conversation:get-count-new-message', this.handleCountNewMessage)
+      await window.socket.on('conversation:get-count-new-message', this.handleCountNewMessage)
     }
-    window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
+    await window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
   },
-  beforeDestroy () {
-    window.socket.off('conversation:get-count-new-message', this.handleCountNewMessage)
-    window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
+  async beforeDestroy () {
+    await window.socket.off('conversation:get-count-new-message', this.handleCountNewMessage)
+    await window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
   },
   async created () {
     await this.getCountMessage()
