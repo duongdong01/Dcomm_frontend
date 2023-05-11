@@ -55,8 +55,8 @@
           <div> <span class="nav_item" style="margin-left: 11px;">Popular</span></div>
         </div>
       </nuxt-link> -->
-      <nuxt-link to="/" tag="a" class="nav_left-menu">
-        <div ref="home" class="flex" :class="$route.path === '/follow' ? 'focus_item_nav' : ''">
+      <nuxt-link to="/global" tag="a" class="nav_left-menu">
+        <div ref="home" class="flex" :class="$route.path.split('/')[1] === 'global' ? 'focus_item_nav' : ''">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"

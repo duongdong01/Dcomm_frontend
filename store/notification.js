@@ -49,6 +49,11 @@ export const mutations = {
       }
     }
     state.listNotification[index].isClicked = true
+  },
+  readAllNotification: (state) => {
+    for (let i = 0; i < state.listNotification.length; i++) {
+      state.listNotification[i].isClicked = true
+    }
   }
 }
 

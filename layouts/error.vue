@@ -14,11 +14,23 @@
 </template>
 <script>
 import MainHeader from '~/components/main_layout/MainHeader.vue'
+import SocketioService from '@/socket/socketio.service'
 export default {
   components: { MainHeader },
   layout: 'empty',
   data () {
     return {}
+  },
+  beforeDestroy () {
+    SocketioService.disconnect()
+  },
+  async beforeMount () {
+    // this.$socket.on('connect', () => {
+    //   console.log('Socket connected')
+    // })
+    if (window.localStorage.getItem('access_token')) {
+      await SocketioService.setupSocketConnection()
+    }
   }
 }
 </script>

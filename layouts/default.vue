@@ -21,6 +21,7 @@ import MainLeft from '@/components/main_layout/MainLeft.vue'
 import MainHeader from '@/components/main_layout/MainHeader.vue'
 import Follower from '@/components/modal/Follower.vue'
 import SocketioService from '@/socket/socketio.service'
+import MyToast from '~/components/toast/MyToast.vue'
 
 export default {
   components: { MainLeft, MainHeader, Follower },
@@ -29,15 +30,39 @@ export default {
     ...mapGetters(['isOpenFollower'])
 
   },
-  beforeDestroy () {
+  async beforeDestroy () {
+    await window.socket.off('notification:send-new-notification', this.handleSendNewNotification)
     SocketioService.disconnect()
   },
-  beforeMount () {
+  async beforeMount () {
     // this.$socket.on('connect', () => {
     //   console.log('Socket connected')
     // })
     if (window.localStorage.getItem('access_token')) {
-      SocketioService.setupSocketConnection()
+      await SocketioService.setupSocketConnection()
+    }
+  },
+  async mounted () {
+    await window.socket.on('notification:send-new-notification', this.handleSendNewNotification)
+  },
+  methods: {
+    showToast (notificationData) {
+      const content = {
+        component: MyToast,
+        props: {
+          notification: notificationData
+        },
+        listeners: {
+          click: () => {
+            this.counter++
+            this.$toast.success(`Toast with counter ${this.counter}`, { position: 'top-left' })
+          }
+        }
+      }
+      this.$toast(content, { position: 'bottom-left', toastClassName: 'my-custom-toast-class', icon: false, bodyClassName: ['custom-class-1', 'custom-class-2'], timeout: 5000 })
+    },
+    handleSendNewNotification (data) {
+      this.showToast(data.notification)
     }
   }
 }
