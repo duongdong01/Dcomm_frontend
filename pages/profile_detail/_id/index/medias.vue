@@ -1,6 +1,13 @@
 <template>
   <div class="mb-5">
-    <AlbumList v-if="isLoad" ref="abc" :listalbum="list" :count-list="list.length" @loadMoreNext="load" />
+    <AlbumList
+      v-if="isLoad"
+      ref="abc"
+      :listalbum="list"
+      :count-list="list.length"
+      :owner="isOwner"
+      @loadMoreNext="load"
+    />
   </div>
 </template>
 
@@ -14,7 +21,8 @@ export default {
       countPage: 1,
       isLoad: false,
       isLoadMore: false,
-      isDebounce: null
+      isDebounce: null,
+      isOwner: false
     }
   },
   async created () {
@@ -28,6 +36,7 @@ export default {
       try {
         userId = this.$route.params.id
         const listAlbum = await this.$api.user.getListMedias({ userId, page, limit })
+        this.isOwner = listAlbum.data.isOwner
         this.list = this.list.concat(listAlbum.data.files)
         if (listAlbum.data.nextPage !== null) {
           this.countPage = listAlbum.data.pageDetail.nextPage

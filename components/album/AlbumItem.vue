@@ -5,9 +5,9 @@
     @mouseover="upHere = true"
     @mouseleave="upHere = false"
   >
-    <div v-if="isImg" class="relative w-full h-full">
+    <div v-if="album.type==='IMAGE'" class="relative w-full h-full">
       <img class="w-full h-full object-cover" :src="album.url" alt="img">
-      <div v-if="upHere" class="absolute top-2 right-2 z-2 bg-gray-700 rounded-full " @click="messeage" @click.stop>
+      <div v-if="upHere && isview && owner" class="absolute top-2 right-2 z-2 bg-gray-700 rounded-full " @click.stop="messeage">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="26"
@@ -23,7 +23,7 @@
         </svg>
       </div>
     </div>
-    <div v-if="!isImg" class="relative" @click="toggleButton">
+    <div v-else class="relative" @click="toggleButton">
       <video class="w-full h-full object-cover" preload="metadata">
         <source :src="album.url" type="video/mp4">
       </video>
@@ -52,7 +52,7 @@
           <path id="ytp-id-159" class="ytp-svg-fill" d="M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z" />
         </svg>
       </div>
-      <div v-if="upHere" class="absolute top-2 right-2 z-2 bg-gray-700 rounded-full" @click="messeage">
+      <div v-if="upHere && isview && owner" class="absolute top-2 right-2 z-2 bg-gray-700 rounded-full" @click.stop="messeage">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="26"
@@ -82,6 +82,14 @@ export default {
     index: {
       type: Number,
       default: 0
+    },
+    isview: {
+      type: Boolean,
+      default: false
+    },
+    owner: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -89,11 +97,6 @@ export default {
       isImg: false,
       active: false,
       upHere: false
-    }
-  },
-  mounted () {
-    if (this.album.type === 'IMAGE') {
-      this.isImg = true
     }
   },
   methods: {
