@@ -6,7 +6,15 @@
       </div>
       <div v-if="isLoad" class="grid grid-cols-4 gap-1">
         <div v-for="(item, index) in list" :key="index">
-          <AlbumItem :album="item" :index="index" class="col-span-1 overflow-hidden rounded-md w-full cursor-pointer h-[263px]" @earseAlbum="messageDisplay" @updateIndex="displayAlbumDetail" />
+          <AlbumItem
+            :album="item"
+            :index="index"
+            :isview="true"
+            :owner="owner"
+            class="col-span-1 overflow-hidden rounded-md w-full cursor-pointer h-[263px]"
+            @earseAlbum="messageDisplay"
+            @updateIndex="displayAlbumDetail"
+          />
         </div>
       </div>
     </div>
@@ -74,6 +82,10 @@ export default {
     countList: {
       type: Number,
       default: 0
+    },
+    owner: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -141,7 +153,6 @@ export default {
       this.list = this.list.filter((current, index) => index !== this.indexDelete)
     }
   }
-
 }
 
 </script>
