@@ -88,7 +88,7 @@
 
               Edit Post
             </div>
-            <div v-if="!post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+            <div v-if="!post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="reportPost">
               <svg
 
                 xmlns="http://www.w3.org/2000/svg"
@@ -261,20 +261,57 @@
             {{ post?.countComment || 0 }}
           </p>
         </nuxt-link>
-        <div class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4">
+        <!-- token post -->
+        <button class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4 relative" @click="showOptionToken" @focusout="hiddenOptionToken">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
             height="20"
             fill="currentColor"
-            class="bi bi-coin"
+            class="bi bi-coin text-yellow-500"
             viewBox="0 0 16 16"
           >
             <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9H5.5zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518l.087.02z" />
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
             <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
           </svg>
-        </div>
+          <p class="ml-1 text-yellow-200">
+            {{ post.totalToken }}
+          </p>
+          <div v-if="isOptionToken" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-[4]">
+            <div v-if="!post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-2 px-5 transition-all ease-in-out duration-300" @click="showModalDonate">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-coin"
+                viewBox="0 0 16 16"
+              >
+                <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9H5.5zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518l.087.02z" />
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
+              </svg>
+              Donate token
+            </div>
+            <div v-if="post.isOwner" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-2 px-5 transition-all ease-in-out duration-300" @click="showModalStake">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                class="bi bi-cash-coin"
+                viewBox="0 0 16 16"
+              >
+                <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z" />
+                <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1h-.003zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195l.054.012z" />
+                <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083c.058-.344.145-.678.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1H1z" />
+                <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 5.982 5.982 0 0 1 3.13-1.567z" />
+              </svg>
+              Stake token
+            </div>
+          </div>
+        </button>
         <div v-if="post.privacy!==PostPrivacy.ONLY_ME" class="flex justify-center items-center cursor-pointer hover:bg-btn_hover rounded-lg px-4" @click="showModalShare">
           <svg
             width="20"
@@ -301,6 +338,8 @@
     <confirm-dialogue ref="confirmDialogue" />
     <SharePost v-if="isShareModal" class="w-full h-full top-0 left-0" :post-share="post.type=== 'NORMAL' ? post : post.originPost" @hiddenShareModal="hiddenShareModal" />
     <EditPost v-if="isEditModal" :post="post" @hiddenEditModal="hiddenEditModal" />
+    <StakeToken ref="stakeToken" />
+    <ReportModal v-if="isReportModal" :post-id="post._id" @hiddenReport="isReportModal=false" />
   </div>
 </template>
 
@@ -308,6 +347,8 @@
 import Comment from '../comment/Comment.vue'
 import Lightbox from '../lightbox/Lightbox.vue'
 import UserView from '../friends/UserView.vue'
+import ReportModal from './ReportModal.vue'
+import StakeToken from '@/components/modal/StakeToken.vue'
 import ConfirmDialogue from '@/components/modal/ConfirmDialogue.vue'
 import { PostPrivacy, PostType } from '~/constants/post'
 import { ReactionOn, ReactionType } from '~/constants/reaction'
@@ -315,7 +356,7 @@ import SharePost from '~/components/modal/SharePost.vue'
 import EditPost from '@/components/modal/EditPost.vue'
 
 export default {
-  components: { Lightbox, Comment, ConfirmDialogue, SharePost, EditPost, UserView },
+  components: { Lightbox, Comment, ConfirmDialogue, SharePost, EditPost, UserView, StakeToken, ReportModal },
   props: {
     post: {
       type: Object,
@@ -342,22 +383,8 @@ export default {
       isShowMoreContentShare: false,
       isShareModal: false,
       isEditModal: false,
-      images: [
-        {
-
-          url: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/1/18/871936/Arin---Oh-My-Girl-8.jpg'
-        },
-        {
-          url: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/1/18/871936/Arin---Oh-My-Girl-5.jpg'
-        },
-        {
-          url: 'https://luv.vn/wp-content/uploads/2021/11/avatar-gai-xinh-41.jpg'
-        },
-        {
-          url: 'https://antimatter.vn/wp-content/uploads/2022/05/hinh-anh-hot-girl-han-quoc.jpg'
-        }
-
-      ]
+      isOptionToken: false,
+      isReportModal: false
     }
   },
   computed: {
@@ -385,6 +412,53 @@ export default {
     }
   },
   methods: {
+    reportPost () {
+      this.isReportModal = true
+    },
+    async showModalDonate () {
+      try {
+        const stake = await this.$refs.stakeToken.show({
+          title: 'Would you like to donate this token?',
+          okButton: 'Donate'
+        })
+        if (stake) {
+          await this.$api.token.donateToken({ postId: this.post._id, quantityToken: stake })
+          this.$store.commit('post/tokenPost', { postId: this.post._id, token: stake })
+          this.$toast.success('Donate successfully.', { timeout: 1500 })
+        }
+      } catch (error) {
+        if (error.data && error.data.message) {
+          this.$toast.error(error.data.message, { timeout: 1500 })
+        } else {
+          this.$toast.error('System error.', { timeout: 1500 })
+        }
+      }
+    },
+    async showModalStake () {
+      try {
+        const stake = await this.$refs.stakeToken.show({
+          title: 'Would you like to stake this token?',
+          okButton: 'Stake'
+        })
+        if (stake) {
+          await this.$api.token.stakeToken({ postId: this.post._id, quantityToken: stake })
+          this.$store.commit('post/tokenPost', { postId: this.post._id, token: stake })
+          this.$toast.success('Stake successfully.', { timeout: 1500 })
+        }
+      } catch (error) {
+        if (error.data && error.data.message) {
+          this.$toast.error(error.data.message, { timeout: 1500 })
+        } else {
+          this.$toast.error('System error.', { timeout: 1500 })
+        }
+      }
+    },
+    hiddenOptionToken () {
+      this.isOptionToken = false
+    },
+    showOptionToken () {
+      this.isOptionToken = !this.isOptionToken
+    },
     getUserHover () {
       this.upHere = true
     },

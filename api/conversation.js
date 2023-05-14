@@ -16,5 +16,11 @@ export default axios => ({
   },
   createConversation ({ userIds }) {
     return axios.post('/conversation/create-conversation', { userIds })
+  },
+  deleteMessageByConversationUserId ({ conversationUserId }) {
+    return axios.delete('/conversation/delete-message-by-conversation-user-id', { data: { conversationUserId } })
+  },
+  getFileMediaMessage ({ conversationId, type }) {
+    return axios.get(`/conversation/get-file-media-message?conversationId=${conversationId}&type=${type}`).then(_ => _.data)
   }
 })

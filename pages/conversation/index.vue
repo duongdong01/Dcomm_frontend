@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-10 text-white h-[100vh] max-h-[100vh] conversation">
-    <div ref="listConversation" class="col-span-2  border-r-[1.5px] border-[#303030] rounded-lg overflow-y-scroll conversation_left">
+  <div class="grid grid-cols-12 lg:grid-cols-11 text-white h-[100vh] max-h-[100vh] conversation 2xl:grid-cols-10">
+    <div ref="listConversation" class="col-span-4  border-r-[1.5px] border-[#303030] rounded-lg overflow-y-scroll conversation_left lg:col-span-3  2xl:col-span-2">
       <div class="flex flex-col pr-8">
         <div class="flex h-16 leading-[64px] justify-between items-center">
           <div>
@@ -55,7 +55,7 @@ export default {
     await this.getListConversation({ limit: 20, page: 1, isLoadMore: this.isLoadMore })
     await this.$store.dispatch('conversation/getCountMessage')
     this.isLoaded = true
-    if (this.listConversation && this.listConversation.length) {
+    if (this.listConversation && this.listConversation.length && this.$route.path.split('/').length < 4) {
       this.$router.push({ path: `/conversation/direct/${this.listConversation[0]._id}` })
     }
   },

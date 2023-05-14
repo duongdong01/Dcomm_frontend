@@ -1,6 +1,6 @@
 <template>
   <nuxt-link class="flex space-x-4 rounded-xl cursor-pointer px-1 py-2 relative" :to="`/conversation/direct/${discussion._id}`" tag="div" :class="$route.path.split('/')[3]===discussion._id ? 'bg-[#252f3c] hover:opacity-90':' hover:bg-drak_chat'">
-    <div class="flex relative">
+    <div class="flex relative min-w-[52px]">
       <img :src=" discussion.userChat.avatar|| avatar" alt="photo" class="w-14 h-14 rounded-full">
       <div v-if="isOnline" class="w-4 h-4 right-1 bottom-0  bg-green-600 absolute rounded-full border-2 border-black" />
     </div>
@@ -9,8 +9,8 @@
         {{ discussion.userChat.fullname }}
       </h1>
       <div v-if="discussion.conversationUser" class="flex text-[14px] font-normal text-gray-400">
-        <p v-if="discussion.conversationUser.type==='TEXT'" class="relative">
-          <span v-if="discussion.conversationUser.isOwner">  You: </span> {{ discussion.conversationUser.message }} <span class="-mt-1 ml-1 absolute">.</span>
+        <p v-if="discussion.conversationUser.type==='TEXT'" class="relative 2xl:max-w-[180px] truncate lg:max-w-[160px]">
+          <span v-if="discussion.conversationUser.isOwner">  You: </span> {{ discussion.conversationUser.message }} <span class="-mt-1 ml-1 absolute right-0">.</span>
         </p>
         <p v-else class="relative">
           <span v-if="discussion.conversationUser.isOwner">  You send file  </span>

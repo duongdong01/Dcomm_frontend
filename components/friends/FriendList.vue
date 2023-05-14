@@ -117,8 +117,8 @@ export default {
         }
       } catch (err) {
         this.isLoaded = false
-        this.$toast.error(err.toString())
-        this.$router.push('/')
+        // this.$toast.error(err.toString())
+        // this.$router.push('/')
       }
     },
     searchFriend (e) {
