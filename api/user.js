@@ -19,5 +19,8 @@ export default axios => ({
   },
   reportPost ({ postId, name, description }) {
     return axios.post('/users/report-post', { postId, name, description })
+  },
+  payment ({ amount, description }) {
+    return axios.post('/paypal/create-payment', { amount, description })
   }
 })

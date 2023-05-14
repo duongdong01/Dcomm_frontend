@@ -32,7 +32,7 @@ export default {
   beforeDestroy () {
     SocketioService.disconnect()
   },
-  mounted () {
+  beforeMount () {
     if (window.localStorage.getItem('access_token')) {
       SocketioService.setupSocketConnection()
     }
