@@ -23,21 +23,21 @@
           <div> <span class="nav_item ">My profile</span></div>
         </div>
       </nuxt-link>
-      <nuxt-link to="/user-setting/withdraw" tag="a" class="nav_left-menu">
-        <div ref="home" class="flex" :class="$route.path === '/following' ? 'focus_item_nav' : ''">
+      <nuxt-link to="/user-setting/balance" tag="a" class="nav_left-menu">
+        <div ref="home" class="flex" :class="$route.path.split('/')[2] === 'balance' ? 'focus_item_nav' : ''">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="22"
               height="22"
               fill="currentColor"
-              class="bi bi-bank2"
+              class="bi bi-wallet2"
               viewBox="0 0 16 16"
             >
-              <path d="M8.277.084a.5.5 0 0 0-.554 0l-7.5 5A.5.5 0 0 0 .5 6h1.875v7H1.5a.5.5 0 0 0 0 1h13a.5.5 0 1 0 0-1h-.875V6H15.5a.5.5 0 0 0 .277-.916l-7.5-5zM12.375 6v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zm-2.5 0v7h-1.25V6h1.25zM8 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM.5 15a.5.5 0 0 0 0 1h15a.5.5 0 1 0 0-1H.5z" />
+              <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z" />
             </svg>
           </div>
-          <div> <span class="nav_item ">Withdraw</span></div>
+          <div> <span class="nav_item ">Balance</span></div>
         </div>
       </nuxt-link>
       <nuxt-link to="/user-setting/people" tag="a" class="nav_left-menu">
