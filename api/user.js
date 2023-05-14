@@ -16,5 +16,8 @@ export default axios => ({
   },
   getListBlock ({ page, limit, search }) {
     return axios.get(`/user-relationship/get-blocked-user?${page}&${limit}&keyword=${search}`).then(_ => _.data)
+  },
+  reportPost ({ postId, name, description }) {
+    return axios.post('/users/report-post', { postId, name, description })
   }
 })

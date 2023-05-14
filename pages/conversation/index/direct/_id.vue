@@ -42,7 +42,7 @@
           </div>
           <MessageItem :is-owner="item.isOwner" :message="item" />
         </div>
-        <div ref="elementEnd" />
+        <div ref="elementEnd" class="h-[1px]" />
       </div>
       <!-- input chat -->
 
@@ -230,8 +230,10 @@ export default {
   watch: {
     async $route () {
       if (this.$route.path.split('/')[2] === 'direct') {
-        await this.getListMessageByConversationId({ limit: 20, page: 1, conversationId: this.$route.params.id, isLoadMore: false })
-        this.scrollToEnd()
+        if (this.$route.params.id) {
+          await this.getListMessageByConversationId({ limit: 20, page: 1, conversationId: this.$route.params.id, isLoadMore: false })
+          this.scrollToEnd()
+        }
       }
     }
   },
@@ -240,9 +242,8 @@ export default {
     //   // this.$refs.chatContent.scrollTop = this.$refs.chatContent.offsetHeight
     //   console.log(this.$refs.chatContent.scrollTop, this.$refs.chatContent.offsetHeight)
     // })
-    this.$nextTick(() => {
-      this.$refs.elementEnd.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    })
+    this.$refs.elementEnd.scrollIntoView({ behavior: 'smooth', block: 'end' })
+
     this.$refs.chatContent.addEventListener('scroll', this.loadMore)
     // socket
     window.socket.emit('conversation:join-room', { roomId: this.$route.params.id })
@@ -310,7 +311,11 @@ export default {
       }
     },
     scrollToEnd () {
-      this.$refs.chatContent.scrollTop = this.$refs.chatContent.scrollHeight
+      try {
+        this.$refs.chatContent.scrollTop = this.$refs.chatContent.scrollHeight
+      } catch (error) {
+
+      }
     },
     scrollToEnd2 () {
       this.$nextTick(() => {
@@ -531,6 +536,7 @@ border: 2px solid #686868;
             position: relative;
             overflow: hidden;
             background-color: #ddd;
+            z-index: 2;
             // margin: 100px auto;
             -webkit-border-radius: 20px;
             -moz-border-radius: 20px;

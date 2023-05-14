@@ -223,6 +223,11 @@ export default {
       isOnline: false
     }
   },
+  computed: {
+    userInfo () {
+      return this.$store.getters.userInfo
+    }
+  },
   async created () {
     await this.getUserHover()
   },
@@ -239,9 +244,10 @@ export default {
     handleOnline (data) {
       this.isOnline = data.isOnline
     },
-    nextToConversation () {
+    async nextToConversation () {
       try {
-        console.log('ok')
+        const conversationData = await this.$api.conversation.createConversation({ userIds: [this.userInfo._id, this.userId] })
+        this.$router.push({ path: `/conversation/direct/${conversationData.data.data.conversation._id}` })
       } catch (error) {
         //
       }

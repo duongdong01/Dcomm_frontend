@@ -63,6 +63,16 @@ export const mutations = {
   },
   setNewMessage: (state, data) => {
     state.listMessage.push(data)
+  },
+  deleteMessage: (state, messageId) => {
+    let index = 0
+    for (let i = 0; i < state.listMessage.length; i++) {
+      if (state.listMessage[i]._id.toString() === messageId.toString()) {
+        index = i
+        break
+      }
+    }
+    state.listMessage[index].isDeleted = true
   }
 }
 export const actions = {

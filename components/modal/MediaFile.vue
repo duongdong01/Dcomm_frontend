@@ -13,7 +13,10 @@
       </svg>
     </div>
     <div class="flex justify-center items-center">
-      <img :src="imageWatch" alt="photo" class="min-h-[200px] max-h-[80vh]">
+      <img v-if="imageWatch.type==='IMAGE'" :src="imageWatch.url" alt="photo" class="min-h-[200px] max-h-[80vh]">
+      <video v-else class="w-full h-full object-cover" controls="controls" preload="metadata">
+        <source :src="imageWatch.url" type="video/mp4">
+      </video>
     </div>
   </div>
 </template>
@@ -22,8 +25,8 @@
 export default {
   props: {
     image: {
-      type: String,
-      default: () => String
+      type: Object,
+      default: () => {}
     }
   },
   data () {

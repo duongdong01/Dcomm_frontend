@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col max-h-[100vh] h-[100vh]">
-    <div class="fixed z-50 w-full flex justify-center bg-[#121212] border-[#303030] border-b-[1.5px]">
+    <div class="fixed z-10 w-full flex justify-center bg-[#121212] border-[#303030] border-b-[1.5px]">
       <MainHeader class="animation-header px-10" />
     </div>
     <div class="flex justify-center items-center w-full h-full ">

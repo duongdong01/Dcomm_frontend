@@ -108,6 +108,24 @@ export const mutations = {
     }
     state.feeds.splice(count, 1)
   },
+  tokenPost: (state, { postId, token }) => {
+    state.feeds.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        el.totalToken += token
+      }
+    })
+
+    state.feedProfile.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        el.totalToken += token
+      }
+    })
+    state.postSearch.forEach((el) => {
+      if (el._id.toString() === postId.toString()) {
+        el.totalToken += token
+      }
+    })
+  },
   toggleLikePost: (state, postId) => {
     state.feeds.forEach((el) => {
       if (el._id.toString() === postId.toString()) {

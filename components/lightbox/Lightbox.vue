@@ -295,13 +295,14 @@ export default {
     vertical-align: middle;
     height: 100%;
 }
-
-.lb-modal-img img ,video{
-    max-width: 100%;
-    max-height: 100%;
-    min-width: 240px;
-    vertical-align: middle;
-    object-fit: contain;
+.lb{
+  .lb-modal-img img ,video{
+      max-width: 100%;
+      max-height: 100%;
+      min-width: 240px;
+      vertical-align: middle;
+      object-fit: contain;
+  }
 }
 
 .lb-modal-img .spinner {
