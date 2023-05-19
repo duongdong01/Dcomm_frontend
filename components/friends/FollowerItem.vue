@@ -2,11 +2,13 @@
   <div class="h-20 flex justify-between border-solid border-b-2 border-gray-500">
     <div class="flex items-center ">
       <div>
-        <nuxt-link :to="`/profile_detail/${follower.userSender._id}`" class="w-12 h-12 rounded-full mr-2 cursor-pointer" tag="div">
+        <nuxt-link :to="`/profile_detail/${follower.userSender._id}`" class="w-12 h-12 rounded-full mr-2 cursor-pointer" tag="div" @click.native="hiddenFollower">
           <img class="w-12 h-12 object-cover rounded-full" :src="follower.userSender.avatar" alt="img">
         </nuxt-link>
       </div>
-      <div>{{ follower.userSender.fullname }}</div>
+      <nuxt-link :to="`/profile_detail/${follower.userSender._id}`" class=" mr-2 cursor-pointer" tag="div" @click.native="hiddenFollower">
+        <div>{{ follower.userSender.fullname }}</div>
+      </nuxt-link>
     </div>
     <div class="flex items-center">
       <div class="p-2 bg-indigo-600 hover:bg-indigo-500 rounded-md cursor-pointer mr-2 relative flex items-center overflow-hidden" @click="acceptFriendRequestById">
@@ -76,6 +78,9 @@ export default {
     },
     change () {
       this.isShowRefuse = false
+    },
+    hiddenFollower () {
+      this.$store.commit('showFollower', false)
     }
   }
 }

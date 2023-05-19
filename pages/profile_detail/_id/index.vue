@@ -250,6 +250,20 @@
                   /></svg>
                   Settings
                 </div>
+                <div v-else class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="blockUser">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    fill="currentColor"
+                    class="bi bi-person-fill-slash"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M13.879 10.414a2.501 2.501 0 0 0-3.465 3.465l3.465-3.465Zm.707.707-3.465 3.465a2.501 2.501 0 0 0 3.465-3.465Zm-4.56-1.096a3.5 3.5 0 1 1 4.949 4.95 3.5 3.5 0 0 1-4.95-4.95ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
+                  </svg>
+
+                  Block
+                </div>
                 <div class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
                   <svg
                     width="22"
@@ -382,7 +396,7 @@
           <p class=" font-semibold">
             About
           </p>
-          <textarea :placeholder="user.aboutMe" class="bg-gray_850 resize-none" disabled/>
+          <textarea :placeholder="user.aboutMe" class="bg-gray_850 resize-none" disabled />
         </div>
         <AlbumShort />
       </div>
@@ -451,11 +465,11 @@ export default {
     }
   },
   async created () {
+    await this.checkBlock(this.$route.params.id)
     await this.getUserProfile()
     await this.getPostFeedProfile({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
     this.isLoaded = true
   },
-
   mounted () {
     if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3) {
       window.addEventListener('scroll', this.loadMore)
@@ -617,6 +631,23 @@ export default {
         }, 300)
       } catch (err) {
         //
+      }
+    },
+    async blockUser () {
+      try {
+        await this.$api.user.blockUserByUserId(this.$route.params.id)
+      } catch (error) {
+
+      }
+    },
+    async checkBlock (id) {
+      try {
+        const tmp = await this.$api.user.checkBlockByUserId(id)
+        if (tmp.data === true) {
+          this.$router.push('/error')
+        }
+      } catch (error) {
+
       }
     }
   }
