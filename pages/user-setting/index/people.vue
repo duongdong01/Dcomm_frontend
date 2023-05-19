@@ -16,7 +16,7 @@
           </div>
         </div>
         <button class="flex items-center">
-          <div class="bg-emerald-400 p-2 rounded-lg">
+          <div class="bg-emerald-400 p-2 rounded-lg" @click="unBlockUserByUserId(item.userDetail._id, index)">
             Unblock
           </div>
         </button>
@@ -64,6 +64,17 @@ export default {
         }, 300)
       } catch (err) {
         //
+      }
+    },
+    refresh (indexBlock) {
+      this.list = this.list.filter((current, index) => index !== indexBlock)
+    },
+    async unBlockUserByUserId (id, index) {
+      try {
+        await this.$api.user.unBlockUserByUserId(id)
+        this.refresh(index)
+      } catch (error) {
+
       }
     }
   }

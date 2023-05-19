@@ -17,6 +17,18 @@ export default axios => ({
   getListBlock ({ page, limit, search }) {
     return axios.get(`/user-relationship/get-blocked-user?${page}&${limit}&keyword=${search}`).then(_ => _.data)
   },
+  getListPeopleRandom (limit) {
+    return axios.get(`/user-relationship/get-random-people?limit=${limit}`).then(_ => _.data)
+  },
+  blockUserByUserId (blockedId) {
+    return axios.post('/user-relationship/blocked-user', { blockedId })
+  },
+  unBlockUserByUserId (unBlockedId) {
+    return axios.post('/user-relationship/un-blocked-user', { unBlockedId })
+  },
+  checkBlockByUserId (userIdCheck) {
+    return axios.post('/user-relationship/check-blocked-user', { userIdCheck })
+  },
   reportPost ({ postId, name, description }) {
     return axios.post('/users/report-post', { postId, name, description })
   },

@@ -19,124 +19,52 @@
         </div>
       </div>
     </div>
-    <div class="flex-col text-white  rounded-xl text-base  pb-3 mb-5">
-      <div class="grid grid-cols-2 gap-1 rounded-xl pb-3">
-        <div>
-          <p class="font-semibold">
-            🔥Hot Products
-          </p>
-        </div>
-        <div class="flex justify-between ml-10">
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer " @click="backArr">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              fill="currentColor"
-              class="bi bi-chevron-left text-white font-semibold cursor-pointer"
-              viewBox="0 0 16 16"
-            >
-              <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-            </svg>
-          </div>
-          <div class="w-8 h-8 hover:bg-btn_hover rounded-xl flex justify-center items-center cursor-pointer" @click="nextArr">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              fill="currentColor"
-              class="bi bi-chevron-right text-white font-semibold "
-              viewBox="0 0 16 16"
-            >
-              <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-            </svg>
-          </div>
+    <div class="flex-col text-white rounded-xl text-base p-3 mb-5 bg-gray_850">
+      <div>
+        <p class="font-semibold">
+          🔥 Add friend with
+        </p>
+      </div>
+      <div v-if="isLoad">
+        <div v-for="(item, index) in list" :key="index">
+          <People :people="item" />
         </div>
       </div>
-      <Ads :arr="current" :class="startAni" />
-      {{ startAni }}
     </div>
   </div>
 </template>
 
 <script>
-import Ads from '../ads/Ads.vue'
+import People from '../friends/People.vue'
 export default {
-  components: { Ads },
+  components: {
+    People
+  },
   data: function () {
     return {
-      array: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-      current: [1, 2, 3],
-      currentIndex: 0,
-      startAni: ''
+      list: [],
+      upHere: false,
+      upHere2: false,
+      isLoad: false
+
     }
   },
-  created () {
-    const tmp = [...this.array]
-    this.current = tmp.splice(this.currentIndex, 3)
-    this.currentIndex = 3
-  },
-  mounted () {
-    setInterval(() => {
-      if (this.currentIndex >= this.array.length) {
-        this.currentIndex = 0
-      }
-      const tmp = [...this.array]
-      this.current = tmp.splice(this.currentIndex, 3)
-      this.currentIndex = this.currentIndex + 3
-    }, 30000)
+  async created () {
+    await this.getListPeopleRandom(5)
   },
   methods: {
-    nextArr () {
-      if (this.currentIndex >= this.array.length) {
-        this.currentIndex = 0
+    async getListPeopleRandom (limit) {
+      try {
+        const tmp = await this.$api.user.getListPeopleRandom(limit)
+        this.list = tmp.data.listPeople
+        this.isLoad = true
+      } catch (error) {
+
       }
-      const tmp = [...this.array]
-      this.current = tmp.splice(this.currentIndex, 3)
-      this.currentIndex = this.currentIndex + 3
-      this.startAni = 'slide'
-      setTimeout(() => {
-        this.startAni = ''
-      }, 500)
-    },
-    backArr () {
-      this.currentIndex = this.currentIndex - 6
-      if (this.currentIndex < 0) {
-        this.currentIndex = 3
-        return
-      }
-      const tmp = [...this.array]
-      this.current = tmp.splice(this.currentIndex, 3)
-      this.currentIndex = this.currentIndex + 3
-      this.startAni = 'slide2'
-      setTimeout(() => {
-        this.startAni = ''
-      }, 500)
     }
   }
 }
 </script>
 <style lang="scss">
-.slide{
-  animation: ani 0.5s 1 ease-in-out;
-}
-.slide2{
-  animation: ani2 0.5s 1 ease-in-out;
-}
-@keyframes ani {
-  0%{
-    transform: translateX(15px);
-  }
-  100%{
-    transform: translateX(0);
-  }
-}
-@keyframes ani2 {
-  0%{
-    transform: translateX(-15px);
-  }
-  100%{
-    transform: translateX(0px);
-  }
-}
+
 </style>
