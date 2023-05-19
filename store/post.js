@@ -111,18 +111,18 @@ export const mutations = {
   tokenPost: (state, { postId, token }) => {
     state.feeds.forEach((el) => {
       if (el._id.toString() === postId.toString()) {
-        el.totalToken += token
+        el.totalToken += Number(token)
       }
     })
 
     state.feedProfile.forEach((el) => {
       if (el._id.toString() === postId.toString()) {
-        el.totalToken += token
+        el.totalToken += Number(token)
       }
     })
     state.postSearch.forEach((el) => {
       if (el._id.toString() === postId.toString()) {
-        el.totalToken += token
+        el.totalToken += Number(token)
       }
     })
   },

@@ -9,6 +9,7 @@ import Search from '@/api/search'
 import Conversation from '@/api/conversation'
 import Token from '@/api/token'
 import Notification from '~/api/notification'
+import Admin from '~/api/admin'
 
 export default (context, inject) => {
   // Initialize API factories
@@ -23,7 +24,8 @@ export default (context, inject) => {
     search: Search(context.$axios),
     conversation: Conversation(context.$axios),
     token: Token(context.$axios),
-    notification: Notification(context.$axios)
+    notification: Notification(context.$axios),
+    admin: Admin(context.$axios)
   }
 
   // Inject $api

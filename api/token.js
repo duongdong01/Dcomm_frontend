@@ -10,5 +10,8 @@ export default axios => ({
   },
   stakeToken ({ postId, quantityToken }) {
     return axios.post('/token/stake-token', { postId, quantityToken })
+  },
+  getTokenByUserId () {
+    return axios.get('/token/get-token-by-user-id').then(_ => _.data)
   }
 })

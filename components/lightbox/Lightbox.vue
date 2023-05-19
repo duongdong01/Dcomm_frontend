@@ -76,7 +76,7 @@ export default {
 
     cells: {
       type: Number,
-      default: () => 5
+      default: () => 4
     }
   },
 

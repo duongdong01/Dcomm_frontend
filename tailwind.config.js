@@ -30,7 +30,8 @@ module.exports = {
       slate: colors.slate,
       primary: '#4f46e5',
       green: colors.green,
-      drak_chat: '#3a3b3c'
+      drak_chat: '#3a3b3c',
+      body: '#25074d'
     }
   },
   plugins: []

@@ -4,7 +4,7 @@
       <users-icon />
     </sidenav-item>
 
-    <sidenav-item title="Medias" to="/admin/medias">
+    <sidenav-item title="Reports" to="/admin/report">
       <medias-icon />
     </sidenav-item>
 

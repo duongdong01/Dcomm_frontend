@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-between text-sm items-center my-5">
     <div class="flex items-center">
-      <div class="relative cursor-pointer" @mouseover="upHere = true" @mouseleave="upHere = false">
-        <img class="w-14 h-14 rounded-full object-cover" :src="people.avatar" alt="">
+      <div class="relative cursor-pointer" @mouseover="upHere = true" @mouseleave="upHere = false" @click="goToProfile">
+        <img class="w-11 h-11 rounded-full object-cover" :src="people.avatar" alt="">
         <div v-if="upHere" class="z-50 absolute top-[-180px] left-2 transition-all">
           <PeopleView :people="people" :issend="isSendRequest" @createFriendRequest="createFriendRequest" @cancelFriendRequestByUserId="cancelFriendRequestByUserId" />
         </div>
@@ -19,10 +19,10 @@
         </div>
       </div>
     </div>
-    <button v-if="!isSendRequest" class="p-2 bg-gray-600 rounded-xl hover:bg-btn_hover" @click="createFriendRequest">
+    <button v-if="!isSendRequest" class="px-3 py-[6px] bg-indigo-500 rounded-md hover:bg-indigo-600" @click="createFriendRequest">
       Add
     </button>
-    <button v-if="isSendRequest" class="p-2 bg-gray-600 rounded-xl hover:bg-btn_hover" @click="cancelFriendRequestByUserId">
+    <button v-if="isSendRequest" class="px-3 py-[6px] bg-gray-600 rounded-md hover:bg-btn_hover" @click="cancelFriendRequestByUserId">
       Cancel
     </button>
   </div>
@@ -64,6 +64,9 @@ export default {
       } catch (err) {
         this.isSendRequest = true
       }
+    },
+    goToProfile () {
+      this.$router.push({ path: `/profile_detail/${this.people._id}` })
     }
 
   }

@@ -3,14 +3,14 @@
     <header class="flex justify-between cursor-pointer">
       <div class="flex w-fit">
         <div class="relative" @mouseover="getUserHover" @mouseleave="hiddenUserHover">
-          <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="w-10 h-10 overflow-hidden cursor-pointer" tag="div">
-            <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-10 h-10">
+          <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="w-11 h-11 overflow-hidden cursor-pointer" tag="div">
+            <img :src="post?.owner.avatar" alt="avatar" class="rounded-full object-cover w-11 h-11">
           </nuxt-link>
           <div v-if="upHere" class="z-50 absolute  transition-all" :class="$route.path.split('/')[1]==='post'? 'top-[90%]' :'bottom-[90%]'">
             <UserView :user-id="post.ownerId" />
           </div>
         </div>
-        <div class="flex flex-col ml-3 -mt-1">
+        <div class="flex flex-col ml-3 ">
           <nuxt-link :to="`/profile_detail/${post.owner._id}`" class="text-white font-medium hover:underline" tag="div">
             {{ post?.owner.fullname }}
           </nuxt-link>

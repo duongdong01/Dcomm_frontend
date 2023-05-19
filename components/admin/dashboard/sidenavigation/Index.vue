@@ -31,17 +31,17 @@ export default {
   props: {
     mobilePosition: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
-  data() {
+  data () {
     return {
       style: {
         left: 'left-0',
-        right: 'right-0',
-      },
+        right: 'right-0'
+      }
     }
-  },
+  }
 }
 </script>
 

@@ -3,8 +3,8 @@
     <div v-if="false" class="absolute z-[2] left-0 w-full h-full flex justify-center bg-[#000] opacity-50 rounded-xl" />
     <Loading v-if="false" class="absolute z-[2] bg-gray-500 opacity-40 rounded-xl" />
     <div class="grid grid-cols-12 create_post gap-1 px-6 pt-5 ">
-      <a href="#" class="avatar_user w-11 h-11 rounded-full cursor-pointer col-span-1">
-        <img :src="userInfo?.avatar" class="rounded-full object-cover  w-11 h-11" alt="avatar">
+      <a href="#" class="avatar_user w-12 h-12 rounded-full cursor-pointer col-span-1">
+        <img :src="userInfo?.avatar" class="rounded-full object-cover  w-12 h-12" alt="avatar">
       </a>
       <div class="w-full relative col-span-11">
         <Mentionable

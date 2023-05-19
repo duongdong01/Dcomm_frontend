@@ -225,6 +225,15 @@ export default {
       return this.$store.getters.avatar
     }
   },
+  watch: {
+    $route () {
+      this.listFile = []
+      this.listMedia = []
+      this.isFile = false
+      this.isMedia = false
+      this.isShowMediaFile = false
+    }
+  },
   methods: {
     async showMediaFile (type) {
       this.isShowMediaFile = true
