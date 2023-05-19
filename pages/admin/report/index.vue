@@ -5,20 +5,18 @@
         Admin
       </nuxt-link>
       <span class="text-gray-700 font-semibold text-lg">
-        / Users
+        / Reports
       </span>
     </div>
     <hr class="text-[#ccc] mt-2">
-    <TableUser />
+    <TabReport />
   </div>
 </template>
 
 <script>
-import TableUser from '~/components/admin/users/TableUser.vue'
+import TabReport from '~/components/admin/reports/TabReport.vue'
 export default {
-  components: {
-    TableUser
-  },
+  components: { TabReport },
   layout: 'admin'
   // middleware: ['auth']
 }

@@ -100,7 +100,7 @@
     <div class="flex flex-row items-center gap-x-1.5 mb-4 mr-6">
       <button
         v-if="!isSendRequest"
-        class="basis-5/12 p-2  ml-3 bg-gray-300 hover:bg-gray-400 rounded-lg cursor-pointer flex justify-center items-center "
+        class="basis-5/12 p-2  ml-3 bg-gray-500 hover:bg-gray-400 rounded-lg cursor-pointer flex justify-center items-center "
         @click="createFriendRequest"
       >
         <svg
@@ -114,7 +114,7 @@
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
         </svg>
-        <span class="text-black font-medium pl-2">Add friends </span>
+        <span class="text-white font-medium pl-2">Add friends </span>
       </button>
       <button
         v-if="isSendRequest"

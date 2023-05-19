@@ -3,7 +3,7 @@
     <div class="col-span-8 grid grid-cols-4">
       <div class="flex justify-start col-span-1">
         <nuxt-link tag="h1" to="/" class="dscvr_logo items-center flex space-x-2 cursor-pointer">
-          <img src="@/static/logo/dscvr-logo.png" class="max-w-[38px] rounded-full" alt="logo">
+          <img src="@/static/logo/dscvr-logo.png" class="max-w-[38px] rounded-full object-cover" alt="logo">
           <span class="text-white font-semibold text-lg">DCOMM</span>
         </nuxt-link>
       </div>
@@ -53,7 +53,7 @@
       </div>
       <button class="relative pr-2" @focusout="hideDropDown">
         <div class="flex justify-center items-center gap-[6px] btn-avatar h-12 px-1" @click="showDropDown()">
-          <img v-if="isLoaded" :src="user.avatar || imageData" alt="avatar" class="w-[38px] h-[38px] rounded-full object-cover">
+          <img v-if="isLoaded" :src="user.avatar || imageData" alt="avatar" class="w-[40px] h-[40px] rounded-full object-cover">
           <div v-if="!isLoaded" class="bg-white w-[38px] h-[38px] rounded-full" />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +180,6 @@ export default {
   },
   async mounted () {
     this.isLoadNotification = false
-    await this.getMe()
     if (this.$route.path.split('/')[1] !== 'conversation') {
       await window.socket.on('conversation:get-count-new-message', this.handleCountNewMessage)
     }
@@ -191,6 +190,7 @@ export default {
     await window.socket.on('notification:count-new-notification', this.handleCountNewNotification)
   },
   async created () {
+    await this.getMe()
     await this.getCountMessage()
     await this.getCountNotification()
   },
