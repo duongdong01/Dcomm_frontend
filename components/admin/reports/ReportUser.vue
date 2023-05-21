@@ -107,7 +107,7 @@
       </template>
     </a-table>
     <ShowSingle ref="showAvatar" :image="avatar" class="top-0 left-0" />
-    <DeleteModal ref="deleteModal" :title="title" @delete="deleteReport" />
+    <DeleteModal ref="deleteModal" @delete="deleteReport" />
   </div>
 </template>
 
@@ -208,8 +208,7 @@ export default {
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' }
         }
-      ],
-      title: 'Are you sure delete this report?'
+      ]
     }
   },
   async created () {
@@ -271,33 +270,21 @@ export default {
     showDeleteReport (record) {
       this.$refs.deleteModal.showDeleteConfirm(record._id)
     },
-    async deleteReport (e) {
-      try {
-        await this.$api.admin.deleteUserReport({ reportId: e })
-        let index = 0
-        for (let i = 0; i < this.data.length; i++) {
-          if (this.data[i]._id.toString() === e.toString()) {
-            index = i
-          }
-        }
-        this.data.splice(index, 1)
-        this.$toast.success('Delete report successfully.', { timeout: 1500 })
-      } catch (error) {
-      //
-      }
+    deleteReport (e) {
+      console.log('emit:', e)
     }
   }
 }
 </script>
-    <style lang="scss">
-    .highlight {
-      background-color: rgb(255, 192, 105);
-      padding: 0px;
-    }
-    .a-btn-search{
+      <style lang="scss">
+      .highlight {
+        background-color: rgb(255, 192, 105);
+        padding: 0px;
+      }
+      .a-btn-search{
+        @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
+      }
+    .ant-btn-primary{
       @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
     }
-  .ant-btn-primary{
-    @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
-  }
-    </style>
+      </style>

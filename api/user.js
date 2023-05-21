@@ -37,5 +37,8 @@ export default axios => ({
   },
   payout ({ amount, receiver }) {
     return axios.post('/paypal/create-payout', { amount, receiver })
+  },
+  reportUser ({ reportUserId, name, description }) {
+    return axios.post('/users/report-user', { reportUserId, name, description })
   }
 })

@@ -51,7 +51,8 @@ export default {
     '@/plugins/toast.js',
     '@/plugins/axios.js',
     '@/plugins/emoji.js',
-    '@/plugins/socket.io.js'
+    '@/plugins/socket.io.js',
+    '@/plugins/chart.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

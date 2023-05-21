@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full justify-between items-center hover:bg-gray-800 py-2 px-5 rounded-md cursor-pointer font-medium">
+  <div class="flex w-full justify-between items-center hover:bg-gray-800 py-2 px-5 rounded-md cursor-pointer font-medium text-white">
     <div>
       {{ report.name }}
     </div>
