@@ -264,17 +264,20 @@
 
                   Block
                 </div>
-                <div class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
+                <div v-if="!isYourProfile" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="reportAccount">
                   <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 20 20"
-                    fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    data-v-1ebbdd90=""
-                  ><g clip-path="url(#clip0_12967_318014)"><path d="M1.42862 19C1.42192 19 1.4169 19 1.4102 19C1.17917 18.9876 0.996697 18.7518 1.00005 18.4664C1.00172 18.3361 1.24781 5.59593 11.2857 5.24433V1.52982C11.2857 1.32507 11.3812 1.13893 11.5302 1.05207C11.6775 0.963133 11.8566 0.99002 11.9838 1.11825L18.841 8.00125C18.9414 8.1026 19 8.25358 19 8.41283C19 8.57208 18.9414 8.72306 18.8426 8.8244L11.9855 15.7074C11.8566 15.8356 11.6791 15.8605 11.5302 15.7736C11.3812 15.6867 11.2857 15.5006 11.2857 15.2958V11.5937C2.35439 11.7944 1.87225 18.2306 1.85551 18.5078C1.84045 18.787 1.65295 19 1.42862 19Z" stroke="white" stroke-opacity="0.8" stroke-width="1.5" class="stroke-current" /></g><defs><clipPath id="clip0_12967_318014"><rect width="20" height="20" fill="white" class="fill-current" /></clipPath></defs></svg>
+                    width="21"
+                    height="21"
+                    fill="currentColor"
+                    class="bi bi-exclamation-square"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                  </svg>
 
-                  Share Profile
+                  Report account
                 </div>
                 <div class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
                   <svg
@@ -403,6 +406,7 @@
     </div>
     <ShowSingle ref="showSingleImg" :image="singleUrl" />
     <UploadSingle ref="uploadSingle" @updateUser="fetchUserInfo" />
+    <ReportAccount v-if="isReportAccount" :user-id="user?._id" @hiddenReport="isReportAccount=false" />
   </div>
 </template>
 <script>
@@ -412,15 +416,17 @@ import UploadSingle from '@/components/modal/UploadSingle.vue'
 import Post from '~/components/post/Post.vue'
 import Loading from '@/components/loading/Loading.vue'
 import AlbumShort from '~/components/album/AlbumShort.vue'
+import ReportAccount from '@/components/modal/ReportAccount.vue'
 export default {
   name: 'ProfileDetailId',
   components: {
-    Post, Loading, AlbumShort, ShowSingle, UploadSingle
+    Post, Loading, AlbumShort, ShowSingle, UploadSingle, ReportAccount
   },
   data: () => {
     return {
       isSettingShow: false,
       user: {
+        _id: '',
         fullname: null,
         createdAt: null,
         avatar: '',
@@ -428,6 +434,7 @@ export default {
         countFriend: 0,
         countFollower: 0
       },
+      isReportAccount: false,
       singleUrl: '',
       isFriend: false,
       isPending: false,
@@ -487,6 +494,9 @@ export default {
     handleOnline (data) {
       this.isOnline = data.isOnline
       console.log('data: ', data, this.isOnline)
+    },
+    reportAccount () {
+      this.isReportAccount = true
     },
     showUploadAvatar () {
       this.$refs.uploadSingle.show('AVATAR')

@@ -85,7 +85,9 @@
               />
             </svg>
           </span>
-          <p class="text-md text-black dark:text-white ml-2">Outgoings</p>
+          <p class="text-md text-black dark:text-white ml-2">
+            Outgoings
+          </p>
         </div>
         <div class="flex flex-col justify-start">
           <p
@@ -143,7 +145,9 @@
               />
             </svg>
           </span>
-          <p class="text-md text-black dark:text-white md:ml-4">Bonus</p>
+          <p class="text-md text-black dark:text-white md:ml-4">
+            Bonus
+          </p>
         </div>
         <div class="flex flex-col justify-start">
           <p
@@ -212,7 +216,7 @@
                 alt="Enoch Ndika"
                 src="/images/1.jpg"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -251,7 +255,7 @@
                 alt="Lionel Messi"
                 src="/images/2.jpg"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -279,8 +283,7 @@
               />
             </svg>
           </div>
-          <span class="text-gray-600 dark:text-gray-400 text-xs mt-2"
-            >Lionel Messi
+          <span class="text-gray-600 dark:text-gray-400 text-xs mt-2">Lionel Messi
           </span>
         </div>
         <div class="flex flex-col items-center">
@@ -290,7 +293,7 @@
                 alt="Jonathan Ilunga"
                 src="/images/4.jpg"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -329,7 +332,7 @@
                 alt="Maurice Lokumba"
                 src="/images/5.jpg"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -368,7 +371,7 @@
                 alt="CR7"
                 src="/images/3.png"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -407,7 +410,7 @@
                 alt="Dave Glad"
                 src="/images/6.jpg"
                 class="mx-auto object-cover rounded-full h-10 w-10"
-              />
+              >
             </a>
             <svg
               width="10"
@@ -541,7 +544,9 @@
       "
     >
       <div class="w-full flex items-center justify-between mb-8">
-        <p class="text-gray-800 dark:text-white text-xl">Account</p>
+        <p class="text-gray-800 dark:text-white text-xl">
+          Account
+        </p>
         <a
           href="#"
           class="
@@ -588,8 +593,12 @@
               justify-between
             "
           >
-            <p class="dark:text-white">American Express</p>
-            <p class="text-gray-300">Wallet deposit</p>
+            <p class="dark:text-white">
+              American Express
+            </p>
+            <p class="text-gray-300">
+              Wallet deposit
+            </p>
           </div>
           <span class="text-green-400">+$3,124</span>
         </div>
@@ -636,8 +645,12 @@
               justify-between
             "
           >
-            <p class="dark:text-white">Visa Premier</p>
-            <p class="text-gray-300">Wallet deposit</p>
+            <p class="dark:text-white">
+              Visa Premier
+            </p>
+            <p class="text-gray-300">
+              Wallet deposit
+            </p>
           </div>
           <span class="text-green-400">+$23,240</span>
         </div>
@@ -692,8 +705,12 @@
               justify-between
             "
           >
-            <p class="dark:text-white">MasterCard</p>
-            <p class="text-gray-300">Wallet deposit</p>
+            <p class="dark:text-white">
+              MasterCard
+            </p>
+            <p class="text-gray-300">
+              Wallet deposit
+            </p>
           </div>
           <span class="text-red-400">-$1,904</span>
         </div>
@@ -745,24 +762,31 @@
               justify-between
             "
           >
-            <p class="dark:text-white">Paypal</p>
-            <p class="text-gray-300">Wallet deposit</p>
+            <p class="dark:text-white">
+              Paypal
+            </p>
+            <p class="text-gray-300">
+              Wallet deposit
+            </p>
           </div>
           <span class="text-green-400">+$904</span>
         </div>
       </div>
     </div>
+    <PieChart />
   </div>
 </template>
 
 <script>
+import PieChart from './chart/PieChart.vue'
 export default {
-  name: 'Content',
+  name: 'Contents',
+  components: { PieChart },
   props: {
     title: {
       type: String,
-      default: '',
-    },
-  },
+      default: ''
+    }
+  }
 }
 </script>

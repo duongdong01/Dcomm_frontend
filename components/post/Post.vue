@@ -24,8 +24,8 @@
             <svg
               v-if="post?.privacy ===PostPrivacy.PUBLIC"
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="14"
+              height="14"
               fill="currentColor"
               class="bi bi-globe-americas text-white/80"
               viewBox="0 0 16 16"
@@ -35,8 +35,8 @@
             <svg
               v-if="post?.privacy ===PostPrivacy.FRIENDS"
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="14"
+              height="14"
               fill="currentColor"
               class="bi bi-people-fill"
               viewBox="0 0 16 16"
@@ -46,8 +46,8 @@
             <svg
               v-if="post?.privacy ===PostPrivacy.ONLY_ME"
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="14"
+              height="14"
               fill="currentColor"
               class="bi bi-lock-fill"
               viewBox="0 0 16 16"

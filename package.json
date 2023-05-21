@@ -32,7 +32,9 @@
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10",
     "vue-toastification": "^1.7.14",
-    "web3": "^1.8.1"
+    "web3": "^1.8.1",
+    "chart.js": "2.9.4",
+    "vue-chartjs": "^3.5.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

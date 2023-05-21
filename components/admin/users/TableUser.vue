@@ -9,6 +9,7 @@
             :row-key="record=>record._id"
             :pagination="pagination"
             bordered
+            :loading="loading"
             @change="handleTableChange"
           >
             <div
@@ -89,6 +90,11 @@
         </div>
       </div>
     </div>
+    <!-- <template>
+      <div>
+        <a-spin />
+      </div>
+    </template> -->
   </div>
 </template>
 
@@ -101,6 +107,7 @@ export default {
     return {
       avatar: '',
       data: [],
+      loading: false,
       searchText: '',
       searchEmail: '',
       searchInput: null,
@@ -192,7 +199,6 @@ export default {
     handleSearch (selectedKeys, confirm, dataIndex) {
       try {
         confirm()
-        console.log(dataIndex)
         if (dataIndex === 'fullname') {
           this.searchText = selectedKeys[0]
         }
@@ -209,12 +215,15 @@ export default {
     },
     async statisticalUser ({ page, limit, sort, fullname, email }) {
       try {
+        this.loading = true
         const dataUser = await this.$api.admin.statisticalUser({ page, limit, sort, fullname, email })
         this.data = dataUser.data.listUser
         this.pagination.total = dataUser.data.pageDetail.totalDocs
         this.pagination.current = page
         this.pagination.pageSize = limit
+        this.loading = false
       } catch (error) {
+        this.loading = false
       }
     },
     async handleTableChange (pagination, filters, sorter) {

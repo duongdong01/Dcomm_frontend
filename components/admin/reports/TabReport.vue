@@ -17,7 +17,9 @@
         <div class="px-4 py-5 flex-auto">
           <div class="tab-content tab-space">
             <div :class="{'hidden': openTab !== 1, 'block': openTab === 1}">
-              <div>Tab1</div>
+              <div>
+                <ReportUser />
+              </div>
             </div>
             <div :class="{'hidden': openTab !== 2, 'block': openTab === 2}">
               <div>
@@ -32,9 +34,10 @@
 </template>
 <script>
 import ReportPost from './ReportPost.vue'
+import ReportUser from './ReportUser.vue'
 
 export default {
-  components: { ReportPost },
+  components: { ReportPost, ReportUser },
   data () {
     return {
       openTab: 1,
