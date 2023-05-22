@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="rounded-xl text-white bg-gray_850 px-3 py-3 mt-4 border border-gray-700 ">
+    <div class="rounded-xl text-white bg-gray_850 px-3 py-3 mt-4 border border-gray-700 min-h-[580px]">
       <div class="text-base mb-3">
         Photos and Videos
       </div>
