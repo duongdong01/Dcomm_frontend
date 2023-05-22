@@ -229,7 +229,7 @@
                 class="pointer-events-none"
                 data-v-1ebbdd90=""
               ><path d="M8.0001 4.80001C7.57575 4.80001 7.16878 4.63144 6.86873 4.33138C6.56867 4.03132 6.4001 3.62435 6.4001 3.20001C6.4001 2.77566 6.56867 2.36869 6.86873 2.06864C7.16879 1.76858 7.57575 1.60001 8.0001 1.60001C8.42444 1.60001 8.83141 1.76858 9.13147 2.06864C9.43153 2.36869 9.6001 2.77566 9.6001 3.20001C9.6001 3.62435 9.43153 4.03132 9.13147 4.33138C8.83141 4.63144 8.42444 4.80001 8.0001 4.80001ZM8.0001 9.60001C7.57575 9.60001 7.16878 9.43143 6.86873 9.13138C6.56867 8.83132 6.4001 8.42435 6.4001 8.00001C6.4001 7.57566 6.56867 7.16869 6.86873 6.86864C7.16878 6.56858 7.57575 6.40001 8.0001 6.40001C8.42444 6.40001 8.83141 6.56858 9.13147 6.86864C9.43153 7.16869 9.6001 7.57566 9.6001 8.00001C9.6001 8.42435 9.43153 8.83132 9.13147 9.13138C8.83141 9.43143 8.42444 9.60001 8.0001 9.60001ZM6.4001 12.8C6.4001 13.2244 6.56867 13.6313 6.86873 13.9314C7.16878 14.2314 7.57575 14.4 8.0001 14.4C8.42444 14.4 8.83141 14.2314 9.13147 13.9314C9.43153 13.6313 9.6001 13.2244 9.6001 12.8C9.6001 12.3757 9.43153 11.9687 9.13147 11.6686C8.83141 11.3686 8.42444 11.2 8.0001 11.2C7.57575 11.2 7.16878 11.3686 6.86873 11.6686C6.56867 11.9687 6.4001 12.3757 6.4001 12.8Z" fill="white" class="fill-current" /></svg>
-              <div v-if="isSettingShow" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-10">
+              <div v-if="isSettingShow" class="flex flex-col py-2  absolute w-56 bg-gray-900 border-gray-700 border -left-[230px] top-0 rounded-xl z-10 ">
                 <div v-if="isYourProfile" class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300">
                   <svg
                     width="22"
@@ -250,7 +250,7 @@
                   /></svg>
                   Settings
                 </div>
-                <div v-else class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="blockUser">
+                <div v-else class="text-white flex gap-2 text-[16px]  items-center hover:bg-gray-700 py-3 px-5 transition-all ease-in-out duration-300" @click="toggleModalBlock">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="22"
@@ -300,6 +300,9 @@
                 </div>
               </div>
             </button>
+            <div v-if="isModalBlock" class="fixed top-0 left-0 w-full h-full z-10">
+              <MessageBlock @blockUser="blockUser" @stopBlock="toggleModalBlock" />
+            </div>
           </div>
         </div>
       </div>
@@ -417,10 +420,11 @@ import Post from '~/components/post/Post.vue'
 import Loading from '@/components/loading/Loading.vue'
 import AlbumShort from '~/components/album/AlbumShort.vue'
 import ReportAccount from '@/components/modal/ReportAccount.vue'
+import MessageBlock from '~/components/modal/MessageBlock.vue'
 export default {
   name: 'ProfileDetailId',
   components: {
-    Post, Loading, AlbumShort, ShowSingle, UploadSingle, ReportAccount
+    Post, Loading, AlbumShort, ShowSingle, UploadSingle, ReportAccount, MessageBlock
   },
   data: () => {
     return {
@@ -453,7 +457,8 @@ export default {
       posts: [],
       isLoadMore: false,
       isDebounce: null,
-      isOnline: false
+      isOnline: false,
+      isModalBlock: false
     }
   },
   computed: {
@@ -643,8 +648,12 @@ export default {
         //
       }
     },
+    toggleModalBlock () {
+      this.isModalBlock = !this.isModalBlock
+    },
     async blockUser () {
       try {
+        this.isModalBlock = false
         await this.$api.user.blockUserByUserId(this.$route.params.id)
       } catch (error) {
 

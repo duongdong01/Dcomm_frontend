@@ -22,7 +22,7 @@
         </svg>
       </div>
     </div>
-    <div id="scrollFollower" class="overflow-y-scroll max-h-[700px] min-h-[100px] scroll-right-edit">
+    <div id="scrollFollower" class="overflow-y-scroll max-h-[700px] min-h-[700px] scroll-right-edit">
       <FollowerItem
         v-for="(item, index) in listFollower"
         :key="index"

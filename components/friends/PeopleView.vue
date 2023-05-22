@@ -101,7 +101,7 @@
       <button
         v-if="!isSendRequest"
         class="basis-5/12 p-2  ml-3 bg-gray-500 hover:bg-gray-400 rounded-lg cursor-pointer flex justify-center items-center "
-        @click="createFriendRequest"
+        @click.stop="createFriendRequest"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -115,11 +115,12 @@
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
         </svg>
         <span class="text-white font-medium pl-2">Add friends </span>
+        <Loading v-if="pending" class="top-[52px] left-[-95px]" />
       </button>
       <button
         v-if="isSendRequest"
         class="basis-5/12 p-2  ml-3 bg-gray-300 hover:bg-gray-400 rounded-lg cursor-pointer flex justify-center items-center "
-        @click="cancelFriendRequestByUserId"
+        @click.stop="cancelFriendRequestByUserId"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -133,6 +134,7 @@
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708Z" />
         </svg>
         <span class="text-black font-medium pl-2">Cancel </span>
+        <Loading v-if="pending" class="top-[52px] left-[-95px]" />
       </button>
       <div
         class="basis-5/12 p-2 text-center bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer flex justify-center items-center "
@@ -170,7 +172,11 @@
   </div>
 </template>
 <script>
+import Loading from '~/components/loading/Loading.vue'
 export default {
+  components: {
+    Loading
+  },
   props: {
     people: {
       type: Object,
@@ -181,6 +187,10 @@ export default {
     issend: {
       type: Boolean,
       default: () => false
+    },
+    pending: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
