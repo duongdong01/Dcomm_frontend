@@ -23,5 +23,6 @@ export default axios => ({
   },
   getLineChart () {
     return axios.get('/admin/get-line-chart').then(_ => _.data)
-  }
+  },
+  get () {}
 })
