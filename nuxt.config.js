@@ -52,7 +52,7 @@ export default {
     '@/plugins/axios.js',
     '@/plugins/emoji.js',
     '@/plugins/socket.io.js',
-    '@/plugins/chart.js'
+    { src: '~/plugins/chart.js', mode: 'client' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
