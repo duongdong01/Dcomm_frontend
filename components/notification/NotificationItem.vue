@@ -343,8 +343,8 @@ font-size: 14px;
 }
 &-status {
 position: absolute;
-right: 15px;
-top: 50%;
+right: 10px;
+top: 48%;
 /* transform: translateY(-50%); */
 width: 12px;
 height: 12px;

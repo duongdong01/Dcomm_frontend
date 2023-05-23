@@ -238,7 +238,7 @@ export default {
       this.searchEmail = ''
     },
     goToPost (postId) {
-      window.open(`http://localhost:3000/post/${postId}`)
+      window.open(`${window.location.origin}/post/${postId}`)
     },
     async handleTableChange (pagination, filters, sorter) {
       try {

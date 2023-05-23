@@ -43,11 +43,11 @@
         :style="{ color: filtered ? '#108ee9' : undefined }"
       />
       <template slot="customRender" slot-scope="text, record, index, column">
-        <span v-if="searchText && searchedColumn === column.dataIndex">
+        <span v-if="searchDescription && searchedColumn === column.dataIndex">
           <template
             v-for="(fragment, i) in text
               .toString()
-              .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+              .split(new RegExp(`(?<=${searchDescription})|(?=${searchDescription})`, 'i'))"
           >
             <mark
               v-if="fragment.toLowerCase() === searchText.toLowerCase()"
@@ -70,10 +70,10 @@
         <a-dropdown>
           <a-menu slot="overlay" @click="handleMenuClick($event,record)">
             <a-menu-item key="1">
-              <div class="flex items-center space-x-1 font-medium text-black" @click="goToPost(record.postId)">
+              <div class="flex items-center space-x-1 font-medium text-black" @click="goToUser(record.reportUser._id)">
                 <a-icon type="double-right" />
                 <div>
-                  Go to post
+                  Go to account
                 </div>
               </div>
             </a-menu-item>
@@ -81,7 +81,7 @@
               <div class="flex items-center space-x-1  text-red-500 font-medium">
                 <a-icon type="delete" class="text-red-500" />
                 <div>
-                  Delete post
+                  Delete account
                 </div>
               </div>
             </a-menu-item>
@@ -105,9 +105,13 @@
       <template slot="avatar" slot-scope="text, record">
         <img :src="record.userSender.avatar" alt="photo" class="w-12 h-12 rounded-full object-cover cursor-pointer" @click="showAvatar(record.userSender.avatar)">
       </template>
+
+      <template slot="avatarReport" slot-scope="text, record">
+        <img :src="record.reportUser.avatar" alt="photo" class="w-12 h-12 rounded-full object-cover cursor-pointer" @click="showAvatar(record.userSender.avatar)">
+      </template>
     </a-table>
     <ShowSingle ref="showAvatar" :image="avatar" class="top-0 left-0" />
-    <DeleteModal ref="deleteModal" @delete="deleteReport" />
+    <DeleteModal ref="deleteModal" :title="title" @delete="deleteReport" />
   </div>
 </template>
 
@@ -120,8 +124,10 @@ export default {
     return {
       avatar: '',
       data: [],
-      searchText: '',
-      searchEmail: '',
+      searchDescription: '',
+      searchEmailSender: '',
+      searchEmailReported: '',
+      searchFullNameReported: '',
       searchInput: null,
       loading: false,
       pagination: {
@@ -135,7 +141,7 @@ export default {
           title: 'Sender email',
           dataIndex: 'userSender.email',
           key: 'email',
-          width: 280,
+          width: 200,
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -154,16 +160,25 @@ export default {
           }
         },
         {
-          title: 'Sender name',
-          dataIndex: 'userSender.fullname',
-          key: 'fullname',
-          width: 280,
+          title: 'Avatar sender',
+          dataIndex: 'userSender.avatar',
+          key: 'avatar',
+          width: 160,
+          scopedSlots: {
+            customRender: 'avatar'
+          }
+        },
+        {
+          title: 'Description',
+          dataIndex: 'description',
+          key: 'description',
+          width: 260,
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
             customRender: 'customRender'
           },
-          onFilter: (value, record) => record.userSender.fullname
+          onFilter: (value, record) => record.description
             .toString()
             .toLowerCase(),
           onFilterDropdownVisibleChange: (visible) => {
@@ -175,44 +190,79 @@ export default {
           }
         },
         {
-          title: 'Avatar',
-          dataIndex: 'userSender.avatar',
-          key: 'avatar',
+          title: 'Email reported',
+          dataIndex: 'reportUser.email',
+          key: 'emailReported',
           width: 200,
           scopedSlots: {
-            customRender: 'avatar'
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender'
+          },
+          onFilter: (value, record) => record.reportUser.email
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              }, 0)
+            }
           }
         },
-        // {
-        //   title: 'Name report',
-        //   dataIndex: 'name',
-        //   key: 'name'
-        // },
         {
-          title: 'Description',
-          dataIndex: 'description',
-          key: 'description',
-          width: 280
+          title: 'Fullname reported',
+          dataIndex: 'reportUser.fullname',
+          key: 'fullnameReported',
+          width: 200,
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender'
+          },
+          onFilter: (value, record) => record.reportUser.fullname
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              }, 0)
+            }
+          }
+        },
+        {
+          title: 'Avatar reported',
+          dataIndex: 'reportUser.avatar',
+          key: 'avatarReported',
+          width: 160,
+          scopedSlots: {
+            customRender: 'avatarReport'
+          }
         },
         {
           title: 'CreatedAt',
           dataIndex: 'createdAt',
           key: 'createdAt',
-          width: 280,
+          width: 220,
           scopedSlots: {
             customRender: 'createdAt'
-          }
+          },
+          sorter: (a, b) => a
         },
         {
           title: 'Action',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' }
         }
-      ]
+      ],
+      title: 'Are you sure delete this report?'
     }
   },
   async created () {
-    await this.listReportPost({ page: 1, limit: 8, sort: 'DESC', fullname: '', email: '' })
+    await this.listReportUser({ page: 1, limit: 8, sort: 'DESC', emailSender: '', emailReported: '', nameReported: '', description: '' })
   },
   methods: {
     showAvatar (avatar) {
@@ -222,43 +272,55 @@ export default {
     handleSearch (selectedKeys, confirm, dataIndex) {
       try {
         confirm()
-        if (dataIndex === 'userSender.fullname') {
-          this.searchText = selectedKeys[0]
-        }
         if (dataIndex === 'userSender.email') {
-          this.searchEmail = selectedKeys[0]
+          this.searchEmailSender = selectedKeys[0]
+        }
+        if (dataIndex === 'reportUser.email') {
+          this.searchEmailReported = selectedKeys[0]
+        }
+        if (dataIndex === 'description') {
+          this.searchDescription = selectedKeys[0]
+        }
+        if (dataIndex === 'reportUser.fullname') {
+          this.searchFullNameReported = selectedKeys[0]
         }
       } catch (error) {
       }
     },
     handleReset (clearFilters) {
       clearFilters()
-      this.searchText = ''
-      this.searchEmail = ''
+      this.searchEmailReported = ''
+      this.searchDescription = ''
+      this.searchEmailSender = ''
+      this.searchFullNameReported = ''
     },
-    goToPost (postId) {
-      window.open(`http://localhost:3000/post/${postId}`)
+    goToUser (userId) {
+      window.open(`${window.location.origin}/profile_detail/${userId}`)
     },
     async handleTableChange (pagination, filters, sorter) {
       try {
+        let order = 'DESC'
+        if (sorter.order === 'ascend') {
+          order = 'ASC'
+        } else {
+          order = 'DESC'
+        }
         this.pagination.current = pagination.current
-        console.log(this.searchEmail, this.searchText)
-        await this.listReportPost({ page: pagination.current, limit: 8, sort: 'DESC', fullname: this.searchText, email: this.searchEmail })
+        await this.listReportUser({ page: pagination.current, limit: 8, sort: order, description: this.searchDescription, emailSender: this.searchEmailSender, emailReported: this.searchEmailReported, nameReported: this.searchFullNameReported })
       } catch (error) {
       }
     },
-    async listReportPost ({ page, limit, sort, fullname, email }) {
+    async listReportUser ({ page, limit, sort, description, emailSender, emailReported, nameReported }) {
       try {
         this.loading = true
-        const reportData = await this.$api.admin.listReportPost({ page, limit, sort, email, fullname })
-        this.data = reportData.data.listReport
+        const reportData = await this.$api.admin.getListReportUser({ page, limit, sort, description, emailSender, emailReported, nameReported })
+        this.data = reportData.data.listUserReport
         this.pagination.total = reportData.data.pageDetail.totalDocs
         this.pagination.current = page
         this.pagination.pageSize = limit
         this.loading = false
       } catch (error) {
         this.loading = false
-        console.log(error)
       }
     },
     onDelete (key) {
@@ -270,8 +332,20 @@ export default {
     showDeleteReport (record) {
       this.$refs.deleteModal.showDeleteConfirm(record._id)
     },
-    deleteReport (e) {
-      console.log('emit:', e)
+    async deleteReport (e) {
+      try {
+        await this.$api.admin.deleteUserReport({ reportId: e })
+        let index = 0
+        for (let i = 0; i < this.data.length; i++) {
+          if (this.data[i]._id.toString() === e.toString()) {
+            index = i
+          }
+        }
+        this.data.splice(index, 1)
+        this.$toast.success('Delete report successfully.', { timeout: 1500 })
+      } catch (error) {
+      //
+      }
     }
   }
 }
