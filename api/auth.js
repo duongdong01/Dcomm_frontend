@@ -20,5 +20,8 @@ export default axios => ({
   },
   refreshToken (token) {
     return axios.get('/auth/refresh-token', token)
+  },
+  changePassword (currentPassword, newPassword) {
+    return axios.post('/auth/change-password', { currentPassword, newPassword })
   }
 })
