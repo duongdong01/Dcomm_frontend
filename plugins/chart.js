@@ -85,6 +85,7 @@ Vue.component('LineChart', {
         }
       })
     }
+
   },
   watch: {
     data () {
@@ -93,5 +94,12 @@ Vue.component('LineChart', {
   },
   mounted () {
     this.renderChart(this.data, this.options)
+  },
+  methods: {
+    updateChart () {
+      const chart = this.$data._chart
+      chart.update()
+      // this.renderChart(this.data, this.options)
+    }
   }
 })

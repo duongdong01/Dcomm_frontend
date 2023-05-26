@@ -7,7 +7,7 @@
     </div>
     <nav class="nav_left">
       <nuxt-link to="/user-setting/profile" tag="a" class="nav_left-menu">
-        <div ref="home" class="flex" :class="$route.path.split('/')[2] === 'profile'? 'focus_item_nav' : ''">
+        <div ref="profile" class="flex" :class="$route.path.split('/')[2] === 'profile'? 'focus_item_nav' : ''">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +24,7 @@
         </div>
       </nuxt-link>
       <nuxt-link to="/user-setting/balance" tag="a" class="nav_left-menu">
-        <div ref="home" class="flex" :class="$route.path.split('/')[2] === 'balance' ? 'focus_item_nav' : ''">
+        <div ref="balance" class="flex" :class="$route.path.split('/')[2] === 'balance' ? 'focus_item_nav' : ''">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@
         </div>
       </nuxt-link>
       <nuxt-link to="/user-setting/people" tag="a" class="nav_left-menu">
-        <div ref="home" class="flex" :class="$route.path === '/follow' ? 'focus_item_nav' : ''">
+        <div ref="people" class="flex" :class="$route.path.split('/')[2] === 'people' ? 'focus_item_nav' : ''">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +57,7 @@
           <div> <span class="nav_item ">People</span></div>
         </div>
       </nuxt-link>
-      <nuxt-link to="/user-setting/changePassword" tag="a" class="nav_left-menu">
+      <!-- <nuxt-link to="/user-setting/changePassword" tag="a" class="nav_left-menu">
         <div ref="home" class="flex" :class="$route.path === '/follow' ? 'focus_item_nav' : ''">
           <div>
             <svg
@@ -74,7 +74,7 @@
           </div>
           <div> <span class="nav_item ">Security</span></div>
         </div>
-      </nuxt-link>
+      </nuxt-link> -->
     </nav>
   </div>
 </template>

@@ -111,11 +111,15 @@
         </div>
       </div>
     </div>
+    <TransactionTable />
   </div>
 </template>
 
 <script>
+import TransactionTable from '~/components/user-setting/TransactionTable.vue'
+
 export default {
+  components: { TransactionTable },
   data () {
     return {
       inputValue: 1,
@@ -163,7 +167,6 @@ export default {
         const tokenData = await this.$api.token.getTokenByUserId()
         this.token = tokenData.data.token
       } catch (error) {
-
       }
     },
     handlePayment (data) {
@@ -174,7 +177,6 @@ export default {
       try {
         await this.$api.user.payout({ amount: 10, receiver: 'duong1310@gmail.com' })
       } catch (error) {
-
       }
     }
   }
