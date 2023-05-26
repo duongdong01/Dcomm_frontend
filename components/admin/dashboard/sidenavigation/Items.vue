@@ -12,25 +12,29 @@
       <contact-icon />
     </sidenav-item>
 
-    <sidenav-item title="Servers" to="/admin/servers">
+    <!-- <sidenav-item title="Transaction" to="/admin/contact">
+      <contact-icon />
+    </sidenav-item> -->
+
+    <sidenav-item title="Transaction" to="/admin/servers">
       <servers-icon />
     </sidenav-item>
 
-    <sidenav-item title="Settings" to="/admin/settings">
+    <!-- <sidenav-item title="Settings" to="/admin/settings">
       <settings-icon />
-    </sidenav-item>
+    </sidenav-item> -->
 
-    <sidenav-item title="Terminal" to="/admin/terminal">
+    <!-- <sidenav-item title="Terminal" to="/admin/terminal">
       <terminal-icon />
-    </sidenav-item>
+    </sidenav-item> -->
 
     <sidenav-item title="Recycle Bin" to="/admin/recycle-bin">
       <recycle-bin-icon />
     </sidenav-item>
 
-    <sidenav-item title="Documentation" to="/admin/documentation">
+    <!-- <sidenav-item title="Documentation" to="/admin/documentation">
       <documentation-icon />
-    </sidenav-item>
+    </sidenav-item> -->
   </ul>
 </template>
 
@@ -42,10 +46,10 @@ import UsersIcon from './icons/Users.vue'
 import MediasIcon from './icons/Medias.vue'
 import ContactIcon from './icons/Contact.vue'
 import ServersIcon from './icons/Servers.vue'
-import TerminalIcon from './icons/Terminal.vue'
-import SettingsIcon from './icons/Settings.vue'
+// import TerminalIcon from './icons/Terminal.vue'
+// import SettingsIcon from './icons/Settings.vue'
 import RecycleBinIcon from './icons/RecycleBin.vue'
-import DocumentationIcon from './icons/Documentation.vue'
+// import DocumentationIcon from './icons/Documentation.vue'
 
 export default {
   name: 'SidenavItems',
@@ -55,10 +59,10 @@ export default {
     SidenavItem,
     ContactIcon,
     ServersIcon,
-    TerminalIcon,
-    SettingsIcon,
-    RecycleBinIcon,
-    DocumentationIcon
+    // TerminalIcon,
+    // SettingsIcon,
+    RecycleBinIcon
+    // DocumentationIcon
   }
 }
 </script>

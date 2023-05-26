@@ -1,30 +1,53 @@
 <template>
-  <div class="bg-gray_850 w-full form-change justify-center" direction="horizontal">
-    <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
+  <div class="bg-gray_850 w-full form-change justify-center flex">
+    <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" layout="vertical">
       <a-form-model-item has-feedback label="Current Password" prop="current">
-        <a-input v-model="ruleForm.current" :type="typeCurrentInput" autocomplete="off" class="relative">
+        <a-input
+          v-model="ruleForm.current"
+          :type="typeCurrentInput"
+          autocomplete="off"
+          class="relative"
+          :disabled="!change"
+          placeholder="*******"
+        >
           <a-icon v-if="isShowCurrentPassword" slot="suffix" class="text-white/25 cursor-pointer" type="eye-invisible" @click="hiddenCurrentPassword" />
           <a-icon v-else slot="suffix" type="eye" class="text-white/25 cursor-pointer" @click="showCurrentPassword" />
         </a-input>
       </a-form-model-item>
       <a-form-model-item has-feedback label="New Password" prop="pass">
-        <a-input v-model="ruleForm.pass" :type="typeNewInput" autocomplete="off" class="relative">
+        <a-input
+          v-model="ruleForm.pass"
+          :type="typeNewInput"
+          autocomplete="off"
+          class="relative"
+          :disabled="!change"
+          placeholder="*******"
+        >
           <a-icon v-if="isShowNewPassword" slot="suffix" class="text-white/25 cursor-pointer" type="eye-invisible" @click="hiddenNewPassword" />
           <a-icon v-else slot="suffix" type="eye" class="text-white/25 cursor-pointer" @click="showNewPassword" />
         </a-input>
       </a-form-model-item>
       <a-form-model-item has-feedback label="Confirm Password" prop="checkPass">
-        <a-input v-model="ruleForm.checkPass" :type="typeConfirmInput" autocomplete="off" class="relative">
+        <a-input
+          v-model="ruleForm.checkPass"
+          :type="typeConfirmInput"
+          autocomplete="off"
+          class="relative"
+          :disabled="!change"
+          placeholder="*******"
+        >
           <a-icon v-if="isShowConfirmPassword" slot="suffix" class="text-white/25 cursor-pointer" type="eye-invisible" @click="hiddenConfirmPassword" />
           <a-icon v-else slot="suffix" type="eye" class="text-white/25 cursor-pointer" @click="showConfirmPassword" />
         </a-input>
       </a-form-model-item>
-      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" class="relative" @click="submitForm('ruleForm')">
-          Change
-          <Loading v-if="ishandling" class="top-0" />
-        </a-button>
-      </a-form-model-item>
+      <div v-if="change" class="flex w-full justify-center">
+        <a-form-model-item>
+          <a-button type="primary" class="relative h-10 w-40" @click="submitForm('ruleForm')">
+            Change
+            <Loading v-if="ishandling" class="top-0" />
+          </a-button>
+        </a-form-model-item>
+      </div>
     </a-form-model>
   </div>
 </template>
@@ -34,6 +57,12 @@ import Loading from '~/components/loading/Loading.vue'
 export default {
   components: {
     Loading
+  },
+  props: {
+    change: {
+      type: Boolean,
+      default: () => Boolean
+    }
   },
   data () {
     const validatePass0 = (rule, value, callback) => {
@@ -82,10 +111,6 @@ export default {
         checkPass: [{ validator: validatePass2, trigger: 'change' }],
         current: [{ validator: validatePass0, trigger: 'change' }]
       },
-      layout: {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 14 }
-      },
       isShowCurrentPassword: false,
       isShowNewPassword: false,
       isShowConfirmPassword: false,
@@ -103,12 +128,14 @@ export default {
             this.ishandling = true
             await this.$api.auth.changePassword(this.ruleForm.current, this.ruleForm.pass)
             this.ishandling = false
-            this.$toast.success('Change password successfully', {
+            await this.$toast.success('Change password successfully', {
               timeout: 1500
             })
             setTimeout(() => {
-              this.$router.push({ path: '/' })
-            }, 1200)
+              window.localStorage.removeItem('access_token')
+              window.localStorage.removeItem('refresh_token')
+              this.$router.push('/auth/login')
+            }, 300)
           } else {
             return false
           }
@@ -119,6 +146,9 @@ export default {
           }
         }
       })
+    },
+    async  resetForm () {
+      await this.$refs.ruleForm.resetFields()
     },
     showCurrentPassword () {
       this.isShowCurrentPassword = true
@@ -148,16 +178,19 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.form-change{
-  .ant-form-item-label > label {
-    @apply text-white
+  <style lang="scss">
+  .form-change{
+    .ant-form-item-label > label {
+      @apply text-white
+    }
+    .ant-input-affix-wrapper {
+      @apply w-[280px]
+    }
+    .ant-form-item-control .ant-input-affix-wrapper .ant-input-suffix i{
+      color: #838487 !important;
+    }
+    .ant-input{
+        @apply py-[18px] w-full
+    }
   }
-  .ant-input-affix-wrapper {
-    @apply w-60
-  }
-  .ant-form-item-control .ant-input-affix-wrapper .ant-input-suffix i{
-    color: #838487 !important;
-  }
-}
-</style>
+  </style>

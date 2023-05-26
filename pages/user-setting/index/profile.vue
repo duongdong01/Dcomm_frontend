@@ -122,14 +122,29 @@
         <a-input v-model="fullname" placeholder="default size" :disabled="disabledFullname" class="w-[280px] h-[38px]" />
       </div>
     </div>
+    <!-- change pass -->
+    <div class="flex flex-col">
+      <div class="text-[18px] font-semibold flex justify-between">
+        <div>
+          Change password
+        </div>
+        <button class="text-[16px] px-2 hover:bg-gray-700 font-medium text-blue-500 rounded-md py-1" @click="ChangePassword">
+          {{ isChangePassword ?'Cancel': 'Edit' }}
+        </button>
+      </div>
+      <div class="flex py-2 justify-center items-center">
+        <ChangePassword ref="formChangePassword" :change="isChangePassword" />
+      </div>
+    </div>
     <UploadSingle ref="upLoadImgSetting" @updateUserSetting="fetchUserSetting" />
   </div>
 </template>
 
 <script>
 import UploadSingle from '~/components/modal/UploadSingle.vue'
+import ChangePassword from '~/components/user-setting/ChangePassword.vue'
 export default {
-  components: { UploadSingle },
+  components: { UploadSingle, ChangePassword },
   data () {
     return {
       textAbout: '',
@@ -144,7 +159,8 @@ export default {
       disabledFullname: true,
       dateOfBirth: '2001-01-01',
       gender: 'Male',
-      fullname: ''
+      fullname: '',
+      isChangePassword: false
     }
   },
   computed: {
@@ -159,6 +175,12 @@ export default {
     await this.getUser()
   },
   methods: {
+    ChangePassword () {
+      if (!this.isChangePassword) {
+        this.$refs.formChangePassword.resetForm()
+      }
+      this.isChangePassword = !this.isChangePassword
+    },
     async fetchUserSetting () {
       await this.getUser()
     },
