@@ -15,6 +15,6 @@
 
 <script>
 export default {
-  name: 'ServersIcon',
-};
+  name: 'ServersIcon'
+}
 </script>

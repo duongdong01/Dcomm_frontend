@@ -78,6 +78,7 @@ export default {
             const dataLogin = await this.$api.auth.login(this.ruleForm.email, this.ruleForm.pass)
             window.localStorage.setItem('access_token', dataLogin.data.access_token)
             window.localStorage.setItem('refresh_token', dataLogin.data.refresh_token)
+            window.localStorage.setItem('isAdmin', dataLogin.data.isAdmin)
             this.$toast.success('Login successfully', {
               timeout: 1500
             })

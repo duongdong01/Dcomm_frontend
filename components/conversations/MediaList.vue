@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="typeMedia==='MEDIA'" class="grid grid-cols-3 gap-1">
-      <div v-for="(item,index) in medias" :key="index" class="flex h-[106px] w-[106px] overflow-hidden" @click="showImage(item)">
+      <div v-for="(item,index) in medias" :key="index" class="flex overflow-hidden" @click="showImage(item)">
         <MediaItem :media="item" />
       </div>
     </div>

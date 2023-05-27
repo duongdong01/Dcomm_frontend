@@ -8,15 +8,15 @@
       <medias-icon />
     </sidenav-item>
 
-    <sidenav-item title="Contacts" to="/admin/contact">
+    <!-- <sidenav-item title="Contacts" to="/admin/contact">
       <contact-icon />
-    </sidenav-item>
+    </sidenav-item> -->
 
     <!-- <sidenav-item title="Transaction" to="/admin/contact">
       <contact-icon />
     </sidenav-item> -->
 
-    <sidenav-item title="Transaction" to="/admin/servers">
+    <sidenav-item title="Transactions" to="/admin/transaction">
       <servers-icon />
     </sidenav-item>
 
@@ -44,7 +44,7 @@ import SidenavItem from './Item.vue'
 /* ICONS */
 import UsersIcon from './icons/Users.vue'
 import MediasIcon from './icons/Medias.vue'
-import ContactIcon from './icons/Contact.vue'
+// import ContactIcon from './icons/Contact.vue'
 import ServersIcon from './icons/Servers.vue'
 // import TerminalIcon from './icons/Terminal.vue'
 // import SettingsIcon from './icons/Settings.vue'
@@ -57,7 +57,7 @@ export default {
     UsersIcon,
     MediasIcon,
     SidenavItem,
-    ContactIcon,
+    // ContactIcon,
     ServersIcon,
     // TerminalIcon,
     // SettingsIcon,

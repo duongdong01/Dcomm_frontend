@@ -8,7 +8,7 @@ export default {
   components: {
     ContentAd
   },
-  layout: 'admin'
-  // middleware: ['auth']
+  layout: 'admin',
+  middleware: ['admin']
 }
 </script>
