@@ -24,5 +24,14 @@ export default axios => ({
   getLineChart () {
     return axios.get('/admin/get-line-chart').then(_ => _.data)
   },
-  get () {}
+  deletePost ({ postId }) {
+    return axios.delete('/admin/delete-post-by-id', { data: { postId } })
+  },
+  getTransactionPay ({ payType, page, limit, sort, transactionId, emailPayer, emailPayee }) {
+    const query = valiQuery({ page, limit, sort, payType, emailPayee, emailPayer, transactionId })
+    return axios.get(`/admin/get-transaction-pay?${query}`).then(_ => _.data)
+  },
+  deleteUser ({ deleteUserId }) {
+    return axios.delete('/admin/delete-user', { data: { deleteUserId } })
+  }
 })

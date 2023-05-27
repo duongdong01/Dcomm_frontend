@@ -18,7 +18,7 @@ export default {
     showDeleteConfirm (e) {
       this.$confirm({
         title: this.title,
-        content: 'Some descriptions',
+        // content: 'Some descriptions',
         okText: 'Yes',
         okType: 'danger',
         cancelText: 'No',

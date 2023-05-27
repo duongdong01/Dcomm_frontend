@@ -78,7 +78,7 @@
               </div>
             </a-menu-item>
             <a-menu-item key="2">
-              <div class="flex items-center space-x-1  text-red-500 font-medium">
+              <div class="flex items-center space-x-1  text-red-500 font-medium" @click="showDeletePost(record)">
                 <a-icon type="delete" class="text-red-500" />
                 <div>
                   Delete post
@@ -108,6 +108,7 @@
     </a-table>
     <ShowSingle ref="showAvatar" :image="avatar" class="top-0 left-0" />
     <DeleteModal ref="deleteModal" :title="title" @delete="deleteReport" />
+    <DeleteModal ref="deletePost" :title="title2" @delete="deletePost" />
   </div>
 </template>
 
@@ -183,11 +184,6 @@ export default {
             customRender: 'avatar'
           }
         },
-        // {
-        //   title: 'Name report',
-        //   dataIndex: 'name',
-        //   key: 'name'
-        // },
         {
           title: 'Description',
           dataIndex: 'description',
@@ -209,7 +205,8 @@ export default {
           scopedSlots: { customRender: 'operation' }
         }
       ],
-      title: 'Are you sure delete this report?'
+      title: 'Are you sure delete this report?',
+      title2: 'Are you sure delete this post?'
     }
   },
   async created () {
@@ -243,7 +240,6 @@ export default {
     async handleTableChange (pagination, filters, sorter) {
       try {
         this.pagination.current = pagination.current
-        console.log(this.searchEmail, this.searchText)
         await this.listReportPost({ page: pagination.current, limit: 8, sort: 'DESC', fullname: this.searchText, email: this.searchEmail })
       } catch (error) {
       }
@@ -270,6 +266,17 @@ export default {
     },
     showDeleteReport (record) {
       this.$refs.deleteModal.showDeleteConfirm(record._id)
+    },
+    showDeletePost (record) {
+      this.$refs.deletePost.showDeleteConfirm(record.postId)
+    },
+    async deletePost (e) {
+      try {
+        await this.$api.admin.deletePost({ postId: e })
+        this.$toast.success('Delete post successfully', { timeout: 1500 })
+      } catch (error) {
+
+      }
     },
     async deleteReport (e) {
       try {

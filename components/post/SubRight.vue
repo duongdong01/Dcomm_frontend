@@ -8,7 +8,7 @@
         <!-- <i class="fa-solid fa-ellipsis text-white cursor-pointer" /> -->
       </div>
       <div v-for="(item,index) in listUserOnline" :key="index" class="flex flex-col mt-2 hover:bg-white/10 rounded-lg cursor-pointer py-1 transition-all">
-        <div class="flex  items-center mx-1">
+        <div class="flex  items-center mx-1" @click="goToConversation(item)">
           <div class="relative">
             <img class="rounded-full w-11 h-11" :src="item.user.avatar" alt="photo">
             <div v-if="item.isOnline" class="rounded-full w-[10px] h-[10px] bg-green-400 top-[34px] right-1 absolute border border-gray-200" />
@@ -65,6 +65,9 @@ export default {
     window.socket.off('user:friend-online', this.handleFriendOnline)
   },
   methods: {
+    goToConversation (item) {
+      console.log(item)
+    },
     async getListPeopleRandom (limit) {
       try {
         const tmp = await this.$api.user.getListPeopleRandom(limit)
@@ -77,7 +80,6 @@ export default {
     handleFriendOnline (data) {
       console.log('on:', data.listUserOnline)
       this.listUserOnline = data.listUserOnline.slice(0, 6)
-      console.log(this.listUserOnline, '11111111111')
     }
   }
 }

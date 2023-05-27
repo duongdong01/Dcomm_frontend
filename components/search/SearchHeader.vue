@@ -5,7 +5,7 @@
         v-model="search"
         type="search"
         placeholder="Search"
-        class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg"
+        class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg  border-gray-600"
         @input="searchGlobal"
         @keyup.enter="pushRouteSearch"
       >

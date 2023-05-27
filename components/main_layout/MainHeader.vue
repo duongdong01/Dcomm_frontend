@@ -241,10 +241,10 @@ export default {
     onSearch (value) {
       console.log(value)
     },
-
     logout () {
       window.localStorage.removeItem('access_token')
       window.localStorage.removeItem('refresh_token')
+      window.localStorage.removeItem('isAdmin')
       this.$router.push('/auth/login')
     },
     async getMe () {
