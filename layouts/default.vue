@@ -62,6 +62,7 @@ export default {
       this.$toast(content, { position: 'bottom-left', toastClassName: 'my-custom-toast-class', icon: false, bodyClassName: ['custom-class-1', 'custom-class-2'], timeout: 5000, hideProgressBar: true })
     },
     handleSendNewNotification (data) {
+      console.log('111111111111', data)
       this.showToast(data.notification)
     }
   }

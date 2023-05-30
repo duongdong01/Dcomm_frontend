@@ -65,8 +65,15 @@ export default {
     window.socket.off('user:friend-online', this.handleFriendOnline)
   },
   methods: {
-    goToConversation (item) {
-      console.log(item)
+    async goToConversation (item) {
+      try {
+        const dataConversation = await this.$api.conversation.getConversationIdByUserId({ userQueryId: item.user._id })
+        if (dataConversation.data?.conversationFound._id) {
+          this.$router.push({ path: `conversation/direct/${dataConversation.data?.conversationFound._id}` })
+        }
+      } catch (error) {
+
+      }
     },
     async getListPeopleRandom (limit) {
       try {

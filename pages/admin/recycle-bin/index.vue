@@ -5,18 +5,18 @@
         Admin
       </nuxt-link>
       <span class="text-gray-700 font-semibold text-lg">
-        / Reports
+        / Recycle-bin
       </span>
     </div>
     <hr class="text-[#ccc] mt-2">
-    <TabReport />
+    <BinTable />
   </div>
 </template>
 
 <script>
-import TabReport from '~/components/admin/reports/TabReport.vue'
+import BinTable from '~/components/admin/bin/BinTable.vue'
 export default {
-  components: { TabReport },
+  components: { BinTable },
   layout: 'admin'
   // middleware: ['auth']
 }
