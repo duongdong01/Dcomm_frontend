@@ -2,7 +2,7 @@
   <div class="flex max-h-[92px] py-[6px] px-2 min-h-[74px] hover:bg-gray-600 items-center rounded-lg cursor-pointer notification relative" @mouseover="showOption(notification._id)" @mouseleave="hiddenOption(notification._id)">
     <div class="notification">
       <!-- like post -->
-      <nuxt-link v-if="notification.type==='LIKE_POST'" class="notification-container justify-start" :to="`/post/${notification.post._id}`" tag="div" @click.native="readNotification">
+      <nuxt-link v-if="notification.type==='LIKE_POST'" class="notification-container justify-start" :to="`/post/${notification.post?._id}`" tag="div" @click.native="readNotification">
         <div class="notification-media">
           <img :src="notification.senderUser.avatar" alt="" class="notification-user-avatar object-cover">
           <svg
@@ -19,11 +19,11 @@
         <div class="notification-content">
           <p v-if="notification.type==='LIKE_POST'" class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            {{ notification.post.countReaction>1 ? `and ${notification.post.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
+            {{ notification.post?.countReaction>1 ? `and ${notification.post?.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>
-        <button :ref="`option-${notification._id }`" class="hidden bg-gray-500 w-[26px] h-[26px] rounded-full absolute right-8 top-[42%] justify-center items-center" @click.stop.prevent="toggleShowOption" @focusout="outShowOptionLike(false)">
+        <button :ref="`option-${notification?._id }`" class="hidden bg-gray-500 w-[26px] h-[26px] rounded-full absolute right-8 top-[42%] justify-center items-center" @click.stop.prevent="toggleShowOption" @focusout="outShowOptionLike(false)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -40,7 +40,7 @@
       </nuxt-link>
 
       <!-- comment post -->
-      <nuxt-link v-if="notification.type==='COMMENT_POST'" class="notification-container justify-start" :to="`/post/${notification.post._id}`" tag="div" @click.native="readNotification">
+      <nuxt-link v-if="notification.type==='COMMENT_POST'" class="notification-container justify-start" :to="`/post/${notification.post?._id}`" tag="div" @click.native="readNotification">
         <div class="notification-media">
           <img :src="notification.senderUser.avatar" alt="" class="notification-user-avatar object-cover">
           <div class="notification-reaction_comment">
@@ -79,7 +79,7 @@
       </nuxt-link>
 
       <!-- mention -->
-      <nuxt-link v-if="notification.type==='MENTION'" class="notification-container justify-start" :to="`/post/${notification.post._id}`" @click.native="readNotification">
+      <nuxt-link v-if="notification.type==='MENTION'" class="notification-container justify-start" :to="`/post/${notification.post?._id}`" @click.native="readNotification">
         <div class="notification-media">
           <img :src="notification.senderUser.avatar" alt="" class="notification-user-avatar object-cover">
           <div class="notification-reaction_comment">

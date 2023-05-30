@@ -22,5 +22,8 @@ export default axios => ({
   },
   getFileMediaMessage ({ conversationId, type }) {
     return axios.get(`/conversation/get-file-media-message?conversationId=${conversationId}&type=${type}`).then(_ => _.data)
+  },
+  getConversationIdByUserId ({ userQueryId }) {
+    return axios.get(`/conversation/get-conversation-id-by-user?userQueryId=${userQueryId}`).then(_ => _.data)
   }
 })

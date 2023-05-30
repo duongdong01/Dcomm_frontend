@@ -5,7 +5,7 @@
         v-model="search"
         type="search"
         placeholder="Search"
-        class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg  border-gray-600"
+        class="input_search w-full h-12 text-base  text-white bg-main_color pl-11 rounded-lg  border-gray-600 border"
         @input="searchGlobal"
         @keyup.enter="pushRouteSearch"
       >
@@ -116,13 +116,10 @@ export default {
 </script>
 
 <style lang="scss">
-.search_header>{
-
     .input_search{
      @apply  border-gray-600 border focus:border-[0.1px] focus:border-blue-500
     }
     .input_search::placeholder{
       @apply text-lg
     }
-}
 </style>

@@ -33,5 +33,8 @@ export default axios => ({
   },
   deleteUser ({ deleteUserId }) {
     return axios.delete('/admin/delete-user', { data: { deleteUserId } })
+  },
+  getDeletedUser ({ page, limit, email }) {
+    return axios.get(`/admin/get-deleted-user?page=${page}&limit=${limit}&email=${email}`).then(_ => _.data)
   }
 })

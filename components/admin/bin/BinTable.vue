@@ -48,7 +48,7 @@
               <a-tag
                 :color="tags === 'USER' ? 'geekblue' : 'green'"
               >
-                {{ tags.toUpperCase() }}
+                {{ tags?.toUpperCase() }}
               </a-tag>
             </span>
             <template slot="customRender" slot-scope="text, record, index, column">
@@ -71,8 +71,8 @@
               </template>
             </template>
             <template slot="operation" slot-scope="text, record">
-              <button class="bg-red-500 text-white rounded-md py-[6px] text-center justify-center hover:bg-red-600 flex items-center w-20" @click="showDeleteUser(record._id)">
-                Delete
+              <button class="flex justify-center items-center py-2 px-2 space-x-1 w-20 bg-blue-500 rounded-md text-white hover:bg-blue-600" @click="showRestoreUser(record._id)">
+                Restore
               </button>
             </template>
             <template slot="avatar" slot-scope="text, record">
@@ -83,24 +83,20 @@
         </div>
       </div>
     </div>
-    <DeleteModal ref="deleteUser" :title="title" @delete="onDelete" />
   </div>
 </template>
 
 <script>
-import DeleteModal from '../modal/DeleteModal.vue'
 import ShowSingle from '~/components/modal/ShowSingle.vue'
 
 export default {
-  components: { ShowSingle, DeleteModal },
+  components: { ShowSingle },
   data () {
     return {
       avatar: '',
       data: [],
       loading: false,
       searchText: '',
-      title: 'Do you want to delete this account?',
-      searchEmail: '',
       searchInput: null,
       pagination: {
         total: 1,
@@ -135,22 +131,7 @@ export default {
           title: 'FullName',
           dataIndex: 'fullname',
           key: 'fullname',
-          width: 290,
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender'
-          },
-          onFilter: (value, record) => record.fullname
-            .toString()
-            .toLowerCase(),
-          onFilterDropdownVisibleChange: (visible) => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              })
-            }
-          }
+          width: 290
         },
         {
           title: 'Avatar',
@@ -180,7 +161,7 @@ export default {
     }
   },
   async created () {
-    await this.statisticalUser({ page: 1, limit: 8, sort: 'DESC', fullname: '', email: '' })
+    await this.getDeletedUser({ page: 1, limit: 8, email: '' })
   },
   methods: {
     showAvatar (avatar) {
@@ -190,28 +171,26 @@ export default {
     handleSearch (selectedKeys, confirm, dataIndex) {
       try {
         confirm()
-        if (dataIndex === 'fullname') {
-          this.searchText = selectedKeys[0]
-        }
         if (dataIndex === 'email') {
-          this.searchEmail = selectedKeys[0]
+          this.searchText = selectedKeys[0]
         }
       } catch (error) {
       }
     },
+    showRestoreUser (e) {},
     handleReset (clearFilters) {
       clearFilters()
       this.searchText = ''
-      this.searchEmail = ''
     },
-    async statisticalUser ({ page, limit, sort, fullname, email }) {
+    async getDeletedUser ({ page, limit, email }) {
       try {
         this.loading = true
-        const dataUser = await this.$api.admin.statisticalUser({ page, limit, sort, fullname, email })
-        this.data = dataUser.data.listUser
+        const dataUser = await this.$api.admin.getDeletedUser({ page, limit, email })
+        this.data = dataUser.data.users
         this.pagination.total = dataUser.data.pageDetail.totalDocs
         this.pagination.current = page
         this.pagination.pageSize = limit
+        console.log(this.data)
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -220,7 +199,7 @@ export default {
     async handleTableChange (pagination, filters, sorter) {
       try {
         this.pagination.current = pagination.current
-        await this.statisticalUser({ page: pagination.current, limit: 8, sort: 'DESC', fullname: this.searchText, email: this.searchEmail })
+        await this.getDeletedUser({ page: pagination.current, limit: 8, email: this.searchText })
       } catch (error) {
       }
     },
@@ -238,22 +217,19 @@ export default {
       } catch (error) {
 
       }
-    },
-    showDeleteUser (e) {
-      this.$refs.deleteUser.showDeleteConfirm(e)
     }
   }
 }
 </script>
-  <style lang="scss">
-  .highlight {
-    background-color: rgb(255, 192, 105);
-    padding: 0px;
-  }
-  .a-btn-search{
+    <style lang="scss">
+    .highlight {
+      background-color: rgb(255, 192, 105);
+      padding: 0px;
+    }
+    .a-btn-search{
+      @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
+    }
+  .ant-btn-primary{
     @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
   }
-.ant-btn-primary{
-  @apply bg-[#1890ff] text-white hover:bg-blue-400 hover:text-white
-}
-  </style>
+    </style>
