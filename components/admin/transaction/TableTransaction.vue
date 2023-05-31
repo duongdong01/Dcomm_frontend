@@ -76,16 +76,9 @@
               </template>
             </template>
             <template slot="operation" slot-scope="text, record">
-              <a-popconfirm
-                v-if="data.length"
-                title="Sure to delete?"
-                class="a-btn-confirm"
-                @confirm="() => onDelete(record.owner._id)"
-              >
-                <button class="bg-red-500 text-white rounded-md py-[6px] text-center justify-center hover:bg-red-600 flex items-center w-20">
-                  Delete
-                </button>
-              </a-popconfirm>
+              <button class="bg-red-500 text-white rounded-md py-[6px] text-center justify-center hover:bg-red-600 flex items-center w-20" @click="showDeleteTran(record._id)">
+                Delete
+              </button>
             </template>
             <template slot="avatar" slot-scope="text, record">
               <div class="flex space-x-2 items-center">
@@ -100,22 +93,20 @@
         </div>
       </div>
     </div>
-    <!-- <template>
-        <div>
-          <a-spin />
-        </div>
-      </template> -->
+    <DeleteModal ref="deleteTran" :title="title" @delete="onDelete" />
   </div>
 </template>
 
 <script>
+import DeleteModal from '../modal/DeleteModal.vue'
 import ShowSingle from '~/components/modal/ShowSingle.vue'
 
 export default {
-  components: { ShowSingle },
+  components: { ShowSingle, DeleteModal },
   data () {
     return {
       avatar: '',
+      title: 'Do you want to delete this transaction?',
       data: [],
       loading: false,
       searchText: '',
@@ -287,13 +278,23 @@ export default {
       } catch (error) {
       }
     },
-    onDelete (key) {
-      // try {
-      //   await this.$api.admin.deleteUser({ deleteUserId: key })
-      //   this.$toast.success("")
-      // } catch (error) {
+    async onDelete (key) {
+      try {
+        await this.$api.admin.deletePayTran({ payId: key })
+        let index = 0
+        for (let i = 0; i < this.data.length; i++) {
+          if (this.data[i]._id.toString() === key.toString()) {
+            index = i
+          }
+        }
+        this.data.splice(index, 1)
+        this.$toast.success('Delete transaction successfully.')
+      } catch (error) {
 
-      // }
+      }
+    },
+    showDeleteTran (e) {
+      this.$refs.deleteTran.showDeleteConfirm(e)
     },
     async getTransactionPay ({ payType, page, limit, sort, transactionId, emailPayer, emailPayee }) {
       try {

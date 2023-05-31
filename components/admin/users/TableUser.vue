@@ -234,7 +234,7 @@ export default {
           }
         }
         this.data.splice(index, 1)
-        this.$toast.success('Delete user successfully.')
+        this.$toast.success('Delete account successfully.')
       } catch (error) {
 
       }

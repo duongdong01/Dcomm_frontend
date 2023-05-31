@@ -11,9 +11,9 @@
         <SearchHeader />
       </div>
     </div>
-    <div class="flex items-center col-span-2 gap-6 justify-end">
+    <div class="flex items-center col-span-2 lg:gap-6 gap-2 justify-end">
       <div class="flex space-x-4">
-        <button class="bg-main-color btn-notification focus:outline-none h-12 w-12 flex items-center justify-center relative" title="Notifications" :disabled="$route.path.split('/')[1]==='notification'? true : false" :class="[$route.path.split('/')[1] === 'notification' ? 'bg-btn_hover rounded-lg':'',isLoadNotification ?'bg-btn_hover rounded-lg':'' ]" @click="showNotification">
+        <button class="bg-main-color btn-notification focus:outline-none lg:h-12 lg:w-12 w-10 h-10 flex items-center justify-center relative" title="Notifications" :disabled="$route.path.split('/')[1]==='notification'? true : false" :class="[$route.path.split('/')[1] === 'notification' ? 'bg-btn_hover rounded-lg':'',isLoadNotification ?'bg-btn_hover rounded-lg':'' ]" @click="showNotification">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -33,7 +33,7 @@
             <Notification :notifications="listNotification" @unread="showUnreadNotification" />
           </div>
         </button>
-        <nuxt-link tag="button" to="/conversation" class="bg-main-color btn-messenger focus:outline-none h-12 w-12 flex items-center justify-center relative" title="messenger" :class="$route.path === '/conversation' ? 'bg-btn_hover rounded-lg':'' ">
+        <nuxt-link tag="button" to="/conversation" class="bg-main-color btn-messenger focus:outline-none lg:h-12 lg:w-12 w-10 h-10 flex items-center justify-center relative" title="messenger" :class="$route.path === '/conversation' ? 'bg-btn_hover rounded-lg':'' ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -53,7 +53,7 @@
       </div>
       <button class="relative pr-2" @focusout="hideDropDown">
         <div class="flex justify-center items-center gap-[6px] btn-avatar h-12 px-1" @click="showDropDown()">
-          <img v-if="isLoaded" :src="user.avatar || imageData" alt="avatar" class="w-[40px] h-[40px] rounded-full object-cover">
+          <img v-if="isLoaded" :src="user.avatar || imageData" alt="avatar" class="w-[40px] h-[40px] min-w-[40px] rounded-full object-cover">
           <div v-if="!isLoaded" class="bg-white w-[38px] h-[38px] rounded-full" />
           <svg
             xmlns="http://www.w3.org/2000/svg"

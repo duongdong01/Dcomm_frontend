@@ -19,7 +19,7 @@
         <div class="notification-content">
           <p v-if="notification.type==='LIKE_POST'" class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            {{ notification.post?.countReaction>1 ? `and ${notification.post?.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
+            {{ notification.post?.countReaction>1 ? `and ${notification.post?.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>
@@ -59,7 +59,8 @@
         <div class="notification-content">
           <p class="notification-text text-gray-200">
             <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-            comment on your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
+            comment on your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
+            <!-- {{ title.replace(/&nb|<[^>]*>/g, '') }} -->
           </p>
           <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
         </div>
@@ -164,6 +165,43 @@
         <span v-if="!notification.isClicked" class="notification-status" />
       </nuxt-link>
 
+      <nuxt-link v-if="notification.type==='SHARE_POST'" class="notification-container justify-start" :to="`/post/${notification.post?._id}`" tag="div" @click.native="readNotification">
+        <div class="notification-media">
+          <img :src="notification.senderUser.avatar" alt="" class="notification-user-avatar object-cover">
+          <div class="notification-reaction_comment">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-white"
+              data-v-6ce1eb9f=""
+            ><path d="M1.42862 19C1.42192 19 1.4169 19 1.4102 19C1.17917 18.9876 0.996697 18.7518 1.00005 18.4664C1.00172 18.3361 1.24781 5.59593 11.2857 5.24433V1.52982C11.2857 1.32507 11.3812 1.13893 11.5302 1.05207C11.6775 0.963133 11.8566 0.99002 11.9838 1.11825L18.841 8.00125C18.9414 8.1026 19 8.25358 19 8.41283C19 8.57208 18.9414 8.72306 18.8426 8.8244L11.9855 15.7074C11.8566 15.8356 11.6791 15.8605 11.5302 15.7736C11.3812 15.6867 11.2857 15.5006 11.2857 15.2958V11.5937C2.35439 11.7944 1.87225 18.2306 1.85551 18.5078C1.84045 18.787 1.65295 19 1.42862 19Z" stroke="#9CA3AF" stroke-width="1.5" class="stroke-current" /></svg>
+          </div>
+        </div>
+        <div class="notification-content">
+          <p class="notification-text text-gray-200">
+            <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
+            share your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
+          </p>
+          <span class="notification-timer">{{ $dayjs(notification.createdAt).fromNow(true) }}</span>
+        </div>
+        <button :ref="`option-${notification._id }`" class="hidden bg-gray-500 w-[26px] h-[26px] rounded-full absolute right-8 top-[42%] justify-center items-center" @click.stop.prevent="toggleShowOption" @focusout="outShowOptionLike(false)">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-three-dots text-white"
+            viewBox="0 0 16 16"
+          >
+            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+          </svg>
+        </button>
+        <span v-if="!notification.isClicked" class="notification-status" />
+      </nuxt-link>
+
       <button v-if="isShowOptionLike" class="flex absolute text-white flex-col bg-gray-900 border border-gray-700 rounded-md py-1 z-10 right-16 top-6">
         <div class="flex justify-start items-center space-x-1 py-2 px-2 hover:bg-gray-700" @click.stop="removerNotification(notification._id)">
           <svg
@@ -211,7 +249,8 @@ export default {
   },
   data () {
     return {
-      isShowOptionLike: false
+      isShowOptionLike: false,
+      title: 'hahahah&nbsp;'
     }
   },
   methods: {

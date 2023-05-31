@@ -18,7 +18,7 @@
       <div class="notification-content">
         <p v-if="notification.type==='LIKE_POST'" class="notification-text text-gray-200">
           <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-          {{ notification.post.countReaction>1 ? `and ${notification.post.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
+          {{ notification.post.countReaction>1 ? `and ${notification.post.countReaction-1} others`:'' }}  react to your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
         </p>
         <span class="notification-timer">a few seconds ago</span>
       </div>
@@ -44,7 +44,7 @@
       <div class="notification-content">
         <p class="notification-text text-gray-200">
           <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
-          comment on your post {{ notification.post?.postNormal?.content?.replace(/<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/<[^>]*>/g, '') }}
+          comment on your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
         </p>
         <span class="notification-timer">a few seconds ago</span>
       </div>
@@ -97,6 +97,32 @@
         <p class="notification-text text-gray-200">
           <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
           send you a friend request
+        </p>
+        <span class="notification-timer">a few seconds ago</span>
+      </div>
+    </div>
+
+    <!-- share post -->
+    <div v-if="notification.type==='SHARE_POST'" class="notification-container justify-start">
+      <div class="notification-media">
+        <img :src="notification.senderUser.avatar" alt="" class="notification-user-avatar object-cover">
+        <div class="notification-reaction_comment">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-chat-left-fill "
+            viewBox="0 0 16 16"
+          >
+            <path d="M2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+          </svg>
+        </div>
+      </div>
+      <div class="notification-content">
+        <p class="notification-text text-gray-200">
+          <strong class="text-white">{{ notification.senderUser.fullname }}</strong>, <strong class="text-white" />
+          share on your post {{ notification.post?.postNormal?.content?.replace(/&|nbsp;|<[^>]*>/g, '') || notification.post?.postShare?.content?.replace(/&|nbsp;|<[^>]*>/g, '') }}
         </p>
         <span class="notification-timer">a few seconds ago</span>
       </div>

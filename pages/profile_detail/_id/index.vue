@@ -375,7 +375,7 @@
     <div class="w-full grid grid-cols-8 gap-2">
       <div class=" w-full" :class="['friends', 'medias'].includes($route.path.split('/')[3]) ? 'col-span-8' :'col-span-6'">
         <div v-if="$route.path.split('/')[1] === 'profile_detail' && $route.path.split('/').length === 3 " class="text-white px-2">
-          <div v-if="feedProfile.length>0">
+          <div v-if="feedProfile.length>0 && isLoadFeedProfile">
             <Post v-for="item in feedProfile" :key="item._id" :post="item" class="mb-4" />
           </div>
           <div v-else class=" w-full flex justify-center items-center h-20 text-[18px] text-gray-400 font-medium bg-gray_850 rounded-xl">
@@ -445,7 +445,8 @@ export default {
       isLoadMore: false,
       isDebounce: null,
       isOnline: false,
-      isModalBlock: false
+      isModalBlock: false,
+      isLoadFeedProfile: false
     }
   },
   computed: {
@@ -464,9 +465,11 @@ export default {
     }
   },
   async created () {
+    this.isLoadFeedProfile = false
     await this.checkBlock(this.$route.params.id)
     await this.getUserProfile()
     await this.getPostFeedProfile({ limit: 5, page: 1, isLoadMore: this.isLoadMore })
+    this.isLoadFeedProfile = true
     this.isLoaded = true
   },
   mounted () {
@@ -617,7 +620,6 @@ export default {
       } catch (err) {
         this.isLoadedAcceptFriend = false
         this.isDisable = false
-        console.log(err)
       }
     },
 
@@ -631,7 +633,6 @@ export default {
     },
     loadMore () {
       try {
-        console.log('loadMore')
         clearTimeout(this.isDebounce)
         this.isDebounce = setTimeout(async () => {
           if (this.$route.path.split('/')[1] === 'profile_detail' && this.$route.path.split('/').length === 3 && this.pageDetailPostProfile.nextPage && !this.isLoadMore) {
