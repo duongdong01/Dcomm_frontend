@@ -36,5 +36,11 @@ export default axios => ({
   },
   getDeletedUser ({ page, limit, email }) {
     return axios.get(`/admin/get-deleted-user?page=${page}&limit=${limit}&email=${email}`).then(_ => _.data)
+  },
+  deletePayTran ({ payId }) {
+    return axios.delete('/admin/delete-transaction-pay', { data: { payId } })
+  },
+  restoreUser ({ userRestoreId }) {
+    return axios.post('/admin/restore-user', { userRestoreId })
   }
 })

@@ -78,7 +78,7 @@
               </div>
             </a-menu-item>
             <a-menu-item key="2">
-              <div class="flex items-center space-x-1  text-red-500 font-medium">
+              <div class="flex items-center space-x-1  text-red-500 font-medium" @click="showDeleteUser(record.reportUser._id)">
                 <a-icon type="delete" class="text-red-500" />
                 <div>
                   Delete account
@@ -112,6 +112,7 @@
     </a-table>
     <ShowSingle ref="showAvatar" :image="avatar" class="top-0 left-0" />
     <DeleteModal ref="deleteModal" :title="title" @delete="deleteReport" />
+    <DeleteModal ref="deleteUser" :title="titleDeleteUser" @delete="onDelete" />
   </div>
 </template>
 
@@ -258,7 +259,8 @@ export default {
           scopedSlots: { customRender: 'operation' }
         }
       ],
-      title: 'Are you sure delete this report?'
+      title: 'Are you sure delete this report?',
+      titleDeleteUser: 'Are you sure delete this account?'
     }
   },
   async created () {
@@ -323,8 +325,24 @@ export default {
         this.loading = false
       }
     },
-    onDelete (key) {
-      console.log(key)
+    async onDelete (key) {
+      try {
+        await this.$api.admin.deleteUser({ deleteUserId: key })
+        // let index = 0
+        // for (let i = 0; i < this.data.length; i++) {
+        //   if (this.data[i]._id.toString() === key.toString()) {
+        //     index = i
+        //   }
+        // }
+        // this.data.splice(index, 1)
+        this.$toast.success('Delete user successfully.')
+        await this.listReportUser({ page: 1, limit: 8, sort: 'DESC', emailSender: '', emailReported: '', nameReported: '', description: '' })
+      } catch (error) {
+
+      }
+    },
+    showDeleteUser (e) {
+      this.$refs.deleteUser.showDeleteConfirm(e)
     },
     handleMenuClick (e, item) {
       console.log('click', e)

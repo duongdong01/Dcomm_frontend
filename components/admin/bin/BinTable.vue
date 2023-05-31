@@ -82,15 +82,17 @@
           <ShowSingle ref="showAvatar" :image="avatar" class="top-0 left-0" />
         </div>
       </div>
+      <ConfirmModal ref="confirmBin" :title="title" @confirm="onConfirm" />
     </div>
   </div>
 </template>
 
 <script>
+import ConfirmModal from '../modal/ConfirmModal.vue'
 import ShowSingle from '~/components/modal/ShowSingle.vue'
 
 export default {
-  components: { ShowSingle },
+  components: { ShowSingle, ConfirmModal },
   data () {
     return {
       avatar: '',
@@ -98,6 +100,7 @@ export default {
       loading: false,
       searchText: '',
       searchInput: null,
+      title: 'Do you want to restore this account?',
       pagination: {
         total: 1,
         current: 1,
@@ -177,7 +180,9 @@ export default {
       } catch (error) {
       }
     },
-    showRestoreUser (e) {},
+    showRestoreUser (e) {
+      this.$refs.confirmBin.showConfirm(e)
+    },
     handleReset (clearFilters) {
       clearFilters()
       this.searchText = ''
@@ -190,7 +195,6 @@ export default {
         this.pagination.total = dataUser.data.pageDetail.totalDocs
         this.pagination.current = page
         this.pagination.pageSize = limit
-        console.log(this.data)
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -213,7 +217,22 @@ export default {
           }
         }
         this.data.splice(index, 1)
-        this.$toast.success('Delete user successfully.')
+        this.$toast.success('Delete account successfully.')
+      } catch (error) {
+
+      }
+    },
+    async onConfirm (key) {
+      try {
+        await this.$api.admin.restoreUser({ userRestoreId: key })
+        let index = 0
+        for (let i = 0; i < this.data.length; i++) {
+          if (this.data[i]._id.toString() === key.toString()) {
+            index = i
+          }
+        }
+        this.data.splice(index, 1)
+        this.$toast.success('Restore account successfully.')
       } catch (error) {
 
       }
