@@ -91,52 +91,22 @@
         <div class="hover:underline cursor-pointer hover:text-[#E85E23]" :class="comment.isReaction ? 'text-[#E85E23]':''" @click="upvoteComment">
           Upvote
         </div>
-        <div class="cursor-pointer hover:text-[#E85E23]" @click="replyComment">
+        <!-- <div class="cursor-pointer hover:text-[#E85E23]" @click="replyComment">
           Reply
-        </div>
+        </div> -->
         <div class="font-normal">
           {{ $dayjs(comment.createdAt).fromNow(true) }}
         </div>
       </div>
-      <div v-if="comment.totalReplyCommentCount>0 && !isShowCommentReply">
-        <div class="text-[12px] font-semibold text-gray-200 ml-2 flex gap-1 items-center hover:underline hover:cursor-pointer" @click="showReplyComment">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-arrow-return-right"
-            viewBox="0 0 16 16"
-          >
-            <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z" />
-          </svg>
-          View all {{ comment.totalReplyCommentCount }} replies
-        </div>
-      </div>
-      <div v-if="isShowCommentReply">
-        <div v-for="item in listReplyComment" :key="item._id">
-          <ItemReply :comment="item" @deleteReply="deleteReply" @upvote="updateVoteReply" />
-        </div>
-      </div>
-      <ReplyComment
-        v-if="isReply"
-        class="w-full"
-        :post-id="comment.postId"
-        :comment-id="comment._id"
-        :personal-reply="comment.owner"
-        @reply="unShiftReplyComment"
-      />
     </div>
   </div>
 </template>
 
 <script>
 import UserView from '../friends/UserView.vue'
-import ItemReply from './ItemReply.vue'
-import ReplyComment from './ReplyComment.vue'
-import { ReactionOn, ReactionType } from '@/constants/reaction'
+import { ReactionOn } from '@/constants/reaction'
 export default {
-  components: { UserView, ReplyComment, ItemReply },
+  components: { UserView },
   props: {
     comment: {
       type: Object,
@@ -149,53 +119,12 @@ export default {
       isShowOptionComment: false,
       upHere: false,
       isReply: false,
-      isShowCommentReply: false,
-      listReplyComment: []
+      isShowCommentReply: false
 
     }
   },
   methods: {
-    async unShiftReplyComment (comment) {
-      if (this.isShowCommentReply) {
-        this.listReplyComment.push(comment)
-      } else {
-        await this.showReplyComment()
-      }
-    },
-    async showReplyComment () {
-      try {
-        const reply = await this.$api.comment.getReplyComment({ commentId: this.comment._id })
-        this.listReplyComment = reply.data.comment
-        this.isShowCommentReply = true
-      } catch (error) {
 
-      }
-    },
-    updateVoteReply (commentId) {
-      this.listReplyComment.forEach((el) => {
-        if (el._id.toString() === commentId.toString()) {
-          if (el.isReaction) {
-            if (el.countReaction > 0) {
-              el.isReaction = false
-              el.countReaction -= 1
-            }
-          } else {
-            el.isReaction = true
-            el.countReaction += 1
-          }
-        }
-      })
-    },
-    deleteReply (e) {
-      let index = 0
-      for (let i = 0; i < this.listReplyComment.length; i++) {
-        if (this.listReplyComment[i]._id.toString() === e.toString()) {
-          index = i
-          break
-        }
-      }
-      this.listReplyComment.splice(index, 1)
-    },
     toggleShowOption () {
       this.isShowOptionComment = !this.isShowOptionComment
     },
@@ -203,10 +132,7 @@ export default {
       //
     },
     async deleteComment () {
-      const data = {
-        commentId: this.comment._id, postId: this.comment.postId
-      }
-      this.$emit('deleteComment', data)
+      this.$emit('deleteReply', this.comment._id)
       await this.$api.comment.deleteComment(this.comment._id)
     },
     replyComment () {
@@ -217,9 +143,9 @@ export default {
     },
     async upvoteComment () {
       try {
-        this.$emit('upvote', true)
-        this.$emit('upvoteCommentInFeed', true)
-        await this.$store.dispatch('comment/upvoteComment', { on: ReactionOn.COMMENT, type: ReactionType.OK, commentId: this.comment._id })
+        await this.$api.comment.reactionComment({ on: ReactionOn.COMMENT, type: 'OK', commentId: this.comment._id })
+        this.$emit('upvote', this.comment._id)
+        // await this.$store.dispatch('comment/upvoteComment', { on: ReactionOn.COMMENT, type: ReactionType.OK, commentId: this.comment._id })
       } catch (err) {
         //
       }
@@ -229,27 +155,22 @@ export default {
 
 </script>
 
-<style lang="scss">
-.text-comment{
-  overflow-wrap: break-word;
-  .mention-user{
-    background-color: transparent !important;
-    @apply text-blue-600 font-medium
+  <style lang="scss">
+  .text-comment{
+    overflow-wrap: break-word;
   }
-}
-.upvoted{
-  background: linear-gradient(90.9deg, #E21344 0%, #E85E23 82.29%, #EEAB00 100%);
-}
-.text-upvote{
-  color:#E85E23
+  .upvoted{
+    background: linear-gradient(90.9deg, #E21344 0%, #E85E23 82.29%, #EEAB00 100%);
   }
-  .option-comment{
-    @apply hidden
-  }
-  .item-comment:hover{
-      .option-comment{
-        @apply flex
-      }
-  }
-
-</style>
+  .text-upvote{
+    color:#E85E23
+    }
+    .option-comment{
+      @apply hidden
+    }
+    .item-comment:hover{
+        .option-comment{
+          @apply flex
+        }
+    }
+  </style>

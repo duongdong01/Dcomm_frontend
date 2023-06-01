@@ -47,7 +47,7 @@
         </Mentionable>
 
         <div v-if="previewImage.length===0" class="flex justify-center text-center absolute top-[9px] right-12">
-          <label :for="`file-comment${postId}`" class="flex"><svg
+          <label :for="`file-comment${commentId}`" class="flex"><svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
             height="22"
@@ -59,7 +59,7 @@
             <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
           </svg> </label>
           <!--fid k dc trung  -->
-          <input :id="`file-comment${postId}`" class="file-comment" type="file" accept="image/jpeg,video/mp4" @change="uploadImage">
+          <input :id="`file-comment${commentId}`" class="file-comment" type="file" accept="image/jpeg,video/mp4" @change="uploadImage">
         </div>
         <div class="absolute z-[2] top-[1px] right-0">
           <emoji-picker :search="search" class="absolute top-0 right-1 w-full" @emoji="append">
@@ -121,19 +121,12 @@
         </div>
       </div>
     </div>
-    <div v-for="item in listOwnerCreateComment" :key="item._id" class="flex">
-      <ItemComment :comment="item" @upvote="upvoteNew(item._id)" @deleteComment="deleteComment" />
-    </div>
-    <div v-for="(item) in comments" :key="item._id" class="flex">
-      <ItemComment :comment="item" @upvoteCommentInFeed="upvoteCommentInFeed(item._id)" @deleteComment="deleteCommentInFeed" />
-    </div>
   </div>
 </template>
 
 <script>
 import { Mentionable } from 'vue-mention'
 import LoadingSpin from '../loading/LoadingSpin.vue'
-import ItemComment from './ItemComment.vue'
 export default {
   directives: {
     focus: {
@@ -142,15 +135,19 @@ export default {
       }
     }
   },
-  components: { Mentionable, LoadingSpin, ItemComment },
+  components: { Mentionable, LoadingSpin },
   props: {
     postId: {
       type: String,
       default: () => String
     },
-    comments: {
-      type: Array,
-      default: () => []
+    commentId: {
+      type: String,
+      default: () => String
+    },
+    personalReply: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
@@ -173,58 +170,19 @@ export default {
       return this.$store.getters.userInfo
     }
   },
+  watch: {
+  },
   mounted () {
+    this.$refs.textareaComment.innerHTML += `<a href="/profile_detail/${this.personalReply._id}" class="mention-user">` + this.personalReply.fullname + '</a>' + ' '
+    const selection = window.getSelection()
+    const range = document.createRange()
+    selection.removeAllRanges()
+    range.selectNodeContents(this.$refs.textareaComment)
+    range.collapse(false)
+    selection.addRange(range)
+    this.$refs.textareaComment.focus()
   },
   methods: {
-    deleteComment (data) {
-      const { commentId } = data
-      let index = 0
-      for (let i = 0; i < this.listOwnerCreateComment.length; i++) {
-        if (this.listOwnerCreateComment[i]._id.toString() === commentId.toString()) {
-          index = i
-          break
-        }
-      }
-      this.listOwnerCreateComment.splice(index, 1)
-    },
-    upvoteNew (commentId) {
-      for (let i = 0; i < this.listOwnerCreateComment.length; i++) {
-        if (this.listOwnerCreateComment[i]._id.toString() === commentId.toString()) {
-          if (this.listOwnerCreateComment[i].isReaction) {
-            if (this.listOwnerCreateComment[i].countReaction > 0) {
-              this.listOwnerCreateComment[i].isReaction = false
-              this.listOwnerCreateComment[i].countReaction -= 1
-              break
-            }
-          } else {
-            this.listOwnerCreateComment[i].isReaction = true
-            this.listOwnerCreateComment[i].countReaction += 1
-            break
-          }
-        }
-      }
-    },
-    deleteCommentInFeed (data) {
-      if (this.$route.path === '/') {
-        this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'FEED' })
-      }
-      if (this.$route.path.split('/')[1] === 'profile_detail') {
-        this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'PROFILE' })
-      }
-      if (this.$route.path.split('/')[1] === 'post') {
-        const { commentId, postId } = data
-        this.$store.commit('comment/deleteComment', commentId)
-        this.$store.commit('post/changeCountComment', { postId, type: 'REMOVE' })
-        console.log('11111111111111111')
-        // await this.$api.comment.deleteComment(commentId)
-        // this.$store.commit('post/deleteCommentInFeed', { ...data, type: 'PROFILE' })
-      }
-    },
-    upvoteCommentInFeed (commentId) {
-      if (this.$route.path === '/' || this.$route.path.split('/')[1] === 'profile_detail') {
-        this.$store.commit('post/toggleLikeComment', { commentId, postId: this.postId })
-      }
-    },
     onSubmit (e) {
       try {
         e.preventDefault()
@@ -266,7 +224,8 @@ export default {
           const commentBody = {
             on: 'POST',
             content: this.$refs.textareaComment.innerHTML,
-            postId: this.postId
+            postId: this.postId,
+            parentId: this.commentId
           }
           if (userMentions.length) {
             commentBody.userMentions = userMentions
@@ -281,6 +240,7 @@ export default {
           }
           const commentData = await this.$api.comment.createComment(commentBody)
           this.listOwnerCreateComment.unshift(commentData.data.data.comment)
+          this.$emit('reply', commentData.data.data.comment)
           if (this.$route.path.split('/')[1] === 'post') {
             this.$store.commit('post/changeCountComment', { postId: this.postId, type: 'ADD' })
           }
@@ -346,7 +306,7 @@ export default {
       if (element.scrollHeight > 30) {
         element.style.height = 'auto'
       } else {
-      //
+        //
       }
       element.style.height = element.scrollHeight + 'px'
     },
@@ -393,132 +353,132 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  [contenteditable][placeholder]:empty:before {
-  content: attr(placeholder);
-  position: absolute;
-  top:10px;
-  color: gray;
-  background-color: transparent;
-}
-  .comment{
-    .mention-item{
-    @apply  text-white py-1 hover:bg-gray-600
+  <style lang="scss">
+    [contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    position: absolute;
+    top:10px;
+    color: gray;
+    background-color: transparent;
   }
-   .vue-popover-theme{
-    @apply bg-gray-700 p-1 rounded-md min-w-[120px]
-   }
-  .mention-selected {
-    @apply bg-gray-600;
-  }
-  .mention-user{
-    @apply bg-[#1f4a82]
-  }
-    .create_comment{
-      .mention-user{
-          @apply bg-[#1f4a82] text-white;
-      }
-        .comment-textarea{
-            @apply outline-0 border-0 w-full font-normal text-base text-white overflow-hidden;
-        }
-        .comment-textarea::placeholder{
-            @apply font-normal   text-[16px] ;
-        }
-
+    .comment{
+      .mention-item{
+      @apply  text-white py-1 hover:bg-gray-600
     }
-    .file-comment{
-            @apply hidden
-      }
-      .ant-select-selection__placeholder{
-        @apply text-white
-      }
-      .ant-select-selection--single{
-        @apply bg-gray_850 border-none
-      }
-      .ant-select-selection--single:focus{
-        @apply bg-gray_850 border-none
-      }
-      .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
-        @apply shadow-none
-      }
-      .ant-select-arrow-icon{
-        @apply text-white
-      }
-  }
-  .ant-select-dropdown-content{
-    @apply rounded-md
-  }
-  .ant-select-dropdown{
-    @apply rounded-lg
-  }
-      .ant-select-dropdown-menu ,.ant-select-dropdown-menu-vertical ,.ant-select-dropdown-menu-root{
-        @apply bg-gray-700 text-white
-      }
-    .ant-select-dropdown-menu-item{
-        @apply bg-gray-700 text-white text-base
-      }
-      .ant-select-dropdown-menu-item:hover{
-        @apply bg-gray-600 text-white
-      }
-      .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled),.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled){
-        @apply bg-gray-600 text-white
-      }
-
-  .emoji-invoker {
-    @apply absolute top-2 right-2 w-6 h-6 rounded-[50%] cursor-pointer transition-all duration-200 p-0 bg-transparent border-0 hover:scale-110 ;
-    svg {
-      @apply fill-[#b1c6d0] ;
+     .vue-popover-theme{
+      @apply bg-gray-700 p-1 rounded-md min-w-[120px]
+     }
+    .mention-selected {
+      @apply bg-gray-600;
     }
-  }
-  .emoji-picker {
-    @apply w-60 h-80 overflow-y-scroll overflow-hidden p-4 box-border rounded-xl bg-gray-800 text-white drop-shadow-lg;
-  }
-  .emoji-picker__search {
-    display: flex;
-  }
-  .emoji-picker__search > input {
-    @apply w-[96%] flex-[1] rounded-[10rem]  py-2 px-4  outline-none bg-[#131720] mb-[2px] ;
-  }
-  .emoji-picker h5 {
-    @apply mb-0 text-[#b1b1b1] uppercase text-[0.8rem] cursor-default ;
-  }
-  .emoji-picker .emojis {
-    @apply flex flex-wrap justify-between ;
-  }
-  .emoji-picker .emojis:after {
-    content: "";
-    flex: auto;
-  }
-  .emoji-picker .emojis span {
-    @apply p-[0.2rem] cursor-pointer rounded-md ;
-  }
-  .emoji-picker .emojis span:hover {
-    @apply bg-[#ececec] cursor-pointer ;
-  }
+    .mention-user{
+      @apply bg-[#1f4a82]
+    }
+      .create_comment{
+        .mention-user{
+            @apply bg-[#1f4a82] text-white;
+        }
+          .comment-textarea{
+              @apply outline-0 border-0 w-full font-normal text-base text-white overflow-hidden;
+          }
+          .comment-textarea::placeholder{
+              @apply font-normal   text-[16px] ;
+          }
 
-  .emoji-picker::-webkit-scrollbar-track
-  {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  }
+      }
+      .file-comment{
+              @apply hidden
+        }
+        .ant-select-selection__placeholder{
+          @apply text-white
+        }
+        .ant-select-selection--single{
+          @apply bg-gray_850 border-none
+        }
+        .ant-select-selection--single:focus{
+          @apply bg-gray_850 border-none
+        }
+        .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
+          @apply shadow-none
+        }
+        .ant-select-arrow-icon{
+          @apply text-white
+        }
+    }
+    .ant-select-dropdown-content{
+      @apply rounded-md
+    }
+    .ant-select-dropdown{
+      @apply rounded-lg
+    }
+        .ant-select-dropdown-menu ,.ant-select-dropdown-menu-vertical ,.ant-select-dropdown-menu-root{
+          @apply bg-gray-700 text-white
+        }
+      .ant-select-dropdown-menu-item{
+          @apply bg-gray-700 text-white text-base
+        }
+        .ant-select-dropdown-menu-item:hover{
+          @apply bg-gray-600 text-white
+        }
+        .ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled),.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled){
+          @apply bg-gray-600 text-white
+        }
 
-  .emoji-picker::-webkit-scrollbar
-  {
-    @apply w-[10px] bg-gray-700 rounded-lg ;
-  }
+    .emoji-invoker {
+      @apply absolute top-2 right-2 w-6 h-6 rounded-[50%] cursor-pointer transition-all duration-200 p-0 bg-transparent border-0 hover:scale-110 ;
+      svg {
+        @apply fill-[#b1c6d0] ;
+      }
+    }
+    .emoji-picker {
+      @apply w-60 h-80 overflow-y-scroll overflow-hidden p-4 box-border rounded-xl bg-gray-800 text-white drop-shadow-lg;
+    }
+    .emoji-picker__search {
+      display: flex;
+    }
+    .emoji-picker__search > input {
+      @apply w-[96%] flex-[1] rounded-[10rem]  py-2 px-4  outline-none bg-[#131720] mb-[2px] ;
+    }
+    .emoji-picker h5 {
+      @apply mb-0 text-[#b1b1b1] uppercase text-[0.8rem] cursor-default ;
+    }
+    .emoji-picker .emojis {
+      @apply flex flex-wrap justify-between ;
+    }
+    .emoji-picker .emojis:after {
+      content: "";
+      flex: auto;
+    }
+    .emoji-picker .emojis span {
+      @apply p-[0.2rem] cursor-pointer rounded-md ;
+    }
+    .emoji-picker .emojis span:hover {
+      @apply bg-[#ececec] cursor-pointer ;
+    }
 
-  .emoji-picker::-webkit-scrollbar-thumb
-  {
-    @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
-  }
+    .emoji-picker::-webkit-scrollbar-track
+    {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
 
-  .grid-img::-webkit-scrollbar
-  {
-    @apply w-[10px] bg-gray-700 rounded-lg ;
-  }
+    .emoji-picker::-webkit-scrollbar
+    {
+      @apply w-[10px] bg-gray-700 rounded-lg ;
+    }
 
-  .grid-img::-webkit-scrollbar-thumb
-  {
-    @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
-  }
+    .emoji-picker::-webkit-scrollbar-thumb
+    {
+      @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
+    }
 
-  </style>
+    .grid-img::-webkit-scrollbar
+    {
+      @apply w-[10px] bg-gray-700 rounded-lg ;
+    }
+
+    .grid-img::-webkit-scrollbar-thumb
+    {
+      @apply border-2 border-solid border-gray-600 bg-gray-600 rounded-lg  ;
+    }
+
+    </style>

@@ -1,6 +1,10 @@
 export default axios => ({
-  createComment ({ on, content, fileUrl, postId, userMentions }) {
-    return axios.post('/comment', { on, content, fileUrl, postId, userMentions })
+  createComment ({ on, content, fileUrl, postId, userMentions, parentId }) {
+    if (parentId) {
+      return axios.post('/comment', { on, content, fileUrl, postId, userMentions, parentId })
+    } else {
+      return axios.post('/comment', { on, content, fileUrl, postId, userMentions })
+    }
   },
   getCommentByPostId ({ postId, limit, page }) {
     return axios.get(`/comment/get-comment-by-post-id?page=${page}&limit=${limit}&postId=${postId}`).then(_ => _.data)
@@ -10,5 +14,8 @@ export default axios => ({
   },
   deleteComment (commentId) {
     return axios.delete(`/comment/delete-comment?commentId=${commentId}`)
+  },
+  getReplyComment ({ commentId }) {
+    return axios.get(`/comment/get-reply-comment?commentId=${commentId}`).then(_ => _.data)
   }
 })
