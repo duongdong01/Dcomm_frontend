@@ -7,7 +7,7 @@
         <div v-if="isLoaded && feeds.length >0 && $route.path==='/'">
           <Post v-for="(item,index) in feeds" :key="`${item._id}+${index}`" :post="item" />
         </div>
-        <div v-if="!isLoaded" class="border border-gray-700 shadow rounded-md p-4 mx-auto mt-4 w-full">
+        <div v-if="!isLoaded" class="border border-gray-700 shadow rounded-lg p-4 mx-auto mt-4 w-full">
           <div class="animate-pulse flex space-x-4">
             <div class="rounded-full bg-slate-200 h-12 w-12" />
             <div class="flex-1 space-y-4 py-1">

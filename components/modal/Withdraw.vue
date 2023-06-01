@@ -98,10 +98,10 @@ export default {
     },
     hidden () {
       this.isShow = false
-    },
-    emitBackToLogin (e) {
-      this.$emit('back-to-login', e)
     }
+    // emitBackToLogin (e) {
+    //   this.$emit('back-to-login', e)
+    // }
   }
 }
 </script>
