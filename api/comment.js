@@ -17,5 +17,8 @@ export default axios => ({
   },
   getReplyComment ({ commentId }) {
     return axios.get(`/comment/get-reply-comment?commentId=${commentId}`).then(_ => _.data)
+  },
+  updateComment ({ commentId, content }) {
+    return axios.put('/comment/update-comment', { commentId, content })
   }
 })
