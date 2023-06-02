@@ -16,7 +16,18 @@
           <p class="cursor-pointer font-medium">
             {{ comment?.owner?.fullname }}
           </p>
-          <div v-if="comment && comment.content" class="font-light text-comment" v-html="comment?.content" />
+          <div v-if="comment && comment.content && !isEditComment" class="font-light text-comment" v-html="content" />
+          <div v-if="isEditComment===true">
+            <div
+              ref="textareaEditComment"
+              contenteditable="true"
+              class="rounded-xl pl-3 pr-9 pt-2 pb-2  focus:outline-none outline-none cursor-text border-gray-600 border bg-gray-800"
+              @input="resize()"
+              @keyup.ctrl.enter="breakLine"
+              @keydown.enter.exact="onSubmit"
+              v-html="comment?.content"
+            />
+          </div>
         </div>
         <div class="flex h-full items-end">
           <div v-if="comment.countReaction >0" class="-ml-4 z-[2] items-center flex justify-center cursor-pointer bg-gray-500 py-1 pr-1 h-6 overflow-hidden  rounded-3xl">
@@ -119,7 +130,9 @@ export default {
       isShowOptionComment: false,
       upHere: false,
       isReply: false,
-      isShowCommentReply: false
+      isShowCommentReply: false,
+      content: this.comment.content,
+      isEditComment: false
 
     }
   },
@@ -129,7 +142,41 @@ export default {
       this.isShowOptionComment = !this.isShowOptionComment
     },
     showModalEditComment () {
+      this.isEditComment = true
+    },
+    onSubmit (e) {
+      e.preventDefault()
+      clearTimeout(this.isDebounce)
+      this.isDebounce = setTimeout(async () => {
+        const content = this.$refs.textareaEditComment.innerHTML
+        await this.$api.comment.updateComment({ commentId: this.comment._id, content })
+        this.content = content
+        this.isEditComment = false
+      }, 200)
+    },
+    breakLine () {
+      this.$refs.textareaEditComment.innerHTML += '<div><br></div>'
+      this.resize()
+      // set focus
+      const selection = window.getSelection()
+      const range = document.createRange()
+      selection.removeAllRanges()
+      range.selectNodeContents(this.$refs.textareaEditComment)
+      range.collapse(false)
+      selection.addRange(range)
+      this.$refs.textareaEditComment.focus()
+    },
+    resize () {
+      const element = this.$refs.textareaEditComment
+      if (this.$refs.textareaEditComment.length === 0) {
+        element.style.height = 48 + 'px'
+      }
+      if (element.scrollHeight > 30) {
+        element.style.height = 'auto'
+      } else {
       //
+      }
+      element.style.height = element.scrollHeight + 'px'
     },
     async deleteComment () {
       this.$emit('deleteReply', this.comment._id)
