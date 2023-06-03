@@ -21,7 +21,7 @@
           <a-input v-model="ruleForm.otp" placeholder="Enter a code..." />
         </a-form-model-item>
         <a-spin :spinning="spinning" :delay="delayTime" size="default" class="h-full">
-          <button class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm">
+          <button class="mt-4 mb-2 text-base px-6 py-[12px] w-full  text-white font-semibold rounded-md hover:bg-indigo-600 transition-all bg-indigo-500 shadow-lg shadow-indigo-500/50" @click="submitForm('ruleForm')">
             Withdraw
           </button>
         </a-spin>
@@ -77,22 +77,24 @@ export default {
   },
   methods: {
     submitForm (formName) {
+      console.log(formName)
       this.$refs[formName].validate(async (valid) => {
         try {
           if (valid) {
-            this.isSendCode = true
             await this.$api.auth.verifyOtp({ email: this.user.email, type: 'WITHDRAW', otp: this.ruleForm.otp })
+            this.$emit('withdraw', this.ruleForm.email)
           } else {
             // console.log('error submit!!')
             return false
           }
         } catch (err) {
-          if (err.data && err.message) {
+          if (err.data && err.data.message) {
             this.$toast.error(err.data.message, { setTimeout: 1500 })
           }
         }
       })
     },
+
     show () {
       this.isShow = true
     },
