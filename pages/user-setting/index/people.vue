@@ -9,21 +9,21 @@
       </div>
     </div>
     <div v-if="isBlockPage">
-      <peopleBlock />
+      <PeopleBlock />
     </div>
     <div v-if="!isBlockPage">
-      <peopleFollower />
+      <PeopleFollower />
     </div>
   </div>
 </template>
 
 <script>
-import peopleBlock from '~/components/user-setting/peopleBlock.vue'
-import peopleFollower from '~/components/user-setting/peopleFollower.vue'
+import PeopleBlock from '~/components/user-setting/PeopleBlock.vue'
+import PeopleFollower from '~/components/user-setting/PeopleFollower.vue'
 
 export default {
   components: {
-    peopleBlock, peopleFollower
+    PeopleBlock, PeopleFollower
   },
   data () {
     return {
