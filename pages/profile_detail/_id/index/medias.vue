@@ -25,10 +25,8 @@ export default {
       isOwner: false
     }
   },
-  async created () {
+  async mounted () {
     await this.getListMedias('', 1, 8)
-  },
-  mounted () {
     document.addEventListener('scroll', this.loadMore)
   },
   methods: {
