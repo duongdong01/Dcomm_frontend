@@ -113,7 +113,7 @@
         </div>
       </div>
     </div>
-    <Withdraw ref="withdraw" />
+    <Withdraw ref="withdraw" @withdraw="payout" />
   </div>
 </template>
 
@@ -184,9 +184,10 @@ export default {
       this.$toast.success('Create payment successfully')
       window.location.replace(data.url)
     },
-    async payout () {
+    async payout (e) {
       try {
-        await this.$api.user.payout({ amount: this.inputWithdraw, receiver: 'duong1310@gmail.com' })
+        await this.$api.user.payout({ amount: this.inputWithdraw, receiver: e })
+        this.$refs.withdraw.hidden()
       } catch (error) {
       }
     },
@@ -194,7 +195,7 @@ export default {
       try {
         this.spinning = true
         await this.$api.auth.sentMailOtp({ email: this.user.email, type: 'WITHDRAW' })
-        this.$toast.success('Withdrawal otp code has been sent to your email', { timeout: 1500 })
+        await this.$toast.success('Withdrawal otp code has been sent to your email', { timeout: 1500 })
         this.spinning = false
         this.showModalWithdraw()
       } catch (err) {
