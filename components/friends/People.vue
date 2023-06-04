@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="text-xs opacity-70">
-          join in {{ people.createdAt.slice(0,4) }}
+          Join in {{ $dayjs(people.createdAt).format('YYYY') }}
         </div>
       </div>
     </div>
