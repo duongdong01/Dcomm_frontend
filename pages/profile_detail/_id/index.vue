@@ -87,7 +87,7 @@
                 ><path d="M19 8.25C17.2061 8.25 15.75 6.79386 15.75 5C15.75 3.20614 17.2061 1.75 19 1.75C20.7939 1.75 22.25 3.20614 22.25 5C22.25 6.79386 20.7939 8.25 19 8.25ZM19 2.25C17.4839 2.25 16.25 3.48386 16.25 5C16.25 6.51614 17.4839 7.75 19 7.75C20.5161 7.75 21.75 6.51614 21.75 5C21.75 3.48386 20.5161 2.25 19 2.25Z" fill="#292D32" stroke="white" class="stroke-current" /><path d="M12 13.25H7C6.86614 13.25 6.75 13.1339 6.75 13C6.75 12.8661 6.86614 12.75 7 12.75H12C12.1339 12.75 12.25 12.8661 12.25 13C12.25 13.1339 12.1339 13.25 12 13.25Z" fill="#292D32" stroke="white" class="stroke-current" /><path d="M16 17.25H7C6.86614 17.25 6.75 17.1339 6.75 17C6.75 16.8661 6.86614 16.75 7 16.75H16C16.1339 16.75 16.25 16.8661 16.25 17C16.25 17.1339 16.1339 17.25 16 17.25Z" fill="#292D32" stroke="white" class="stroke-current" /><path d="M15 22.25H9C6.3424 22.25 4.56492 21.6803 3.4423 20.5577C2.31968 19.4351 1.75 17.6576 1.75 15V9C1.75 6.3424 2.31968 4.56492 3.4423 3.4423C4.56492 2.31968 6.3424 1.75 9 1.75H14C14.1339 1.75 14.25 1.86614 14.25 2C14.25 2.13386 14.1339 2.25 14 2.25H9C6.65972 2.25 4.92432 2.66107 3.7927 3.7927C2.66107 4.92432 2.25 6.65972 2.25 9V15C2.25 17.3403 2.66107 19.0757 3.7927 20.2073C4.92432 21.3389 6.65972 21.75 9 21.75H15C17.3403 21.75 19.0757 21.3389 20.2073 20.2073C21.3389 19.0757 21.75 17.3403 21.75 15V10C21.75 9.86614 21.8661 9.75 22 9.75C22.1339 9.75 22.25 9.86614 22.25 10V15C22.25 17.6576 21.6803 19.4351 20.5577 20.5577C19.4351 21.6803 17.6576 22.25 15 22.25Z" fill="#292D32" stroke="white" class="stroke-current" /></svg>
 
                 <p class="text-white text-base">
-                  240
+                  {{countPost }}
                 </p>
               </div>
               <div class="flex gap-2 items-center">
@@ -463,7 +463,8 @@ export default {
       isDebounce: null,
       isOnline: false,
       isModalBlock: false,
-      isLoadFeedProfile: false
+      isLoadFeedProfile: false,
+      countPost: 0
     }
   },
   computed: {
@@ -563,6 +564,7 @@ export default {
           this.isPending = dataUserProfile.data.isPending
           this.isReceiver = dataUserProfile.data.isReceiver
           this.isYourProfile = dataUserProfile.data.isYourProfile
+          this.countPost = dataUserProfile.data.countPost
         } else {
           return false
         }
