@@ -20,15 +20,15 @@
           <button class="flex items-center">
             <div class="p-2 bg-indigo-600 hover:bg-indigo-500 rounded-md cursor-pointer mr-2 relative flex items-center overflow-hidden" @click="acceptFriendRequestById(item._id, index)">
               Accept
-              <div v-if="isAccept" class="absolute left-0 w-full h-full bg-gray-200 opacity-40" />
-              <Loading v-if="isAccept" />
+              <div v-if="(CurrentClick === index ? true : false) && isAccept" class="absolute left-0 w-full h-full bg-gray-200 opacity-40" />
+              <Loading v-if="(CurrentClick === index ? true : false) && isAccept" />
             </div>
           </button>
           <button class="flex items-center">
             <div class="bg-gray-500 hover:bg-gray-400 p-2 rounded-lg relative flex items-center overflow-hidden" @click="refuseFriendRequestById(item._id, index)">
               Refuse
-              <div v-if="isRefuse" class="absolute left-0 w-full h-full bg-gray-200 opacity-40" />
-              <Loading v-if="isRefuse" />
+              <div v-if="(CurrentClick === index ? true : false) && isRefuse" class="absolute left-0 w-full h-full bg-gray-200 opacity-40" />
+              <Loading v-if="(CurrentClick === index ? true : false) && isRefuse" />
             </div>
           </button>
         </div>
@@ -56,7 +56,8 @@ export default {
       load: false,
       isAccept: false,
       isRefuse: false,
-      isEmpty: false
+      isEmpty: false,
+      CurrentClick: null
     }
   },
   async mounted () {
@@ -99,7 +100,9 @@ export default {
     async acceptFriendRequestById (item, index) {
       try {
         this.isAccept = true
+        this.CurrentClick = index
         await this.$api.friend.acceptFriendRequestById(item)
+        this.CurrentClick = null
         this.isAccept = false
         this.refresh(index)
       } catch (error) {
@@ -109,7 +112,9 @@ export default {
     async refuseFriendRequestById (item, index) {
       try {
         this.isRefuse = true
+        this.CurrentClick = index
         await this.$api.friend.refuseFriendRequestById(item)
+        this.CurrentClick = null
         this.isRefuse = false
         this.refresh(index)
       } catch (error) {

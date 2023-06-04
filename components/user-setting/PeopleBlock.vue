@@ -13,8 +13,10 @@
           </div>
         </div>
         <button class="flex items-center">
-          <div class="bg-emerald-400 p-2 rounded-lg" @click="unBlockUserByUserId(item.userDetail._id, index)">
+          <div class="bg-emerald-400 hover:bg-emerald-300  p-2 rounded-lg relative flex items-center overflow-hidden" @click="unBlockUserByUserId(item.userDetail._id, index)">
             Unblock
+            <div v-if="(CurrentClick === index ? true : false) && isUnBlock" class="absolute left-0  w-full h-full bg-gray-200 opacity-40" />
+            <Loading v-if="(CurrentClick === index ? true : false) && isUnBlock" />
           </div>
         </button>
       </div>
@@ -26,8 +28,11 @@
 </template>
 
 <script>
-
+import Loading from '~/components/loading/Loading.vue'
 export default {
+  components: {
+    Loading
+  },
   data () {
     return {
       list: [],
@@ -36,6 +41,8 @@ export default {
       load: false,
       countPage: null,
       isLoadMore: false,
+      CurrentClick: null,
+      isUnBlock: false,
       isEmpty: false
     }
   },
@@ -75,7 +82,11 @@ export default {
     },
     async unBlockUserByUserId (id, index) {
       try {
+        this.isUnBlock = true
+        this.CurrentClick = index
         await this.$api.user.unBlockUserByUserId(id)
+        this.isUnBlock = false
+        this.CurrentClick = null
         this.refresh(index)
       } catch (error) {
 

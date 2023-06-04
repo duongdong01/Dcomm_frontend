@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="text-xs opacity-70">
-          join in 2023
+          Join in {{ $dayjs(people.createdAt).format('YYYY') }}
         </div>
       </div>
     </div>
@@ -49,7 +49,8 @@ export default {
       upHere: false,
       upHere2: false,
       isSendRequest: false,
-      isPending: false
+      isPending: false,
+      dateJoin: null
     }
   },
   methods: {
