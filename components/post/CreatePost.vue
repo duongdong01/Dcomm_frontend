@@ -266,11 +266,15 @@ export default {
             dem++
           }
           if (!listImgName.includes(image[i].name) && dem === 0) {
+            if (image[i].size / (1024 * 1024) > 10) {
+              this.$toast.error('The maximum size you can post is 10MB.')
+              return
+            }
             this.imageUpload.push(image[i])
             const reader = new FileReader()
             reader.readAsDataURL(image[i])
             reader.onload = (e) => {
-              this.previewImage.push({ dataImg: e.target.result, name: image[i].name })
+              this.previewImage.push({ dataImg: e.target.result, name: image[i].name, size: image[i].size })
             }
           }
         }

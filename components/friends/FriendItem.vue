@@ -22,7 +22,7 @@
         {{ friend.mutualCount > 0 ? friend.mutualCount :'' }} {{ friend.mutualCount > 0 ? 'mutual friends' :'' }}
       </div>
     </div>
-    <button class="rounded-full p-1 bg-edit3 relative" @click="toggleClick" @focusout="change">
+    <button v-if="isOwner" class="rounded-full p-1 bg-edit3 relative" @click="toggleClick" @focusout="change">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="22"
@@ -33,7 +33,18 @@
       >
         <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
       </svg>
-      <div v-if="isClick" class="p-2 bg-gray-600 bg-edit4 absolute z-10 top-[36px] min-w-[120px] rounded-md">
+      <div v-if="isClick" class="p-2 bg-gray-600 bg-edit4 gap-2 absolute z-10 top-[36px] min-w-[120px] rounded-md flex" @click="removeFriendByUserId(friend.userDetail._id)">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
+          class="bi bi-person-dash h-5 w-5"
+          viewBox="0 0 16 16"
+        >
+          <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+          <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+        </svg>
         <div>
           Unfriend
         </div>
@@ -52,6 +63,10 @@ export default {
       // eslint-disable-next-line vue/require-valid-default-prop
       default: () => {
       }
+    },
+    isOwner: {
+      type: Boolean,
+      default: () => Boolean
     }
   },
   data: () => {
@@ -68,6 +83,14 @@ export default {
     },
     toggleClick () {
       this.isClick = !this.isClick
+    },
+    async removeFriendByUserId (userId) {
+      try {
+        this.$emit('unfriend', userId)
+        await this.$api.friend.removeFriendByUserId(userId)
+      } catch (err) {
+        this.$toast.error(err.data.message)
+      }
     }
   }
 }

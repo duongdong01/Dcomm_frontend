@@ -26,7 +26,7 @@
       </div>
     </div>
     <div v-if="isLoaded" class="grid grid-cols-2 gap-4">
-      <friend-item v-for="(item, index) in friends" :key="index" :friend="item" />
+      <friend-item v-for="(item, index) in friends" :key="index" :friend="item" :is-owner="isYourProfile" @unfriend="unfriend" />
     </div>
     <div v-if="!isLoaded || isLoadMore" class="shadow grid grid-cols-2 gap-4 my-4">
       <div v-for="item in [0,1]" :key="item">
@@ -54,10 +54,12 @@ export default {
       search: '',
       isLoadMore: false,
       isTyping: true,
-      isDebounce: null
+      isDebounce: null,
+      isYourProfile: false
     }
   },
   async mounted () {
+    await this.getUserProfile()
     window.addEventListener('scroll', this.debounce(this.loadMore, 300))
     await this.getListFriend(10, 1, this.search)
   },
@@ -68,6 +70,19 @@ export default {
       return (...args) => {
         clearTimeout(timer)
         timer = setTimeout(() => { func.apply(this, args) }, timeout)
+      }
+    },
+    unfriend (userId) {
+      if (this.friends.length) {
+        let index = null
+        for (let i = 0; i < this.friends.length; i++) {
+          if (this.friends[i].userDetail._id.toString() === userId.toString()) {
+            index = i
+          }
+        }
+        if (index || index === 0) {
+          this.friends.splice(index, 1)
+        }
       }
     },
     async loadMore () {
@@ -132,6 +147,16 @@ export default {
         }, 500)
       } catch (err) {
         //
+      }
+    },
+    async getUserProfile () {
+      try {
+        if (this.$route.params.id) {
+          const dataUserProfile = await this.$api.user.getUserProfile(this.$route.params.id)
+          this.isYourProfile = dataUserProfile.data.isYourProfile
+        }
+      } catch (err) {
+
       }
     }
   }
