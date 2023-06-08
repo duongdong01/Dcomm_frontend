@@ -74,7 +74,7 @@
           <div> <span class="nav_item ">All</span></div>
         </div>
       </nuxt-link>
-      <nuxt-link to="/global" tag="a" class="nav_left-menu">
+      <nuxt-link to="/explore" tag="a" class="nav_left-menu">
         <div ref="home" class="flex" :class="$route.path.split('/')[1] === 'explore' ? 'focus_item_nav' : ''">
           <div>
             <svg

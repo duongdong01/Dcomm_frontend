@@ -356,5 +356,14 @@ export const actions = {
       this.$toast.error('System error.', { timeout: 1500 })
       this.$router.push('/')
     }
+  },
+  async searchGlobalPostExplore ({ commit, state }, { limit, page, keyword, isLoadMore }) {
+    try {
+      const postData = await this.$api.search.searchGlobalPostExplore({ limit, page, keyword, explore: 'explore' })
+      commit('setPostSearch', { isLoadMore, data: postData.data.posts })
+      commit('setPageDetailPostSearch', postData.data.pageDetail)
+    } catch (err) {
+      //
+    }
   }
 }
