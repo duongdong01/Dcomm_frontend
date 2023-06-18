@@ -5,9 +5,9 @@
     </div>
     <div class="grid grid-flow-col grid-cols-10  max-w-[1410px] mx-auto mt-24 gap-8 w-full">
       <div class="col-span-2 shrink">
-        <MainLeft v-if="$route.path.split('/')[1]!=='post' && $route.path.split('/')[1]!=='search' && $route.path.split('/')[1]!=='notification'" class="overflow-y-auto sticky top-24 xl:w-[250px] md:w-[230px]" />
+        <MainLeft v-if="$route.path.split('/')[1]!=='post' && $route.path.split('/')[1]!=='search' && $route.path.split('/')[1]!=='notification'" class="overflow-y-auto sticky top-24 xl:w-[250px] md:w-[200px] lg:w-[240px]" />
       </div>
-      <div class="col-span-8 flex">
+      <div class="col-span-8 flex md:ml-3 lg:ml-0">
         <nuxt />
       </div>
     </div>

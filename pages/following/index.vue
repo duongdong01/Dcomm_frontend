@@ -1,6 +1,6 @@
 <template>
   <div ref="home" class="grid grid-cols-8 w-full gap-6">
-    <div class="col-span-6 min-h-[100vh]">
+    <div class="lg:col-span-6 min-h-[100vh] col-span-7">
       <create-post class="mb-4" :on="on" />
       <Sort @sort="sortPost" />
       <div>
@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="col-span-2 flex">
+    <div class="col-span-2 lg:flex hidden">
       <MainRight class="rounded-2xl sticky top-7 " />
     </div>
   </div>
